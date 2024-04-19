@@ -78,13 +78,19 @@ class GameNotifier extends _$GameNotifier {
     final server = await ref.read(activeServerNotifierProvider.future);
     if (server.clientPath.isEmpty) return;
     final patterns = server.clientPath.split(r'\');
-    patterns.removeLast();
-    patterns.add('Cache');
-    final cache = patterns.join(r'\');
-    final directory = Directory(cache);
+    final prefix = patterns.take(patterns.length - 1);
+    final cachePatterns = [...prefix, 'Cache'];
+    final directory = Directory(cachePatterns.join(r'\'));
     if (await directory.exists()) {
       await directory.delete(recursive: true);
     }
+    final realmListPatterns = [...prefix, 'realmlist.wtf'];
+    final file = File(realmListPatterns.join(r'\'));
+    if (!await file.exists()) {
+      await file.create();
+    }
+    final realmList = server.realmList;
+    file.writeAsString('SET realmlist "$realmList"');
     ProcessUtil().start(server.clientPath);
   }
 
