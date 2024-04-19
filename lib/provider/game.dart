@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:arcane_launcher/model/service_information.dart';
 import 'package:arcane_launcher/provider/auth_server.dart';
@@ -76,6 +77,14 @@ class GameNotifier extends _$GameNotifier {
   void startClient() async {
     final server = await ref.read(activeServerNotifierProvider.future);
     if (server.clientPath.isEmpty) return;
+    final patterns = server.clientPath.split(r'\');
+    patterns.removeLast();
+    patterns.add('Cache');
+    final cache = patterns.join(r'\');
+    final directory = Directory(cache);
+    if (await directory.exists()) {
+      await directory.delete(recursive: true);
+    }
     ProcessUtil().start(server.clientPath);
   }
 
