@@ -1,16 +1,13 @@
-# arcane_launcher
+# Arcane Launcher
 
-A new Flutter project.
+You can start game easily cause arcane integrate all services needed.
 
-## Getting Started
+## Preview
 
-This project is a starting point for a Flutter application.
+![launcher](./screenshot/launcher.png)
 
-A few resources to get you started if this is your first Flutter project:
+## Install
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+1. First, you should open the setting page and add a new server which contains the services you need to start a game
+2. Then, back to launcher page and click the start game button.
+3. And all you need now, is waiting for the launcher starting services.

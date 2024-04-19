@@ -1,13 +1,18 @@
 class ServiceInformation {
-  bool active = false;
   List<String> logs = [];
   List<int> processIds = [];
+  ServiceStatus status = ServiceStatus.stopped;
 
-  ServiceInformation copyWith(
-      {bool? active, List<String>? logs, List<int>? processIds}) {
+  ServiceInformation copyWith({
+    List<String>? logs,
+    List<int>? processIds,
+    ServiceStatus? status,
+  }) {
     return ServiceInformation()
-      ..active = active ?? this.active
       ..logs = logs ?? this.logs
-      ..processIds = processIds ?? this.processIds;
+      ..processIds = processIds ?? this.processIds
+      ..status = status ?? this.status;
   }
 }
+
+enum ServiceStatus { stopped, starting, running }

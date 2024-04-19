@@ -1,7 +1,5 @@
-import 'package:arcane_launcher/page/launcher/component/auth_server_log.dart';
-import 'package:arcane_launcher/page/launcher/component/auth_server_tile.dart';
-import 'package:arcane_launcher/page/launcher/component/mysql_log.dart';
-import 'package:arcane_launcher/page/launcher/component/mysql_tile.dart';
+import 'package:arcane_launcher/page/launcher/component/auth_server.dart';
+import 'package:arcane_launcher/page/launcher/component/mysqld.dart';
 import 'package:arcane_launcher/page/config/config.dart';
 import 'package:arcane_launcher/page/setting/setting.dart';
 import 'package:arcane_launcher/provider/external_application.dart';
@@ -10,8 +8,7 @@ import 'package:arcane_launcher/schema/external_application.dart';
 import 'package:arcane_launcher/schema/server.dart';
 import 'package:arcane_launcher/widget/dropdown.dart';
 import 'package:arcane_launcher/widget/service_tile.dart';
-import 'package:arcane_launcher/page/launcher/component/world_server_log.dart';
-import 'package:arcane_launcher/page/launcher/component/world_server_tile.dart';
+import 'package:arcane_launcher/page/launcher/component/world_server.dart';
 import 'package:arcane_launcher/provider/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -43,7 +40,7 @@ class LauncherPage extends StatelessWidget {
                 children: [
                   Image.asset('asset/world-of-warcraft.png', fit: BoxFit.cover),
                   const ServiceTileDivider(label: '核心服务'),
-                  const MysqlTile(),
+                  const MysqldTile(),
                   const WorldServerTile(),
                   const AuthServerTile(),
                   const ServiceTileDivider(label: '设置'),
@@ -73,7 +70,7 @@ class LauncherPage extends StatelessWidget {
             const Expanded(
               child: Column(
                 children: [
-                  Expanded(child: MysqlLog()),
+                  Expanded(child: MysqldLog()),
                   SizedBox(height: 16),
                   Expanded(child: WorldServerLog()),
                   SizedBox(height: 16),

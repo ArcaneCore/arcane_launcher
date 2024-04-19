@@ -18,30 +18,35 @@ class WorldServerInformationNotifier extends _$WorldServerInformationNotifier {
     final information = ServiceInformation();
     final processIds = await _getProcessIds();
     if (processIds.isEmpty) return information;
-    information.active = true;
     information.processIds = processIds;
+    information.status = ServiceStatus.running;
     return information;
   }
 
   void start() async {
+    final information = await future;
+    if (information.status != ServiceStatus.stopped) return;
     final server = await ref.read(activeServerNotifierProvider.future);
     if (server.worldServerPath.isEmpty) return;
     await ProcessUtil().start(server.worldServerPath);
-    var information = await future;
-    if (information.active) return;
-    state = AsyncData(information.copyWith(active: true));
+    state = AsyncData(information.copyWith(status: ServiceStatus.running));
     _listenProcessLogs();
     _listenProcessExit();
   }
 
   void stop() async {
-    final information = await future;
-    if (!information.active) return;
+    var information = await future;
+    if (information.status != ServiceStatus.running) return;
     ProcessUtil().stop(information.processIds);
-    state = AsyncData(information.copyWith(active: false, processIds: []));
+    state = AsyncData(information.copyWith(
+      processIds: [],
+      status: ServiceStatus.stopped,
+    ));
     _cancelListeningProcessLogs();
     _cancelListeningProcessExit();
   }
+
+  void toggle() async {}
 
   void _listenProcessLogs() async {
     var information = await future;
@@ -62,7 +67,10 @@ class WorldServerInformationNotifier extends _$WorldServerInformationNotifier {
         if (line.contains(' (worldserver-daemon) ready...')) {
           final processIds = await _getProcessIds();
           information = await future;
-          state = AsyncData(information.copyWith(processIds: processIds));
+          state = AsyncData(information.copyWith(
+            processIds: processIds,
+            status: ServiceStatus.running,
+          ));
         }
       }
     });
@@ -75,11 +83,14 @@ class WorldServerInformationNotifier extends _$WorldServerInformationNotifier {
   void _listenProcessExit() async {
     _processTimer = Timer.periodic(const Duration(seconds: 30), (_) async {
       var information = await future;
-      if (!information.active) return;
+      if (information.status != ServiceStatus.running) return;
       final processIds = await _getProcessIds();
       if (processIds.isNotEmpty) return;
       information = await future;
-      state = AsyncData(information.copyWith(active: false, processIds: []));
+      state = AsyncData(information.copyWith(
+        processIds: [],
+        status: ServiceStatus.stopped,
+      ));
       _cancelListeningProcessExit();
     });
   }

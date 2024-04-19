@@ -7,7 +7,7 @@ part of 'auth_server.dart';
 // **************************************************************************
 
 String _$authServerInformationNotifierHash() =>
-    r'3480790fa8a4e4562b397a5e2289860474a8a2da';
+    r'21fa91a564dbd78bf3fdab9248f59db8afd80087';
 
 /// See also [AuthServerInformationNotifier].
 @ProviderFor(AuthServerInformationNotifier)

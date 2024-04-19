@@ -1,28 +1,28 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'mysql.dart';
+part of 'mysqld.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$mysqlInformationNotifierHash() =>
-    r'76b309aaa05db78461a16cd1327b3af66127d59e';
+String _$mysqldInformationNotifierHash() =>
+    r'18352a8d2bb1a48f577ad934ffbed319dcd3b806';
 
-/// See also [MysqlInformationNotifier].
-@ProviderFor(MysqlInformationNotifier)
-final mysqlInformationNotifierProvider = AutoDisposeAsyncNotifierProvider<
-    MysqlInformationNotifier, ServiceInformation>.internal(
-  MysqlInformationNotifier.new,
-  name: r'mysqlInformationNotifierProvider',
+/// See also [MysqldInformationNotifier].
+@ProviderFor(MysqldInformationNotifier)
+final mysqldInformationNotifierProvider = AutoDisposeAsyncNotifierProvider<
+    MysqldInformationNotifier, ServiceInformation>.internal(
+  MysqldInformationNotifier.new,
+  name: r'mysqldInformationNotifierProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$mysqlInformationNotifierHash,
+      : _$mysqldInformationNotifierHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$MysqlInformationNotifier
+typedef _$MysqldInformationNotifier
     = AutoDisposeAsyncNotifier<ServiceInformation>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

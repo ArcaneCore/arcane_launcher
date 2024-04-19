@@ -7,7 +7,7 @@ part of 'world_server.dart';
 // **************************************************************************
 
 String _$worldServerInformationNotifierHash() =>
-    r'5b26526fd2662841be4144069f670a70ff6c7da0';
+    r'c9d97ebafae6d08f8d368ff4a895c9d43c70f5ac';
 
 /// See also [WorldServerInformationNotifier].
 @ProviderFor(WorldServerInformationNotifier)

@@ -2,9 +2,7 @@ import 'package:arcane_launcher/page/setting/component/external_application.dart
 import 'package:arcane_launcher/page/setting/component/server.dart';
 import 'package:arcane_launcher/provider/setting.dart';
 import 'package:arcane_launcher/schema/setting.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SettingPage extends StatefulWidget {
