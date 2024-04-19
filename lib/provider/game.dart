@@ -57,7 +57,7 @@ class GameNotifier extends _$GameNotifier {
       }
       if (tasks.isEmpty) {
         timer.cancel();
-        state = const AsyncData(true);
+        state = const AsyncData(false);
       }
     });
   }

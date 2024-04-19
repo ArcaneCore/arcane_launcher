@@ -17,6 +17,7 @@ class MysqldInformationNotifier extends _$MysqldInformationNotifier {
     final information = ServiceInformation();
     final processIds = await _getProcessIds();
     if (processIds.isEmpty) return information;
+    information.logs = ['Mysqld is running.'];
     information.processIds = processIds;
     information.status = ServiceStatus.running;
     return information;
@@ -31,7 +32,7 @@ class MysqldInformationNotifier extends _$MysqldInformationNotifier {
       server.mysqldPath,
       arguments: ['--console'],
     );
-    state = AsyncData(information.copyWith(status: ServiceStatus.running));
+    state = AsyncData(information.copyWith(status: ServiceStatus.starting));
     process.stdout.transform(utf8.decoder).listen(_listenProcessLogs);
     process.stderr.transform(utf8.decoder).listen(_listenProcessLogs);
     _listenProcessExit();
@@ -41,14 +42,18 @@ class MysqldInformationNotifier extends _$MysqldInformationNotifier {
     var information = await future;
     if (information.status != ServiceStatus.running) return;
     ProcessUtil().stop(information.processIds);
-    state = AsyncData(information.copyWith(
-      processIds: [],
-      status: ServiceStatus.stopped,
-    ));
+    state = AsyncData(ServiceInformation());
     _cancelListeningProcessExit();
   }
 
-  void toggle() async {}
+  void toggle() async {
+    var information = await future;
+    if (information.status != ServiceStatus.stopped) {
+      stop();
+    } else {
+      start();
+    }
+  }
 
   void _listenProcessLogs(String log) async {
     var information = await future;

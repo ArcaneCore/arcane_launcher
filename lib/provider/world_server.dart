@@ -18,6 +18,7 @@ class WorldServerInformationNotifier extends _$WorldServerInformationNotifier {
     final information = ServiceInformation();
     final processIds = await _getProcessIds();
     if (processIds.isEmpty) return information;
+    information.logs = await _getLogs();
     information.processIds = processIds;
     information.status = ServiceStatus.running;
     return information;
@@ -29,7 +30,7 @@ class WorldServerInformationNotifier extends _$WorldServerInformationNotifier {
     final server = await ref.read(activeServerNotifierProvider.future);
     if (server.worldServerPath.isEmpty) return;
     await ProcessUtil().start(server.worldServerPath);
-    state = AsyncData(information.copyWith(status: ServiceStatus.running));
+    state = AsyncData(information.copyWith(status: ServiceStatus.starting));
     _listenProcessLogs();
     _listenProcessExit();
   }
@@ -38,30 +39,32 @@ class WorldServerInformationNotifier extends _$WorldServerInformationNotifier {
     var information = await future;
     if (information.status != ServiceStatus.running) return;
     ProcessUtil().stop(information.processIds);
-    state = AsyncData(information.copyWith(
-      processIds: [],
-      status: ServiceStatus.stopped,
-    ));
+    state = AsyncData(ServiceInformation());
     _cancelListeningProcessLogs();
     _cancelListeningProcessExit();
   }
 
-  void toggle() async {}
+  void toggle() async {
+    var information = await future;
+    if (information.status != ServiceStatus.stopped) {
+      stop();
+    } else {
+      start();
+    }
+  }
 
   void _listenProcessLogs() async {
-    var information = await future;
-    state = AsyncData(information.copyWith(logs: []));
     final server = await ref.read(activeServerNotifierProvider.future);
     if (server.worldServerLog.isEmpty) return;
     final file = File(server.worldServerLog);
-    DateTime modified = await file.lastModified();
+    int size = 0;
     _logTimer = Timer.periodic(const Duration(seconds: 1), (_) async {
       if (!file.existsSync()) return;
-      final lastModified = await file.lastModified();
-      if (lastModified.compareTo(modified) == 0) return;
-      modified = lastModified;
+      final newSize = await file.length();
+      if (newSize == size) return;
+      size = newSize;
       final lines = await file.readAsLines();
-      information = await future;
+      var information = await future;
       state = AsyncData(information.copyWith(logs: lines));
       for (var line in lines) {
         if (line.contains(' (worldserver-daemon) ready...')) {
@@ -74,6 +77,15 @@ class WorldServerInformationNotifier extends _$WorldServerInformationNotifier {
         }
       }
     });
+  }
+
+  Future<List<String>> _getLogs() async {
+    final server = await ref.read(activeServerNotifierProvider.future);
+    if (server.worldServerLog.isEmpty) return [];
+    final file = File(server.worldServerLog);
+    if (!file.existsSync()) return [];
+    final lines = await file.readAsLines();
+    return lines;
   }
 
   void _cancelListeningProcessLogs() {

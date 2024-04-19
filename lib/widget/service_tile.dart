@@ -32,11 +32,15 @@ class ServiceTile extends StatelessWidget {
       value: active,
       onChanged: handleChange,
     );
+    var cursor = SystemMouseCursors.click;
+    if (loading) {
+      cursor = SystemMouseCursors.forbidden;
+    }
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: handleTap,
       child: MouseRegion(
-        cursor: SystemMouseCursors.click,
+        cursor: cursor,
         child: Container(
           alignment: Alignment.center,
           height: 40,
@@ -61,6 +65,7 @@ class ServiceTile extends StatelessWidget {
   }
 
   void handleTap() {
+    if (loading) return;
     onChanged?.call();
   }
 }
