@@ -10,14 +10,12 @@ part 'mysqld.g.dart';
 
 @riverpod
 class MysqldInformationNotifier extends _$MysqldInformationNotifier {
-  Timer? _processTimer;
-
   @override
   Future<ServiceInformation> build() async {
     final information = ServiceInformation();
     final processIds = await _getProcessIds();
     if (processIds.isEmpty) return information;
-    information.logs = ['Mysqld is running.'];
+    information.logs = ['Mysqld is running...'];
     information.processIds = processIds;
     information.status = ServiceStatus.running;
     return information;
@@ -35,7 +33,6 @@ class MysqldInformationNotifier extends _$MysqldInformationNotifier {
     state = AsyncData(information.copyWith(status: ServiceStatus.starting));
     process.stdout.transform(utf8.decoder).listen(_listenProcessLogs);
     process.stderr.transform(utf8.decoder).listen(_listenProcessLogs);
-    _listenProcessExit();
   }
 
   void stop() async {
@@ -43,7 +40,6 @@ class MysqldInformationNotifier extends _$MysqldInformationNotifier {
     if (information.status != ServiceStatus.running) return;
     ProcessUtil().stop(information.processIds);
     state = AsyncData(ServiceInformation());
-    _cancelListeningProcessExit();
   }
 
   void toggle() async {
@@ -53,6 +49,10 @@ class MysqldInformationNotifier extends _$MysqldInformationNotifier {
     } else {
       start();
     }
+  }
+
+  Future<List<int>> _getProcessIds() async {
+    return ProcessUtil().getProcessIds('mysqld.exe');
   }
 
   void _listenProcessLogs(String log) async {
@@ -66,28 +66,5 @@ class MysqldInformationNotifier extends _$MysqldInformationNotifier {
         status: ServiceStatus.running,
       ));
     }
-  }
-
-  void _listenProcessExit() async {
-    _processTimer = Timer.periodic(const Duration(seconds: 30), (_) async {
-      var information = await future;
-      if (information.status != ServiceStatus.running) return;
-      final processIds = await _getProcessIds();
-      if (processIds.isNotEmpty) return;
-      information = await future;
-      state = AsyncData(information.copyWith(
-        processIds: [],
-        status: ServiceStatus.stopped,
-      ));
-      _cancelListeningProcessExit();
-    });
-  }
-
-  void _cancelListeningProcessExit() {
-    _processTimer?.cancel();
-  }
-
-  Future<List<int>> _getProcessIds() async {
-    return ProcessUtil().getProcessIds('mysqld.exe');
   }
 }

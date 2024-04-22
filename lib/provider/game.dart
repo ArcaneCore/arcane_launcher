@@ -13,8 +13,30 @@ part 'game.g.dart';
 
 @riverpod
 class GameNotifier extends _$GameNotifier {
+  Timer? _timer;
   @override
   Future<bool> build() async {
+    _timer = Timer.periodic(const Duration(seconds: 15), (_) async {
+      final processes = await ProcessUtil().getProcessNames();
+      if (!processes.contains('mysqld.exe')) {
+        final mysqldInformationNotifier =
+            ref.read(mysqldInformationNotifierProvider.notifier);
+        mysqldInformationNotifier.stop();
+      }
+      if (!processes.contains('worldserver.exe')) {
+        final worldServerInformationNotifier =
+            ref.read(worldServerInformationNotifierProvider.notifier);
+        worldServerInformationNotifier.stop();
+      }
+      if (!processes.contains('authserver.exe')) {
+        final authServerInformationNotifier =
+            ref.read(authServerInformationNotifierProvider.notifier);
+        authServerInformationNotifier.stop();
+      }
+    });
+    ref.onDispose(() {
+      _timer?.cancel();
+    });
     return false;
   }
 
@@ -28,6 +50,26 @@ class GameNotifier extends _$GameNotifier {
         timer.cancel();
       }
     });
+  }
+
+  void startClient() async {
+    final server = await ref.read(activeServerNotifierProvider.future);
+    if (server.clientPath.isEmpty) return;
+    final patterns = server.clientPath.split(r'\');
+    final prefix = patterns.take(patterns.length - 1);
+    final cachePatterns = [...prefix, 'Cache'];
+    final directory = Directory(cachePatterns.join(r'\'));
+    if (await directory.exists()) {
+      await directory.delete(recursive: true);
+    }
+    final realmListPatterns = [...prefix, 'realmlist.wtf'];
+    final file = File(realmListPatterns.join(r'\'));
+    if (!await file.exists()) {
+      await file.create();
+    }
+    final realmList = server.realmList;
+    file.writeAsString('SET realmlist "$realmList"');
+    ProcessUtil().start(server.clientPath);
   }
 
   void startServices() async {
@@ -72,26 +114,6 @@ class GameNotifier extends _$GameNotifier {
     authServerNotifier.stop();
     final mysqldNotifier = ref.read(mysqldInformationNotifierProvider.notifier);
     mysqldNotifier.stop();
-  }
-
-  void startClient() async {
-    final server = await ref.read(activeServerNotifierProvider.future);
-    if (server.clientPath.isEmpty) return;
-    final patterns = server.clientPath.split(r'\');
-    final prefix = patterns.take(patterns.length - 1);
-    final cachePatterns = [...prefix, 'Cache'];
-    final directory = Directory(cachePatterns.join(r'\'));
-    if (await directory.exists()) {
-      await directory.delete(recursive: true);
-    }
-    final realmListPatterns = [...prefix, 'realmlist.wtf'];
-    final file = File(realmListPatterns.join(r'\'));
-    if (!await file.exists()) {
-      await file.create();
-    }
-    final realmList = server.realmList;
-    file.writeAsString('SET realmlist "$realmList"');
-    ProcessUtil().start(server.clientPath);
   }
 
   Future<List<String>> _createTasks() async {

@@ -13,8 +13,6 @@ class ProcessUtil {
   /// search for. It can be specified with or without a file path. If a file path
   /// is provided, the process names will be matched against the base name of
   /// the file path.
-  ///
-  /// This function does not throw any exceptions.
   Future<List<int>> getProcessIds(String name) async {
     final result = await Process.run('tasklist', [], runInShell: true);
     final lines = result.stdout.toString().split('\n');
@@ -29,6 +27,24 @@ class ProcessUtil {
       processIds.add(int.parse(patterns[1]));
     }
     return processIds;
+  }
+
+  /// Retrieves the names of all running processes.
+  ///
+  /// This function runs the 'tasklist' command to list all running processes, and
+  /// then extracts the names of the processes. It returns a [Future] that completes
+  /// with a list of strings representing the names of the processes. If no processes
+  /// are found, an empty list is returned.
+  Future<List<String>> getProcessNames() async {
+    final result = await Process.run('tasklist', [], runInShell: true);
+    final lines = result.stdout.toString().split('\n');
+    final List<String> names = [];
+    for (final line in lines) {
+      final formattedLine = line.replaceAll(RegExp(r'\s+'), ' ');
+      final patterns = formattedLine.split(' ');
+      names.add(patterns.first);
+    }
+    return names.toSet().toList();
   }
 
   /// Starts a new process with the specified [name] and optional [arguments].
