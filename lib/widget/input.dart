@@ -16,7 +16,7 @@ class AntInput extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final shadow = colorScheme.shadow.withOpacity(0.125);
+    final shadow = colorScheme.shadow.withValues(alpha: 0.125);
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(

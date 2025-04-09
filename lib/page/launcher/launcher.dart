@@ -21,7 +21,7 @@ class LauncherPage extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final surface = colorScheme.surface;
-    final shadow = colorScheme.shadow.withOpacity(0.125);
+    final shadow = colorScheme.shadow.withValues(alpha: 0.125);
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -98,15 +98,13 @@ class LauncherPage extends StatelessWidget {
 }
 
 class _ExternalApplicationTile extends StatelessWidget {
-  const _ExternalApplicationTile({
-    super.key,
-  });
+  const _ExternalApplicationTile();
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final onSurface = colorScheme.onSurface.withOpacity(0.25);
+    final onSurface = colorScheme.onSurface.withValues(alpha: 0.25);
     return Consumer(builder: (context, ref, child) {
       final provider = ref.watch(externalApplicationsNotifierProvider);
       final List<ExternalApplication> applications = switch (provider) {
@@ -143,9 +141,7 @@ class _ExternalApplicationTile extends StatelessWidget {
 }
 
 class _ServerSelect extends StatefulWidget {
-  const _ServerSelect({
-    super.key,
-  });
+  const _ServerSelect();
 
   @override
   State<_ServerSelect> createState() => _ServerSelectState();
@@ -160,7 +156,7 @@ class _ServerSelectState extends State<_ServerSelect> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final shadow = colorScheme.shadow.withOpacity(0.125);
+    final shadow = colorScheme.shadow.withValues(alpha: 0.125);
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: insertOverlay,
@@ -215,7 +211,7 @@ class _ServerSelectState extends State<_ServerSelect> {
 }
 
 class _SelectOverlay extends StatelessWidget {
-  const _SelectOverlay({super.key, required this.link, this.onTap});
+  const _SelectOverlay({required this.link, this.onTap});
 
   final LayerLink link;
   final void Function()? onTap;
@@ -225,7 +221,7 @@ class _SelectOverlay extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final surface = colorScheme.surface;
-    final shadow = colorScheme.shadow.withOpacity(0.125);
+    final shadow = colorScheme.shadow.withValues(alpha: 0.125);
     return Stack(
       children: [
         GestureDetector(
@@ -282,7 +278,7 @@ class _SelectOverlay extends StatelessWidget {
 }
 
 class _GameStarter extends StatelessWidget {
-  const _GameStarter({super.key});
+  const _GameStarter();
 
   @override
   Widget build(BuildContext context) {
@@ -302,10 +298,10 @@ class _GameStarter extends StatelessWidget {
             };
             return ElevatedButton(
               style: ButtonStyle(
-                backgroundColor: MaterialStatePropertyAll(primary),
-                foregroundColor: MaterialStatePropertyAll(onPrimary),
-                surfaceTintColor: MaterialStatePropertyAll(surface),
-                shape: const MaterialStatePropertyAll(
+                backgroundColor: WidgetStatePropertyAll(primary),
+                foregroundColor: WidgetStatePropertyAll(onPrimary),
+                surfaceTintColor: WidgetStatePropertyAll(surface),
+                shape: const WidgetStatePropertyAll(
                   RoundedRectangleBorder(
                     borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(4),
@@ -338,7 +334,7 @@ class _GameStarter extends StatelessWidget {
 }
 
 class _GameOption extends StatefulWidget {
-  const _GameOption({super.key});
+  const _GameOption();
 
   @override
   State<_GameOption> createState() => __GameOptionState();
@@ -386,10 +382,10 @@ class __GameOptionState extends State<_GameOption> {
       controller: controller,
       child: ElevatedButton(
         style: ButtonStyle(
-          backgroundColor: MaterialStatePropertyAll(primary),
-          foregroundColor: MaterialStatePropertyAll(onPrimary),
-          surfaceTintColor: MaterialStatePropertyAll(surface),
-          shape: const MaterialStatePropertyAll(
+          backgroundColor: WidgetStatePropertyAll(primary),
+          foregroundColor: WidgetStatePropertyAll(onPrimary),
+          surfaceTintColor: WidgetStatePropertyAll(surface),
+          shape: const WidgetStatePropertyAll(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.only(
                 bottomRight: Radius.circular(4),

@@ -79,7 +79,7 @@ class ServiceTileDivider extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final onSurface = colorScheme.onSurface.withOpacity(0.5);
+    final onSurface = colorScheme.onSurface.withValues(alpha: 0.5);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
       child: Text(label, style: TextStyle(color: onSurface)),

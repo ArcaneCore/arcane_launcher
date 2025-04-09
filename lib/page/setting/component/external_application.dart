@@ -32,7 +32,7 @@ class ExternalApplicationsPage extends StatelessWidget {
 }
 
 class _CreateExternalApplicationButton extends StatelessWidget {
-  const _CreateExternalApplicationButton({super.key});
+  const _CreateExternalApplicationButton();
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +56,7 @@ class _CreateExternalApplicationButton extends StatelessWidget {
 }
 
 class _ExternalApplicationTile extends StatelessWidget {
-  const _ExternalApplicationTile({super.key, required this.application});
+  const _ExternalApplicationTile({required this.application});
 
   final ExternalApplication application;
 
@@ -110,7 +110,7 @@ class _ExternalApplicationTile extends StatelessWidget {
 }
 
 class _ExternalApplicationAlertDialog extends StatelessWidget {
-  const _ExternalApplicationAlertDialog({super.key, required this.application});
+  const _ExternalApplicationAlertDialog({required this.application});
 
   final ExternalApplication application;
 
@@ -147,7 +147,7 @@ class _ExternalApplicationAlertDialog extends StatelessWidget {
 }
 
 class _ExternalApplicationForm extends StatefulWidget {
-  const _ExternalApplicationForm({super.key, required this.application});
+  const _ExternalApplicationForm({required this.application});
 
   final ExternalApplication application;
 

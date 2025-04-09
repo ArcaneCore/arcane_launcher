@@ -2,7 +2,6 @@ import 'package:arcane_launcher/model/service_information.dart';
 import 'package:arcane_launcher/widget/service_tile.dart';
 import 'package:arcane_launcher/provider/mysqld.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class MysqldTile extends StatelessWidget {
@@ -45,7 +44,7 @@ class MysqldLog extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final surface = colorScheme.surface;
-    final shadow = colorScheme.shadow.withOpacity(0.125);
+    final shadow = colorScheme.shadow.withValues(alpha: 0.125);
     return Container(
       decoration: BoxDecoration(
         color: surface,
@@ -60,7 +59,7 @@ class MysqldLog extends StatelessWidget {
               'MYSQLD',
               maxLines: 1,
               style: TextStyle(
-                color: shadow.withOpacity(0.05),
+                color: shadow.withValues(alpha: 0.05),
                 fontSize: 120,
                 fontWeight: FontWeight.bold,
                 overflow: TextOverflow.ellipsis,

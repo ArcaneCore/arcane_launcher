@@ -31,7 +31,7 @@ class ServersPage extends StatelessWidget {
 }
 
 class _CreateServerButton extends StatelessWidget {
-  const _CreateServerButton({super.key});
+  const _CreateServerButton();
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +55,7 @@ class _CreateServerButton extends StatelessWidget {
 }
 
 class _ServerTile extends StatelessWidget {
-  const _ServerTile({super.key, required this.server});
+  const _ServerTile({required this.server});
 
   final Server server;
 
@@ -114,7 +114,7 @@ class _ServerTile extends StatelessWidget {
 }
 
 class _ServerAlertDialog extends StatelessWidget {
-  const _ServerAlertDialog({super.key, required this.server});
+  const _ServerAlertDialog({required this.server});
 
   final Server server;
 
@@ -151,7 +151,7 @@ class _ServerAlertDialog extends StatelessWidget {
 }
 
 class _ServerForm extends StatefulWidget {
-  const _ServerForm({super.key, required this.server});
+  const _ServerForm({required this.server});
 
   final Server server;
 

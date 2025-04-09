@@ -24,7 +24,7 @@ class _SettingState extends State<ConfigPage> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final surface = colorScheme.surface;
-    final shadow = colorScheme.shadow.withOpacity(0.125);
+    final shadow = colorScheme.shadow.withValues(alpha: 0.125);
     return Scaffold(
       body: Row(
         children: [

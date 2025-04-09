@@ -72,7 +72,6 @@ class AntDropdownState extends State<AntDropdown> {
 
 class _AntDropdownOverlay extends StatelessWidget {
   const _AntDropdownOverlay({
-    super.key,
     this.builder,
     required this.link,
     this.onTap,
@@ -87,7 +86,7 @@ class _AntDropdownOverlay extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final surface = colorScheme.surface;
-    final shadow = colorScheme.shadow.withOpacity(0.125);
+    final shadow = colorScheme.shadow.withValues(alpha: 0.125);
     return Stack(
       children: [
         GestureDetector(

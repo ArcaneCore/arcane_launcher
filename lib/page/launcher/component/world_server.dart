@@ -44,7 +44,7 @@ class WorldServerLog extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final surface = colorScheme.surface;
-    final shadow = colorScheme.shadow.withOpacity(0.125);
+    final shadow = colorScheme.shadow.withValues(alpha: 0.125);
     return Container(
       decoration: BoxDecoration(
         color: surface,
@@ -59,7 +59,7 @@ class WorldServerLog extends StatelessWidget {
               'WORLD SERVER',
               maxLines: 1,
               style: TextStyle(
-                color: shadow.withOpacity(0.05),
+                color: shadow.withValues(alpha: 0.05),
                 fontSize: 120,
                 fontWeight: FontWeight.bold,
                 overflow: TextOverflow.ellipsis,

@@ -19,13 +19,13 @@ class AntSwitch extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final surface = colorScheme.surface;
-    var surfaceVariant = colorScheme.surfaceVariant;
+    var surfaceContainerHighest = colorScheme.surfaceContainerHighest;
     var primary = colorScheme.primary;
     var cursor = SystemMouseCursors.click;
     if (loading) {
       cursor = SystemMouseCursors.forbidden;
-      surfaceVariant = surfaceVariant.withOpacity(0.5);
-      primary = primary.withOpacity(0.5);
+      surfaceContainerHighest = surfaceContainerHighest.withValues(alpha: 0.5);
+      primary = primary.withValues(alpha: 0.5);
     }
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
@@ -38,7 +38,7 @@ class AntSwitch extends StatelessWidget {
           height: 28,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(50),
-            color: value ? primary : surfaceVariant,
+            color: value ? primary : surfaceContainerHighest,
           ),
           duration: const Duration(milliseconds: 150),
           padding: const EdgeInsets.all(2),
@@ -65,7 +65,7 @@ class AntSwitch extends StatelessWidget {
 }
 
 class _AntSwitchLoadingIndicator extends StatefulWidget {
-  const _AntSwitchLoadingIndicator({super.key});
+  const _AntSwitchLoadingIndicator();
 
   @override
   State<_AntSwitchLoadingIndicator> createState() =>

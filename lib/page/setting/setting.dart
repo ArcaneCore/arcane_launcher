@@ -27,7 +27,7 @@ class _SettingState extends State<SettingPage> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final surface = colorScheme.surface;
-    final shadow = colorScheme.shadow.withOpacity(0.125);
+    final shadow = colorScheme.shadow.withValues(alpha: 0.125);
     return Scaffold(
       body: Row(
         children: [
@@ -123,7 +123,7 @@ class _SettingState extends State<SettingPage> {
 }
 
 class _ThemeTile extends StatelessWidget {
-  const _ThemeTile({super.key});
+  const _ThemeTile();
 
   @override
   Widget build(BuildContext context) {
@@ -148,7 +148,7 @@ class _ThemeTile extends StatelessWidget {
             Colors.primaries.length,
             (index) {
               final color = Colors.primaries[index];
-              final backgroundColor = MaterialStatePropertyAll(color);
+              final backgroundColor = WidgetStatePropertyAll(color);
               Widget icon = Icon(Icons.check_outlined, color: onPrimary);
               if (color.value != setting.color) {
                 icon = const SizedBox();
