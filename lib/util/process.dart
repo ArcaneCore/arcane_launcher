@@ -16,9 +16,10 @@ class ProcessUtil {
   Future<List<int>> getProcessIds(String name) async {
     final result = await Process.run('tasklist', [], runInShell: true);
     final lines = result.stdout.toString().split('\n');
-    final serviceLines = lines.where((line) {
-      return line.contains(name);
-    }).toList();
+    final serviceLines =
+        lines.where((line) {
+          return line.contains(name);
+        }).toList();
     final List<int> processIds = [];
     if (serviceLines.isEmpty) return processIds;
     for (final line in serviceLines) {
@@ -57,20 +58,38 @@ class ProcessUtil {
   /// The [arguments] parameter is an optional list of string arguments to pass to
   /// the process. If not provided, an empty list will be used.
   ///
+  /// The [detached] parameter determines whether to start the process as a detached
+  /// process. When true, the process runs independently and automatically includes
+  /// the /MIN parameter to start minimized. Defaults to false.
+  ///
   /// Returns a [Future] that completes with a [Process] object representing the
   /// started process.
-  Future<Process> start(String name, {List<String>? arguments}) async {
+  Future<Process> start(
+    String name, {
+    List<String>? arguments,
+    bool detached = false,
+  }) async {
+    var executable = name;
+    var formattedArguments = arguments ?? [];
+    var mode = ProcessStartMode.normal;
+    String? workingDirectory;
     final patterns = name.split(r'\');
-    if (patterns.length == 1) {
-      return await Process.start(name, [], runInShell: true);
+    if (patterns.length > 1) {
+      executable = patterns.last;
+      workingDirectory = patterns.take(patterns.length - 1).join(r'\');
     }
-    final executable = patterns.last;
-    final directory = patterns.take(patterns.length - 1).join(r'\');
+    if (detached) {
+      // 使用Windows的start命令来确保最小化启动
+      executable = 'start';
+      formattedArguments = ['/MIN', name, ...formattedArguments];
+      mode = ProcessStartMode.detached;
+    }
     return await Process.start(
       executable,
-      arguments ?? [],
+      formattedArguments,
+      mode: mode,
       runInShell: true,
-      workingDirectory: directory,
+      workingDirectory: workingDirectory,
     );
   }
 

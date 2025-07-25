@@ -45,7 +45,7 @@ class WorldServerInformationNotifier extends _$WorldServerInformationNotifier {
     if (information.status != ServiceStatus.stopped) return;
     final server = await ref.read(activeServerNotifierProvider.future);
     if (server.worldServerPath.isEmpty) return;
-    await ProcessUtil().start(server.worldServerPath);
+    await ProcessUtil().start(server.worldServerPath, detached: true);
     state = AsyncData(information.copyWith(status: ServiceStatus.starting));
     _listenProcessLogs();
   }
@@ -101,10 +101,12 @@ class WorldServerInformationNotifier extends _$WorldServerInformationNotifier {
         if (line.contains(' (worldserver-daemon) ready...')) {
           final processIds = await _getProcessIds();
           information = await future;
-          state = AsyncData(information.copyWith(
-            processIds: processIds,
-            status: ServiceStatus.running,
-          ));
+          state = AsyncData(
+            information.copyWith(
+              processIds: processIds,
+              status: ServiceStatus.running,
+            ),
+          );
         }
       }
     });

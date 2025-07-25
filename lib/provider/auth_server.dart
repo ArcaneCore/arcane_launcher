@@ -45,7 +45,7 @@ class AuthServerInformationNotifier extends _$AuthServerInformationNotifier {
     if (information.status != ServiceStatus.stopped) return;
     final server = await ref.read(activeServerNotifierProvider.future);
     if (server.authServerPath.isEmpty) return;
-    ProcessUtil().start(server.authServerPath);
+    ProcessUtil().start(server.authServerPath, detached: true);
     state = AsyncData(information.copyWith(status: ServiceStatus.starting));
     _listenProcessLogs();
   }
@@ -101,10 +101,12 @@ class AuthServerInformationNotifier extends _$AuthServerInformationNotifier {
         if (line.contains('Added realm')) {
           final processIds = await _getProcessIds();
           information = await future;
-          state = AsyncData(information.copyWith(
-            processIds: processIds,
-            status: ServiceStatus.running,
-          ));
+          state = AsyncData(
+            information.copyWith(
+              processIds: processIds,
+              status: ServiceStatus.running,
+            ),
+          );
         }
       }
     });
