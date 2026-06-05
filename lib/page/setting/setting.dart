@@ -40,35 +40,39 @@ class _SettingState extends State<SettingPage> {
             margin: const EdgeInsets.all(16),
             padding: const EdgeInsets.all(16),
             width: 320,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ListTile(
-                  leading: const Icon(LucideIcons.arrowLeft),
-                  title: const Text('返回'),
-                  onTap: () => Navigator.of(context).pop(),
-                ),
-                ListTile(
-                  leading: const Icon(LucideIcons.server),
-                  title: const Text('服务器'),
-                  selected: selectedIndex == 0,
-                  onTap: () => handlePageChanged(0),
-                ),
-                ListTile(
-                  leading: const Icon(LucideIcons.blocks),
-                  selected: selectedIndex == 1,
-                  title: const Text('外部应用'),
-                  onTap: () => handlePageChanged(1),
-                ),
-                const Divider(),
-                ListTile(
-                  leading: const Icon(LucideIcons.info),
-                  title: const Text('关于'),
-                  onTap: () => showAbout(context),
-                ),
-                const Spacer(),
-                const _ThemeTile(),
-              ],
+            child: Material(
+              type: MaterialType.transparency,
+              borderRadius: BorderRadius.circular(8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ListTile(
+                    leading: const Icon(LucideIcons.arrowLeft),
+                    title: const Text('返回'),
+                    onTap: () => Navigator.of(context).pop(),
+                  ),
+                  ListTile(
+                    leading: const Icon(LucideIcons.server),
+                    title: const Text('服务器'),
+                    selected: selectedIndex == 0,
+                    onTap: () => handlePageChanged(0),
+                  ),
+                  ListTile(
+                    leading: const Icon(LucideIcons.blocks),
+                    selected: selectedIndex == 1,
+                    title: const Text('外部应用'),
+                    onTap: () => handlePageChanged(1),
+                  ),
+                  const Divider(),
+                  ListTile(
+                    leading: const Icon(LucideIcons.info),
+                    title: const Text('关于'),
+                    onTap: () => showAbout(context),
+                  ),
+                  const Spacer(),
+                  const _ThemeTile(),
+                ],
+              ),
             ),
           ),
           Expanded(
@@ -76,19 +80,22 @@ class _SettingState extends State<SettingPage> {
               controller: controller,
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder:
-                  (context, index) => Container(
-                    decoration: BoxDecoration(
-                      color: surface,
-                      borderRadius: BorderRadius.circular(8),
-                      boxShadow: [BoxShadow(blurRadius: 16, color: shadow)],
+                  (context, index) => Material(
+                    color: surface,
+                    borderRadius: BorderRadius.circular(8),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        boxShadow: [BoxShadow(blurRadius: 16, color: shadow)],
+                      ),
+                      margin: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(16),
+                      child: switch (selectedIndex) {
+                        0 => const ServersPage(),
+                        1 => const ExternalApplicationsPage(),
+                        _ => const SizedBox(),
+                      },
                     ),
-                    margin: const EdgeInsets.all(16),
-                    padding: const EdgeInsets.all(16),
-                    child: switch (selectedIndex) {
-                      0 => const ServersPage(),
-                      1 => const ExternalApplicationsPage(),
-                      _ => const SizedBox(),
-                    },
                   ),
               itemCount: 2,
               scrollDirection: Axis.vertical,

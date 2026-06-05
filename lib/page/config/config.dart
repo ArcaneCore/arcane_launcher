@@ -38,46 +38,53 @@ class _SettingState extends State<ConfigPage> {
             margin: const EdgeInsets.all(16),
             padding: const EdgeInsets.all(16),
             width: 320,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ListTile(
-                  leading: const Icon(LucideIcons.arrowLeft),
-                  title: const Text('返回'),
-                  onTap: () => handleTap(context),
-                ),
-                ListTile(
-                  leading: const Icon(LucideIcons.gamepad2),
-                  title: const Text('World Server'),
-                  selected: selectedIndex == 0,
-                  onTap: () => handlePageChanged(0),
-                ),
-                ListTile(
-                  leading: const Icon(LucideIcons.user),
-                  selected: selectedIndex == 1,
-                  title: const Text('Auth Server'),
-                  onTap: () => handlePageChanged(1),
-                ),
-              ],
+            child: Material(
+              type: MaterialType.transparency,
+              borderRadius: BorderRadius.circular(8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ListTile(
+                    leading: const Icon(LucideIcons.arrowLeft),
+                    title: const Text('返回'),
+                    onTap: () => handleTap(context),
+                  ),
+                  ListTile(
+                    leading: const Icon(LucideIcons.gamepad2),
+                    title: const Text('World Server'),
+                    selected: selectedIndex == 0,
+                    onTap: () => handlePageChanged(0),
+                  ),
+                  ListTile(
+                    leading: const Icon(LucideIcons.user),
+                    selected: selectedIndex == 1,
+                    title: const Text('Auth Server'),
+                    onTap: () => handlePageChanged(1),
+                  ),
+                ],
+              ),
             ),
           ),
           Expanded(
             child: PageView.builder(
               controller: controller,
               physics: const NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) => Container(
-                decoration: BoxDecoration(
-                  color: surface,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [BoxShadow(blurRadius: 16, color: shadow)],
+              itemBuilder: (context, index) => Material(
+                color: surface,
+                borderRadius: BorderRadius.circular(8),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [BoxShadow(blurRadius: 16, color: shadow)],
+                  ),
+                  margin: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
+                  child: switch (selectedIndex) {
+                    0 => const WorldServerConfigPage(),
+                    1 => const AuthServerConfigPage(),
+                    _ => const SizedBox(),
+                  },
                 ),
-                margin: const EdgeInsets.all(16),
-                padding: const EdgeInsets.all(16),
-                child: switch (selectedIndex) {
-                  0 => const WorldServerConfigPage(),
-                  1 => const AuthServerConfigPage(),
-                  _ => const SizedBox(),
-                },
               ),
               itemCount: 2,
               scrollDirection: Axis.vertical,

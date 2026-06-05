@@ -99,9 +99,10 @@ class _AntDropdownOverlay extends StatelessWidget {
             link: link,
             offset: const Offset(16, 0),
             child: Material(
+              color: surface,
+              borderRadius: BorderRadius.circular(8),
               child: Container(
                 decoration: BoxDecoration(
-                  color: surface,
                   borderRadius: BorderRadius.circular(8),
                   boxShadow: [BoxShadow(blurRadius: 16, color: shadow)],
                 ),
