@@ -85,15 +85,23 @@ class LauncherPage extends StatelessWidget {
   }
 
   void navigateConfigPage(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return const ConfigPage();
-    }));
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) {
+          return const ConfigPage();
+        },
+      ),
+    );
   }
 
   void navigateSettingPage(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return const SettingPage();
-    }));
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) {
+          return const SettingPage();
+        },
+      ),
+    );
   }
 }
 
@@ -105,33 +113,38 @@ class _ExternalApplicationTile extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final onSurface = colorScheme.onSurface.withValues(alpha: 0.25);
-    return Consumer(builder: (context, ref, child) {
-      final provider = ref.watch(externalApplicationsNotifierProvider);
-      final List<ExternalApplication> applications = switch (provider) {
-        AsyncData(:final value) => value,
-        _ => [],
-      };
-      if (applications.isEmpty) return const SizedBox();
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const ServiceTileDivider(label: '外部应用程序'),
-          Expanded(
-            child: ListView.builder(
-              itemBuilder: (context, index) {
-                return ServiceTile(
-                  leading: const Icon(Icons.apps_outlined),
-                  name: applications[index].name,
-                  trailing: Icon(Icons.open_in_new_outlined, color: onSurface),
-                  onChanged: () => handleChanged(ref, index),
-                );
-              },
-              itemCount: applications.length,
+    return Consumer(
+      builder: (context, ref, child) {
+        final provider = ref.watch(externalApplicationsNotifierProvider);
+        final List<ExternalApplication> applications = switch (provider) {
+          AsyncData(:final value) => value,
+          _ => [],
+        };
+        if (applications.isEmpty) return const SizedBox();
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const ServiceTileDivider(label: '外部应用程序'),
+            Expanded(
+              child: ListView.builder(
+                itemBuilder: (context, index) {
+                  return ServiceTile(
+                    leading: const Icon(Icons.apps_outlined),
+                    name: applications[index].name,
+                    trailing: Icon(
+                      Icons.open_in_new_outlined,
+                      color: onSurface,
+                    ),
+                    onChanged: () => handleChanged(ref, index),
+                  );
+                },
+                itemCount: applications.length,
+              ),
             ),
-          ),
-        ],
-      );
-    });
+          ],
+        );
+      },
+    );
   }
 
   void handleChanged(WidgetRef ref, int index) {
@@ -170,14 +183,16 @@ class _ServerSelectState extends State<_ServerSelect> {
           padding: const EdgeInsets.all(8),
           child: Row(
             children: [
-              Consumer(builder: (context, ref, child) {
-                final provider = ref.watch(activeServerNotifierProvider);
-                final Server server = switch (provider) {
-                  AsyncData(:final value) => value,
-                  _ => Server(),
-                };
-                return Text(server.name);
-              }),
+              Consumer(
+                builder: (context, ref, child) {
+                  final provider = ref.watch(activeServerNotifierProvider);
+                  final Server server = switch (provider) {
+                    AsyncData(:final value) => value,
+                    _ => Server(),
+                  };
+                  return Text(server.name);
+                },
+              ),
               const Spacer(),
               AnimatedRotation(
                 turns: active ? 0.5 : 0,
@@ -192,9 +207,11 @@ class _ServerSelectState extends State<_ServerSelect> {
   }
 
   void insertOverlay() {
-    entry = OverlayEntry(builder: (context) {
-      return _SelectOverlay(link: link, onTap: removeOverlay);
-    });
+    entry = OverlayEntry(
+      builder: (context) {
+        return _SelectOverlay(link: link, onTap: removeOverlay);
+      },
+    );
     final overlay = Overlay.of(context);
     overlay.insert(entry!);
     setState(() {
@@ -243,22 +260,24 @@ class _SelectOverlay extends StatelessWidget {
               ),
               width: 288,
               height: 200,
-              child: Consumer(builder: (context, ref, child) {
-                final provider = ref.watch(serversNotifierProvider);
-                final List<Server> servers = switch (provider) {
-                  AsyncData(:final value) => value,
-                  _ => [],
-                };
-                return ListView.builder(
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(servers[index].name),
-                      onTap: () => activeServer(ref, servers[index]),
-                    );
-                  },
-                  itemCount: servers.length,
-                );
-              }),
+              child: Consumer(
+                builder: (context, ref, child) {
+                  final provider = ref.watch(serversNotifierProvider);
+                  final List<Server> servers = switch (provider) {
+                    AsyncData(:final value) => value,
+                    _ => [],
+                  };
+                  return ListView.builder(
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(servers[index].name),
+                        onTap: () => activeServer(ref, servers[index]),
+                      );
+                    },
+                    itemCount: servers.length,
+                  );
+                },
+              ),
             ),
           ),
         ),
@@ -290,34 +309,36 @@ class _GameStarter extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          child: Consumer(builder: (context, ref, child) {
-            final provider = ref.watch(gameNotifierProvider);
-            final loading = switch (provider) {
-              AsyncData(:final value) => value,
-              _ => true,
-            };
-            return ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor: WidgetStatePropertyAll(primary),
-                foregroundColor: WidgetStatePropertyAll(onPrimary),
-                surfaceTintColor: WidgetStatePropertyAll(surface),
-                shape: const WidgetStatePropertyAll(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(4),
-                      topLeft: Radius.circular(4),
+          child: Consumer(
+            builder: (context, ref, child) {
+              final provider = ref.watch(gameNotifierProvider);
+              final loading = switch (provider) {
+                AsyncData(:final value) => value,
+                _ => true,
+              };
+              return ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(primary),
+                  foregroundColor: WidgetStatePropertyAll(onPrimary),
+                  surfaceTintColor: WidgetStatePropertyAll(surface),
+                  shape: const WidgetStatePropertyAll(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(4),
+                        topLeft: Radius.circular(4),
+                      ),
                     ),
                   ),
                 ),
-              ),
-              onPressed: () => start(ref),
-              child: Container(
-                alignment: Alignment.center,
-                height: 48,
-                child: Text(loading ? '正在启动' : '开始游戏'),
-              ),
-            );
-          }),
+                onPressed: () => start(ref),
+                child: Container(
+                  alignment: Alignment.center,
+                  height: 48,
+                  child: Text(loading ? '正在启动' : '开始游戏'),
+                ),
+              );
+            },
+          ),
         ),
         Container(color: surface, height: 48, width: 0.5),
         const _GameOption(),
@@ -356,28 +377,30 @@ class __GameOptionState extends State<_GameOption> {
     final primary = colorScheme.primary;
     final onPrimary = colorScheme.onPrimary;
     final surface = colorScheme.surface;
-    return AntDropdown(
+    return ArcaneDropdown(
       builder: (context) {
-        return Consumer(builder: (context, ref, child) {
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                title: const Text('启动所有服务'),
-                onTap: () => startServices(ref),
-              ),
-              ListTile(
-                title: const Text('关闭所有服务'),
-                onTap: () => stopServices(ref),
-              ),
-              const Divider(),
-              ListTile(
-                title: const Text('启动客户端'),
-                onTap: () => startClient(ref),
-              ),
-            ],
-          );
-        });
+        return Consumer(
+          builder: (context, ref, child) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  title: const Text('启动所有服务'),
+                  onTap: () => startServices(ref),
+                ),
+                ListTile(
+                  title: const Text('关闭所有服务'),
+                  onTap: () => stopServices(ref),
+                ),
+                const Divider(),
+                ListTile(
+                  title: const Text('启动客户端'),
+                  onTap: () => startClient(ref),
+                ),
+              ],
+            );
+          },
+        );
       },
       controller: controller,
       child: ElevatedButton(

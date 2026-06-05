@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class AntDropdown extends StatefulWidget {
-  const AntDropdown({
+class ArcaneDropdown extends StatefulWidget {
+  const ArcaneDropdown({
     super.key,
     this.controller,
     this.builder,
@@ -13,10 +13,10 @@ class AntDropdown extends StatefulWidget {
   final Widget child;
 
   @override
-  State<AntDropdown> createState() => AntDropdownState();
+  State<ArcaneDropdown> createState() => ArcaneDropdownState();
 }
 
-class AntDropdownState extends State<AntDropdown> {
+class ArcaneDropdownState extends State<ArcaneDropdown> {
   LayerLink link = LayerLink();
   OverlayEntry? entry;
   bool active = false;
@@ -47,13 +47,15 @@ class AntDropdownState extends State<AntDropdown> {
   }
 
   void insertOverlay() {
-    entry = OverlayEntry(builder: (context) {
-      return _AntDropdownOverlay(
-        builder: widget.builder,
-        link: link,
-        onTap: removeOverlay,
-      );
-    });
+    entry = OverlayEntry(
+      builder: (context) {
+        return _AntDropdownOverlay(
+          builder: widget.builder,
+          link: link,
+          onTap: removeOverlay,
+        );
+      },
+    );
     final overlay = Overlay.of(context);
     overlay.insert(entry!);
     setState(() {
@@ -71,11 +73,7 @@ class AntDropdownState extends State<AntDropdown> {
 }
 
 class _AntDropdownOverlay extends StatelessWidget {
-  const _AntDropdownOverlay({
-    this.builder,
-    required this.link,
-    this.onTap,
-  });
+  const _AntDropdownOverlay({this.builder, required this.link, this.onTap});
 
   final Widget Function(BuildContext)? builder;
   final LayerLink link;
