@@ -1,17 +1,17 @@
+import 'package:arcane_launcher/di.dart';
 import 'package:arcane_launcher/page/launcher/component/auth_server.dart';
 import 'package:arcane_launcher/page/launcher/component/mysqld.dart';
 import 'package:arcane_launcher/page/config/config.dart';
 import 'package:arcane_launcher/page/setting/setting.dart';
-import 'package:arcane_launcher/provider/external_application.dart';
-import 'package:arcane_launcher/provider/server.dart';
-import 'package:arcane_launcher/schema/external_application.dart';
+import 'package:arcane_launcher/page/launcher/component/world_server.dart';
 import 'package:arcane_launcher/schema/server.dart';
+import 'package:arcane_launcher/viewmodel/external_application_view_model.dart';
+import 'package:arcane_launcher/viewmodel/game_view_model.dart';
+import 'package:arcane_launcher/viewmodel/server_view_model.dart';
 import 'package:arcane_launcher/widget/dropdown.dart';
 import 'package:arcane_launcher/widget/service_tile.dart';
-import 'package:arcane_launcher/page/launcher/component/world_server.dart';
-import 'package:arcane_launcher/provider/game.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:signals/signals_flutter.dart';
 
 class LauncherPage extends StatelessWidget {
   const LauncherPage({super.key});
@@ -80,28 +80,20 @@ class LauncherPage extends StatelessWidget {
             ),
           ],
         ),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
     );
   }
 
   void navigateConfigPage(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) {
-          return const ConfigPage();
-        },
-      ),
-    );
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (context) => const ConfigPage()));
   }
 
   void navigateSettingPage(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) {
-          return const SettingPage();
-        },
-      ),
-    );
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (context) => const SettingPage()));
   }
 }
 
@@ -111,16 +103,12 @@ class _ExternalApplicationTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final onSurface = colorScheme.onSurface.withValues(alpha: 0.25);
-    return Consumer(
-      builder: (context, ref, child) {
-        final provider = ref.watch(externalApplicationsNotifierProvider);
-        final List<ExternalApplication> applications = switch (provider) {
-          AsyncData(:final value) => value,
-          _ => [],
-        };
-        if (applications.isEmpty) return const SizedBox();
+    final onSurface = theme.colorScheme.onSurface.withValues(alpha: 0.25);
+    return SignalBuilder(
+      builder: (context) {
+        final vm = getIt<ExternalApplicationViewModel>();
+        final apps = vm.applications;
+        if (apps.isEmpty) return const SizedBox();
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -130,26 +118,21 @@ class _ExternalApplicationTile extends StatelessWidget {
                 itemBuilder: (context, index) {
                   return ServiceTile(
                     leading: const Icon(Icons.apps_outlined),
-                    name: applications[index].name,
+                    name: apps[index].name,
                     trailing: Icon(
                       Icons.open_in_new_outlined,
                       color: onSurface,
                     ),
-                    onChanged: () => handleChanged(ref, index),
+                    onChanged: () => vm.start(index),
                   );
                 },
-                itemCount: applications.length,
+                itemCount: apps.length,
               ),
             ),
           ],
         );
       },
     );
-  }
-
-  void handleChanged(WidgetRef ref, int index) {
-    final provider = ref.read(externalApplicationsNotifierProvider.notifier);
-    provider.start(index);
   }
 }
 
@@ -168,8 +151,7 @@ class _ServerSelectState extends State<_ServerSelect> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final shadow = colorScheme.shadow.withValues(alpha: 0.125);
+    final shadow = theme.colorScheme.shadow.withValues(alpha: 0.125);
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: insertOverlay,
@@ -183,14 +165,9 @@ class _ServerSelectState extends State<_ServerSelect> {
           padding: const EdgeInsets.all(8),
           child: Row(
             children: [
-              Consumer(
-                builder: (context, ref, child) {
-                  final provider = ref.watch(activeServerNotifierProvider);
-                  final Server server = switch (provider) {
-                    AsyncData(:final value) => value,
-                    _ => Server(),
-                  };
-                  return Text(server.name);
+              SignalBuilder(
+                builder: (context) {
+                  return Text(getIt<ServerViewModel>().activeServer.name);
                 },
               ),
               const Spacer(),
@@ -208,22 +185,15 @@ class _ServerSelectState extends State<_ServerSelect> {
 
   void insertOverlay() {
     entry = OverlayEntry(
-      builder: (context) {
-        return _SelectOverlay(link: link, onTap: removeOverlay);
-      },
+      builder: (context) => _SelectOverlay(link: link, onTap: removeOverlay),
     );
-    final overlay = Overlay.of(context);
-    overlay.insert(entry!);
-    setState(() {
-      active = !active;
-    });
+    Overlay.of(context).insert(entry!);
+    setState(() => active = !active);
   }
 
   void removeOverlay() {
     entry?.remove();
-    setState(() {
-      active = !active;
-    });
+    setState(() => active = !active);
   }
 }
 
@@ -236,14 +206,13 @@ class _SelectOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final surface = colorScheme.surface;
-    final shadow = colorScheme.shadow.withValues(alpha: 0.125);
+    final surface = theme.colorScheme.surface;
+    final shadow = theme.colorScheme.shadow.withValues(alpha: 0.125);
     return Stack(
       children: [
         GestureDetector(
           behavior: HitTestBehavior.opaque,
-          onTap: handleTap,
+          onTap: () => onTap?.call(),
           child: Container(color: Colors.transparent),
         ),
         CompositedTransformFollower(
@@ -260,21 +229,17 @@ class _SelectOverlay extends StatelessWidget {
               ),
               width: 288,
               height: 200,
-              child: Consumer(
-                builder: (context, ref, child) {
-                  final provider = ref.watch(serversNotifierProvider);
-                  final List<Server> servers = switch (provider) {
-                    AsyncData(:final value) => value,
-                    _ => [],
-                  };
+              child: SignalBuilder(
+                builder: (context) {
+                  final list = getIt<ServerViewModel>().servers;
                   return ListView.builder(
                     itemBuilder: (context, index) {
                       return ListTile(
-                        title: Text(servers[index].name),
-                        onTap: () => activeServer(ref, servers[index]),
+                        title: Text(list[index].name),
+                        onTap: () => selectServer(list[index]),
                       );
                     },
-                    itemCount: servers.length,
+                    itemCount: list.length,
                   );
                 },
               ),
@@ -285,13 +250,8 @@ class _SelectOverlay extends StatelessWidget {
     );
   }
 
-  void handleTap() {
-    onTap?.call();
-  }
-
-  void activeServer(WidgetRef ref, Server server) {
-    final notifier = ref.read(serversNotifierProvider.notifier);
-    notifier.active(server);
+  void selectServer(Server server) {
+    getIt<ServerViewModel>().activate(server);
     onTap?.call();
   }
 }
@@ -302,20 +262,15 @@ class _GameStarter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final primary = colorScheme.primary;
-    final onPrimary = colorScheme.onPrimary;
-    final surface = colorScheme.surface;
+    final primary = theme.colorScheme.primary;
+    final onPrimary = theme.colorScheme.onPrimary;
+    final surface = theme.colorScheme.surface;
     return Row(
       children: [
         Expanded(
-          child: Consumer(
-            builder: (context, ref, child) {
-              final provider = ref.watch(gameNotifierProvider);
-              final loading = switch (provider) {
-                AsyncData(:final value) => value,
-                _ => true,
-              };
+          child: SignalBuilder(
+            builder: (context) {
+              final loading = getIt<GameViewModel>().loading;
               return ElevatedButton(
                 style: ButtonStyle(
                   backgroundColor: WidgetStatePropertyAll(primary),
@@ -330,7 +285,10 @@ class _GameStarter extends StatelessWidget {
                     ),
                   ),
                 ),
-                onPressed: () => start(ref),
+                onPressed: () {
+                  if (loading) return;
+                  getIt<GameViewModel>().startGame();
+                },
                 child: Container(
                   alignment: Alignment.center,
                   height: 48,
@@ -344,13 +302,6 @@ class _GameStarter extends StatelessWidget {
         const _GameOption(),
       ],
     );
-  }
-
-  void start(WidgetRef ref) async {
-    final loading = await ref.read(gameNotifierProvider.future);
-    if (loading) return;
-    final notifier = ref.read(gameNotifierProvider.notifier);
-    notifier.start();
   }
 }
 
@@ -373,33 +324,38 @@ class __GameOptionState extends State<_GameOption> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final primary = colorScheme.primary;
-    final onPrimary = colorScheme.onPrimary;
-    final surface = colorScheme.surface;
+    final primary = theme.colorScheme.primary;
+    final onPrimary = theme.colorScheme.onPrimary;
+    final surface = theme.colorScheme.surface;
     return ArcaneDropdown(
       builder: (context) {
-        return Consumer(
-          builder: (context, ref, child) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ListTile(
-                  title: const Text('启动所有服务'),
-                  onTap: () => startServices(ref),
-                ),
-                ListTile(
-                  title: const Text('关闭所有服务'),
-                  onTap: () => stopServices(ref),
-                ),
-                const Divider(),
-                ListTile(
-                  title: const Text('启动客户端'),
-                  onTap: () => startClient(ref),
-                ),
-              ],
-            );
-          },
+        final gameVM = getIt<GameViewModel>();
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: const Text('启动所有服务'),
+              onTap: () {
+                gameVM.startServices();
+                controller.removeOverlayEntry();
+              },
+            ),
+            ListTile(
+              title: const Text('关闭所有服务'),
+              onTap: () {
+                gameVM.stopServices();
+                controller.removeOverlayEntry();
+              },
+            ),
+            const Divider(),
+            ListTile(
+              title: const Text('启动客户端'),
+              onTap: () {
+                gameVM.startClient();
+                controller.removeOverlayEntry();
+              },
+            ),
+          ],
         );
       },
       controller: controller,
@@ -425,23 +381,5 @@ class __GameOptionState extends State<_GameOption> {
         ),
       ),
     );
-  }
-
-  void startServices(WidgetRef ref) async {
-    final notifier = ref.read(gameNotifierProvider.notifier);
-    notifier.startServices();
-    controller.removeOverlayEntry();
-  }
-
-  void stopServices(WidgetRef ref) async {
-    final notifier = ref.read(gameNotifierProvider.notifier);
-    notifier.stopServices();
-    controller.removeOverlayEntry();
-  }
-
-  void startClient(WidgetRef ref) async {
-    final notifier = ref.read(gameNotifierProvider.notifier);
-    notifier.startClient();
-    controller.removeOverlayEntry();
   }
 }

@@ -1,9 +1,9 @@
+import 'package:arcane_launcher/di.dart';
 import 'package:arcane_launcher/page/setting/component/external_application.dart';
 import 'package:arcane_launcher/page/setting/component/server.dart';
-import 'package:arcane_launcher/provider/setting.dart';
-import 'package:arcane_launcher/schema/setting.dart';
+import 'package:arcane_launcher/viewmodel/setting_view_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:signals/signals_flutter.dart';
 
 class SettingPage extends StatefulWidget {
   const SettingPage({super.key});
@@ -25,9 +25,8 @@ class _SettingState extends State<SettingPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final surface = colorScheme.surface;
-    final shadow = colorScheme.shadow.withValues(alpha: 0.125);
+    final surface = theme.colorScheme.surface;
+    final shadow = theme.colorScheme.shadow.withValues(alpha: 0.125);
     return Scaffold(
       body: Row(
         children: [
@@ -46,7 +45,7 @@ class _SettingState extends State<SettingPage> {
                 ListTile(
                   leading: const Icon(Icons.arrow_back_outlined),
                   title: const Text('返回'),
-                  onTap: () => handleTap(context),
+                  onTap: () => Navigator.of(context).pop(),
                 ),
                 ListTile(
                   leading: const Icon(Icons.dns_outlined),
@@ -67,7 +66,7 @@ class _SettingState extends State<SettingPage> {
                   onTap: () => showAbout(context),
                 ),
                 const Spacer(),
-                const _ThemeTile()
+                const _ThemeTile(),
               ],
             ),
           ),
@@ -75,37 +74,32 @@ class _SettingState extends State<SettingPage> {
             child: PageView.builder(
               controller: controller,
               physics: const NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) => Container(
-                decoration: BoxDecoration(
-                  color: surface,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [BoxShadow(blurRadius: 16, color: shadow)],
-                ),
-                margin: const EdgeInsets.all(16),
-                padding: const EdgeInsets.all(16),
-                child: switch (selectedIndex) {
-                  0 => const ServersPage(),
-                  1 => const ExternalApplicationsPage(),
-                  _ => const SizedBox(),
-                },
-              ),
+              itemBuilder:
+                  (context, index) => Container(
+                    decoration: BoxDecoration(
+                      color: surface,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [BoxShadow(blurRadius: 16, color: shadow)],
+                    ),
+                    margin: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(16),
+                    child: switch (selectedIndex) {
+                      0 => const ServersPage(),
+                      1 => const ExternalApplicationsPage(),
+                      _ => const SizedBox(),
+                    },
+                  ),
               itemCount: 2,
               scrollDirection: Axis.vertical,
             ),
           ),
         ],
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
     );
   }
 
-  void handleTap(BuildContext context) {
-    Navigator.of(context).pop();
-  }
-
   void handlePageChanged(int index) {
-    setState(() {
-      selectedIndex = index;
-    });
+    setState(() => selectedIndex = index);
     controller.animateToPage(
       index,
       duration: const Duration(milliseconds: 200),
@@ -127,55 +121,38 @@ class _ThemeTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer(builder: (context, ref, child) {
-      final theme = Theme.of(context);
-      final colorScheme = theme.colorScheme;
-      final onPrimary = colorScheme.onPrimary;
-      final provider = ref.watch(settingNotifierProvider);
-      final setting = switch (provider) {
-        AsyncData(:final value) => value,
-        _ => Setting(),
-      };
-      IconData iconData = Icons.dark_mode_outlined;
-      if (setting.darkMode) {
-        iconData = Icons.light_mode_outlined;
-      }
-      return Wrap(
-        runSpacing: 8,
-        spacing: 8,
-        children: [
-          ...List.generate(
-            Colors.primaries.length,
-            (index) {
+    return SignalBuilder(
+      builder: (context) {
+        final theme = Theme.of(context);
+        final onPrimary = theme.colorScheme.onPrimary;
+        final vm = getIt<SettingViewModel>();
+        final s = vm.setting;
+        final iconData =
+            s.darkMode ? Icons.light_mode_outlined : Icons.dark_mode_outlined;
+        return Wrap(
+          runSpacing: 8,
+          spacing: 8,
+          children: [
+            ...List.generate(Colors.primaries.length, (index) {
               final color = Colors.primaries[index];
-              final backgroundColor = WidgetStatePropertyAll(color);
+              final bg = WidgetStatePropertyAll(color);
               Widget icon = Icon(Icons.check_outlined, color: onPrimary);
-              if (color.value != setting.color) {
+              if (color.value != s.color) {
                 icon = const SizedBox();
               }
               return IconButton(
                 icon: icon,
-                onPressed: () => updateColor(ref, color.value),
-                style: ButtonStyle(backgroundColor: backgroundColor),
+                onPressed: () => vm.updateColor(color.value),
+                style: ButtonStyle(backgroundColor: bg),
               );
-            },
-          ),
-          IconButton(
-            onPressed: () => toggleBrightness(ref),
-            icon: Icon(iconData),
-          )
-        ],
-      );
-    });
-  }
-
-  void updateColor(WidgetRef ref, int color) {
-    final notifier = ref.read(settingNotifierProvider.notifier);
-    notifier.updateColor(color);
-  }
-
-  void toggleBrightness(WidgetRef ref) {
-    final notifier = ref.read(settingNotifierProvider.notifier);
-    notifier.toggleBrightness();
+            }),
+            IconButton(
+              onPressed: () => vm.toggleBrightness(),
+              icon: Icon(iconData),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

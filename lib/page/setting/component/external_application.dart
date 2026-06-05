@@ -1,38 +1,37 @@
-import 'package:arcane_launcher/provider/external_application.dart';
+import 'package:arcane_launcher/di.dart';
 import 'package:arcane_launcher/schema/external_application.dart';
+import 'package:arcane_launcher/viewmodel/external_application_view_model.dart';
 import 'package:arcane_launcher/widget/form_item.dart';
 import 'package:arcane_launcher/widget/input.dart';
 import 'package:arcane_launcher/widget/tag.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:signals/signals_flutter.dart';
 
 class ExternalApplicationsPage extends StatelessWidget {
   const ExternalApplicationsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Consumer(builder: (context, ref, child) {
-      final provider = ref.watch(externalApplicationsNotifierProvider);
-      final List<ExternalApplication> servers = switch (provider) {
-        AsyncData(:final value) => value,
-        _ => [],
-      };
-      return ListView.builder(
-        itemBuilder: (context, index) {
-          if (index == servers.length) {
-            return const _CreateExternalApplicationButton();
-          }
-          return _ExternalApplicationTile(application: servers[index]);
-        },
-        itemCount: servers.length + 1,
-      );
-    });
+    return SignalBuilder(
+      builder: (context) {
+        final apps = getIt<ExternalApplicationViewModel>().applications;
+        return ListView.builder(
+          itemBuilder: (context, index) {
+            if (index == apps.length) {
+              return const _CreateButton();
+            }
+            return _Tile(application: apps[index]);
+          },
+          itemCount: apps.length + 1,
+        );
+      },
+    );
   }
 }
 
-class _CreateExternalApplicationButton extends StatelessWidget {
-  const _CreateExternalApplicationButton();
+class _CreateButton extends StatelessWidget {
+  const _CreateButton();
 
   @override
   Widget build(BuildContext context) {
@@ -41,22 +40,20 @@ class _CreateExternalApplicationButton extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [Icon(Icons.add_outlined), Text('新增外部程序')],
       ),
-      onTap: () => createExternalApplication(context),
+      onTap: () => _create(context),
     );
   }
 
-  void createExternalApplication(BuildContext context) {
+  void _create(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) {
-        return _ExternalApplicationForm(application: ExternalApplication());
-      },
+      builder: (context) => _Form(application: ExternalApplication()),
     );
   }
 }
 
-class _ExternalApplicationTile extends StatelessWidget {
-  const _ExternalApplicationTile({required this.application});
+class _Tile extends StatelessWidget {
+  const _Tile({required this.application});
 
   final ExternalApplication application;
 
@@ -73,7 +70,7 @@ class _ExternalApplicationTile extends StatelessWidget {
         children: [
           Text(application.name),
           const SizedBox(width: 8),
-          Tag(label: application.path, type: TagType.tertiary)
+          Tag(label: application.path, type: TagType.tertiary),
         ],
       ),
       trailing: Row(
@@ -81,36 +78,32 @@ class _ExternalApplicationTile extends StatelessWidget {
         children: [
           const Icon(Icons.chevron_right_outlined),
           IconButton(
-            onPressed: () => destroyExternalApplication(context, application),
+            onPressed: () => _destroyDialog(context),
             icon: const Icon(Icons.delete_outline),
           ),
         ],
       ),
-      onTap: () => editExternalApplication(context, application),
+      onTap: () => _edit(context),
     );
   }
 
-  void editExternalApplication(
-      BuildContext context, ExternalApplication application) {
+  void _edit(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => _ExternalApplicationForm(application: application),
+      builder: (context) => _Form(application: application),
     );
   }
 
-  void destroyExternalApplication(
-      BuildContext context, ExternalApplication application) {
+  void _destroyDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) {
-        return _ExternalApplicationAlertDialog(application: application);
-      },
+      builder: (context) => _AlertDialog(application: application),
     );
   }
 }
 
-class _ExternalApplicationAlertDialog extends StatelessWidget {
-  const _ExternalApplicationAlertDialog({required this.application});
+class _AlertDialog extends StatelessWidget {
+  const _AlertDialog({required this.application});
 
   final ExternalApplication application;
 
@@ -121,52 +114,42 @@ class _ExternalApplicationAlertDialog extends StatelessWidget {
       content: const Text('你确认要删除这个外部程序吗？删除后不可恢复。'),
       actions: [
         TextButton(
-          onPressed: () => cancelDestroy(context),
+          onPressed: () => Navigator.of(context).pop(),
           child: const Text('取消'),
         ),
-        Consumer(builder: (context, ref, child) {
-          return TextButton(
-            onPressed: () => confirmDestroy(context, ref),
-            child: const Text('确认'),
-          );
-        })
+        TextButton(
+          onPressed: () async {
+            await getIt<ExternalApplicationViewModel>().destroy(application);
+            if (!context.mounted) return;
+            Navigator.of(context).pop();
+          },
+          child: const Text('确认'),
+        ),
       ],
     );
   }
-
-  void cancelDestroy(BuildContext context) {
-    Navigator.of(context).pop();
-  }
-
-  void confirmDestroy(BuildContext context, WidgetRef ref) async {
-    final notifier = ref.read(externalApplicationsNotifierProvider.notifier);
-    await notifier.destroy(application);
-    if (!context.mounted) return;
-    Navigator.of(context).pop();
-  }
 }
 
-class _ExternalApplicationForm extends StatefulWidget {
-  const _ExternalApplicationForm({required this.application});
+class _Form extends StatefulWidget {
+  const _Form({required this.application});
 
   final ExternalApplication application;
 
   @override
-  State<_ExternalApplicationForm> createState() =>
-      _ExternalApplicationFormState();
+  State<_Form> createState() => _FormState();
 }
 
-class _ExternalApplicationFormState extends State<_ExternalApplicationForm> {
-  TextEditingController nameController = TextEditingController();
-  TextEditingController descriptionController = TextEditingController();
-  TextEditingController pathController = TextEditingController();
+class _FormState extends State<_Form> {
+  final nameCtrl = TextEditingController();
+  final descCtrl = TextEditingController();
+  final pathCtrl = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    nameController.text = widget.application.name;
-    descriptionController.text = widget.application.description;
-    pathController.text = widget.application.path;
+    nameCtrl.text = widget.application.name;
+    descCtrl.text = widget.application.description;
+    pathCtrl.text = widget.application.path;
   }
 
   @override
@@ -183,67 +166,48 @@ class _ExternalApplicationFormState extends State<_ExternalApplicationForm> {
               children: [
                 const Text('外部程序信息'),
                 IconButton(
-                  onPressed: () => cancel(context),
+                  onPressed: () => Navigator.of(context).pop(),
                   icon: const Icon(Icons.close_outlined),
-                )
+                ),
               ],
             ),
             const SizedBox(height: 16),
-            AntFormItem(
-              label: '名称',
-              child: AntInput(controller: nameController),
-            ),
-            AntFormItem(
-              label: '描述',
-              child: AntInput(controller: descriptionController),
-            ),
+            AntFormItem(label: '名称', child: AntInput(controller: nameCtrl)),
+            AntFormItem(label: '描述', child: AntInput(controller: descCtrl)),
             AntFormItem(
               label: 'Client',
               child: Row(
                 children: [
-                  Expanded(
-                    child: AntInput(controller: pathController),
-                  ),
+                  Expanded(child: AntInput(controller: pathCtrl)),
                   const SizedBox(width: 8),
                   IconButton(
-                    onPressed: updatePath,
+                    onPressed: _pickPath,
                     icon: const Icon(Icons.more_horiz_outlined),
-                  )
+                  ),
                 ],
               ),
             ),
-            Consumer(builder: (context, ref, child) {
-              return ElevatedButton(
-                onPressed: () => store(context, ref),
-                child: const Text('保存'),
-              );
-            })
+            ElevatedButton(onPressed: _store, child: const Text('保存')),
           ],
         ),
       ),
     );
   }
 
-  void updatePath() async {
+  void _pickPath() async {
     final result = await FilePicker.platform.pickFiles();
     if (result == null) return;
-    final path = result.files.single.path!;
-    pathController.text = path;
+    pathCtrl.text = result.files.single.path!;
   }
 
-  void store(BuildContext context, WidgetRef ref) async {
-    final notifier = ref.read(externalApplicationsNotifierProvider.notifier);
-    final application = ExternalApplication();
-    application.id = widget.application.id;
-    application.name = nameController.text;
-    application.description = descriptionController.text;
-    application.path = pathController.text;
-    await notifier.store(application);
+  void _store() async {
+    final app = ExternalApplication();
+    app.id = widget.application.id;
+    app.name = nameCtrl.text;
+    app.description = descCtrl.text;
+    app.path = pathCtrl.text;
+    await getIt<ExternalApplicationViewModel>().store(app);
     if (!context.mounted) return;
-    Navigator.of(context).pop();
-  }
-
-  void cancel(BuildContext context) {
     Navigator.of(context).pop();
   }
 }
