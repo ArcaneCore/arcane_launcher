@@ -4,10 +4,10 @@ import 'dart:io';
 import 'package:arcane_launcher/model/service_information.dart';
 import 'package:arcane_launcher/schema/server.dart';
 import 'package:arcane_launcher/util/process.dart';
-import 'package:arcane_launcher/viewmodel/auth_server_view_model.dart';
-import 'package:arcane_launcher/viewmodel/mysqld_view_model.dart';
-import 'package:arcane_launcher/viewmodel/server_view_model.dart';
-import 'package:arcane_launcher/viewmodel/world_server_view_model.dart';
+import 'package:arcane_launcher/view_model/auth_server_view_model.dart';
+import 'package:arcane_launcher/view_model/mysqld_view_model.dart';
+import 'package:arcane_launcher/view_model/server_view_model.dart';
+import 'package:arcane_launcher/view_model/world_server_view_model.dart';
 import 'package:get_it/get_it.dart';
 import 'package:signals/signals.dart';
 

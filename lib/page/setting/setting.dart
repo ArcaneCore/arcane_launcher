@@ -1,7 +1,7 @@
 import 'package:arcane_launcher/di.dart';
 import 'package:arcane_launcher/page/setting/component/external_application.dart';
 import 'package:arcane_launcher/page/setting/component/server.dart';
-import 'package:arcane_launcher/viewmodel/setting_view_model.dart';
+import 'package:arcane_launcher/view_model/setting_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
@@ -128,8 +128,7 @@ class _ThemeTile extends StatelessWidget {
         final onPrimary = theme.colorScheme.onPrimary;
         final vm = getIt<SettingViewModel>();
         final s = vm.setting;
-        final iconData =
-            s.darkMode ? LucideIcons.sun : LucideIcons.moon;
+        final iconData = s.darkMode ? LucideIcons.sun : LucideIcons.moon;
         return Wrap(
           runSpacing: 8,
           spacing: 8,

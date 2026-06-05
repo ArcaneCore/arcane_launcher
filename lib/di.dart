@@ -1,10 +1,10 @@
-import 'package:arcane_launcher/viewmodel/auth_server_view_model.dart';
-import 'package:arcane_launcher/viewmodel/external_application_view_model.dart';
-import 'package:arcane_launcher/viewmodel/game_view_model.dart';
-import 'package:arcane_launcher/viewmodel/mysqld_view_model.dart';
-import 'package:arcane_launcher/viewmodel/server_view_model.dart';
-import 'package:arcane_launcher/viewmodel/setting_view_model.dart';
-import 'package:arcane_launcher/viewmodel/world_server_view_model.dart';
+import 'package:arcane_launcher/view_model/auth_server_view_model.dart';
+import 'package:arcane_launcher/view_model/external_application_view_model.dart';
+import 'package:arcane_launcher/view_model/game_view_model.dart';
+import 'package:arcane_launcher/view_model/mysqld_view_model.dart';
+import 'package:arcane_launcher/view_model/server_view_model.dart';
+import 'package:arcane_launcher/view_model/setting_view_model.dart';
+import 'package:arcane_launcher/view_model/world_server_view_model.dart';
 import 'package:get_it/get_it.dart';
 
 final getIt = GetIt.instance;

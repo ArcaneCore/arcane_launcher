@@ -1,7 +1,7 @@
 import 'package:arcane_launcher/di.dart';
 import 'package:arcane_launcher/model/service_information.dart';
-import 'package:arcane_launcher/viewmodel/auth_server_view_model.dart';
-import 'package:arcane_launcher/viewmodel/server_view_model.dart';
+import 'package:arcane_launcher/view_model/auth_server_view_model.dart';
+import 'package:arcane_launcher/view_model/server_view_model.dart';
 import 'package:arcane_launcher/widget/service_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';

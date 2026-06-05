@@ -5,9 +5,9 @@ import 'package:arcane_launcher/page/config/config.dart';
 import 'package:arcane_launcher/page/setting/setting.dart';
 import 'package:arcane_launcher/page/launcher/component/world_server.dart';
 import 'package:arcane_launcher/schema/server.dart';
-import 'package:arcane_launcher/viewmodel/external_application_view_model.dart';
-import 'package:arcane_launcher/viewmodel/game_view_model.dart';
-import 'package:arcane_launcher/viewmodel/server_view_model.dart';
+import 'package:arcane_launcher/view_model/external_application_view_model.dart';
+import 'package:arcane_launcher/view_model/game_view_model.dart';
+import 'package:arcane_launcher/view_model/server_view_model.dart';
 import 'package:arcane_launcher/widget/dropdown.dart';
 import 'package:arcane_launcher/widget/service_tile.dart';
 import 'package:flutter/material.dart';
@@ -120,10 +120,7 @@ class _ExternalApplicationTile extends StatelessWidget {
                   return ServiceTile(
                     leading: const Icon(LucideIcons.blocks),
                     name: apps[index].name,
-                    trailing: Icon(
-                      LucideIcons.externalLink,
-                      color: onSurface,
-                    ),
+                    trailing: Icon(LucideIcons.externalLink, color: onSurface),
                     onChanged: () => vm.start(index),
                   );
                 },

@@ -1,6 +1,6 @@
 import 'package:arcane_launcher/di.dart';
 import 'package:arcane_launcher/schema/external_application.dart';
-import 'package:arcane_launcher/viewmodel/external_application_view_model.dart';
+import 'package:arcane_launcher/view_model/external_application_view_model.dart';
 import 'package:arcane_launcher/widget/form_item.dart';
 import 'package:arcane_launcher/widget/input.dart';
 import 'package:arcane_launcher/widget/tag.dart';

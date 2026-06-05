@@ -1,6 +1,6 @@
 import 'package:arcane_launcher/di.dart';
 import 'package:arcane_launcher/schema/server.dart';
-import 'package:arcane_launcher/viewmodel/server_view_model.dart';
+import 'package:arcane_launcher/view_model/server_view_model.dart';
 import 'package:arcane_launcher/widget/form_item.dart';
 import 'package:arcane_launcher/widget/input.dart';
 import 'package:arcane_launcher/widget/switch.dart';
@@ -290,10 +290,7 @@ class _ServerFormState extends State<_ServerForm> {
         children: [
           Expanded(child: AntInput(controller: ctrl)),
           const SizedBox(width: 8),
-          IconButton(
-            onPressed: onPick,
-            icon: const Icon(LucideIcons.ellipsis),
-          ),
+          IconButton(onPressed: onPick, icon: const Icon(LucideIcons.ellipsis)),
         ],
       ),
     );
