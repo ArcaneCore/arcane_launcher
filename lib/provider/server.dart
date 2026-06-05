@@ -1,6 +1,5 @@
-import 'package:arcane_launcher/schema/isar.dart';
+import 'package:arcane_launcher/schema/laconic.dart';
 import 'package:arcane_launcher/schema/server.dart';
-import 'package:isar/isar.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'server.g.dart';
@@ -9,37 +8,29 @@ part 'server.g.dart';
 class ServersNotifier extends _$ServersNotifier {
   @override
   Future<List<Server>> build() async {
-    return await isar.servers.where().findAll();
+    final results = await laconic.table('servers').get();
+    return results.map((r) => Server.fromMap(r.toMap())).toList();
   }
 
   Future<void> store(Server server) async {
-    await isar.writeTxn(() async {
-      await isar.servers.put(server);
-    });
+    if (server.id != null && server.id != 0) {
+      await laconic.table('servers').where('id', server.id!).update(server.toMap());
+    } else {
+      final id = await laconic.table('servers').insertGetId(server.toMap());
+      server.id = id;
+    }
     ref.invalidateSelf();
   }
 
   Future<void> destroy(Server server) async {
-    await isar.writeTxn(() async {
-      await isar.servers.delete(server.id);
-    });
+    await laconic.table('servers').where('id', server.id!).delete();
     ref.invalidateSelf();
   }
 
   Future<void> active(Server server) async {
-    final queryBuilder = isar.servers.filter().activeEqualTo(true);
-    final activeServers = await queryBuilder.findAll();
-    if (activeServers.isNotEmpty) {
-      for (final activeServer in activeServers) {
-        activeServer.active = false;
-      }
-      await isar.writeTxn(() async {
-        await isar.servers.putAll(activeServers);
-      });
-    }
+    await laconic.statement('UPDATE servers SET active = 0');
     server.active = true;
     await store(server);
-    return;
   }
 }
 

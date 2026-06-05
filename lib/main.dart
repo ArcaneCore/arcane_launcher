@@ -1,6 +1,6 @@
 import 'package:arcane_launcher/page/launcher/launcher.dart';
 import 'package:arcane_launcher/provider/setting.dart';
-import 'package:arcane_launcher/schema/isar.dart';
+import 'package:arcane_launcher/schema/laconic.dart';
 import 'package:arcane_launcher/schema/setting.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,7 +9,7 @@ import 'package:window_manager/window_manager.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await WindowInitializer.ensureInitialized();
-  await IsarInitializer.ensureInitialized();
+  await LaconicInitializer.ensureInitialized();
   runApp(const ProviderScope(child: ArcaneLauncher()));
 }
 
