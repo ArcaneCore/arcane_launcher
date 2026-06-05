@@ -1,11 +1,11 @@
 import 'package:laconic/laconic.dart';
-import 'package:laconic_sqlite/laconic_sqlite.dart';
 
-late Laconic laconic;
+class Migration202506050000 {
+  static const name = 'migration_202506050000';
 
-class LaconicInitializer {
-  static Future<void> ensureInitialized() async {
-    laconic = Laconic(SqliteDriver(SqliteConfig('arcane_launcher.db')));
+  Future<void> migrate(Laconic laconic) async {
+    final count = await laconic.table('migrations').where('name', name).count();
+    if (count > 0) return;
 
     await laconic.statement('''
       CREATE TABLE IF NOT EXISTS servers (
@@ -36,12 +36,8 @@ class LaconicInitializer {
       )
     ''');
 
-    await laconic.statement('''
-      CREATE TABLE IF NOT EXISTS settings (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        color INTEGER NOT NULL DEFAULT 4288423856,
-        dark_mode INTEGER NOT NULL DEFAULT 0
-      )
-    ''');
+    await laconic.table('migrations').insert([
+      {'name': name},
+    ]);
   }
 }

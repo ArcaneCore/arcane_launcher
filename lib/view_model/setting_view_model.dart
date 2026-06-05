@@ -1,35 +1,31 @@
-import 'package:arcane_launcher/schema/laconic.dart';
 import 'package:arcane_launcher/schema/setting.dart';
+import 'package:arcane_launcher/util/shared_preference_util.dart';
 import 'package:signals/signals.dart';
 
 class SettingViewModel {
   final _setting = signal(Setting());
+  final _prefs = SharedPreferenceUtil.instance;
 
   Setting get setting => _setting.value;
 
   Future<void> fetch() async {
-    final results = await laconic.table('settings').get();
-    if (results.isEmpty) {
-      final s = Setting();
-      final id = await laconic.table('settings').insertGetId(s.toMap());
-      s.id = id;
-      _setting.value = s;
-      return;
-    }
-    _setting.value = Setting.fromMap(results.first.toMap());
+    final color = await _prefs.getColor();
+    final darkMode = await _prefs.getDarkMode();
+    _setting.value = Setting(color: color, darkMode: darkMode);
   }
 
   Future<void> updateColor(int color) async {
+    await _prefs.setColor(color);
     final s = _setting.value;
     s.color = color;
-    await laconic.table('settings').where('id', s.id!).update(s.toMap());
-    await fetch();
+    _setting.value = s;
   }
 
   Future<void> toggleBrightness() async {
     final s = _setting.value;
-    s.darkMode = !s.darkMode;
-    await laconic.table('settings').where('id', s.id!).update(s.toMap());
-    await fetch();
+    final darkMode = !s.darkMode;
+    await _prefs.setDarkMode(darkMode);
+    s.darkMode = darkMode;
+    _setting.value = s;
   }
 }

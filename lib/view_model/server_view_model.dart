@@ -1,4 +1,4 @@
-import 'package:arcane_launcher/schema/laconic.dart';
+import 'package:arcane_launcher/database/database.dart';
 import 'package:arcane_launcher/schema/server.dart';
 import 'package:signals/signals.dart';
 

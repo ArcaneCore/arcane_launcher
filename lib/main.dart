@@ -1,6 +1,7 @@
 import 'package:arcane_launcher/di.dart';
 import 'package:arcane_launcher/page/launcher/launcher.dart';
-import 'package:arcane_launcher/schema/laconic.dart';
+import 'package:arcane_launcher/database/database.dart';
+import 'package:arcane_launcher/util/shared_preference_util.dart';
 import 'package:arcane_launcher/view_model/auth_server_view_model.dart';
 import 'package:arcane_launcher/view_model/external_application_view_model.dart';
 import 'package:arcane_launcher/view_model/game_view_model.dart';
@@ -14,7 +15,8 @@ import 'package:window_manager/window_manager.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await WindowInitializer.ensureInitialized();
-  await LaconicInitializer.ensureInitialized();
+  await Database.instance.ensureInitialized();
+  await SharedPreferenceUtil.instance.init();
   setupDependencies();
 
   final serverVM = getIt<ServerViewModel>();

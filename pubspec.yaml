@@ -36,6 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.6
   signals: ^7.1.0
   get_it: ^8.0.3
+  shared_preferences: ^2.2.0
   charset: ^2.0.1
   laconic: ^2.2.0
   laconic_sqlite: ^1.2.0
