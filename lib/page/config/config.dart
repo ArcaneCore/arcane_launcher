@@ -1,6 +1,7 @@
 import 'package:arcane_launcher/page/config/component/auth_server.dart';
 import 'package:arcane_launcher/page/config/component/world_server.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class ConfigPage extends StatefulWidget {
   const ConfigPage({super.key});
@@ -41,18 +42,18 @@ class _SettingState extends State<ConfigPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ListTile(
-                  leading: const Icon(Icons.arrow_back_outlined),
+                  leading: const Icon(LucideIcons.arrowLeft),
                   title: const Text('返回'),
                   onTap: () => handleTap(context),
                 ),
                 ListTile(
-                  leading: const Icon(Icons.sports_esports_outlined),
+                  leading: const Icon(LucideIcons.gamepad2),
                   title: const Text('World Server'),
                   selected: selectedIndex == 0,
                   onTap: () => handlePageChanged(0),
                 ),
                 ListTile(
-                  leading: const Icon(Icons.person_outline),
+                  leading: const Icon(LucideIcons.user),
                   selected: selectedIndex == 1,
                   title: const Text('Auth Server'),
                   onTap: () => handlePageChanged(1),

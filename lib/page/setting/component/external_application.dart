@@ -6,6 +6,7 @@ import 'package:arcane_launcher/widget/input.dart';
 import 'package:arcane_launcher/widget/tag.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
 class ExternalApplicationsPage extends StatelessWidget {
@@ -38,7 +39,7 @@ class _CreateButton extends StatelessWidget {
     return ListTile(
       title: const Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [Icon(Icons.add_outlined), Text('新增外部程序')],
+        children: [Icon(LucideIcons.plus), Text('新增外部程序')],
       ),
       onTap: () => _create(context),
     );
@@ -64,7 +65,7 @@ class _Tile extends StatelessWidget {
       subtitle = Text(application.description);
     }
     return ListTile(
-      leading: const Icon(Icons.dns_outlined),
+      leading: const Icon(LucideIcons.server),
       subtitle: subtitle,
       title: Row(
         children: [
@@ -76,10 +77,10 @@ class _Tile extends StatelessWidget {
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.chevron_right_outlined),
+          const Icon(LucideIcons.chevronRight),
           IconButton(
             onPressed: () => _destroyDialog(context),
-            icon: const Icon(Icons.delete_outline),
+            icon: const Icon(LucideIcons.trash2),
           ),
         ],
       ),
@@ -167,7 +168,7 @@ class _FormState extends State<_Form> {
                 const Text('外部程序信息'),
                 IconButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.close_outlined),
+                  icon: const Icon(LucideIcons.x),
                 ),
               ],
             ),
@@ -182,7 +183,7 @@ class _FormState extends State<_Form> {
                   const SizedBox(width: 8),
                   IconButton(
                     onPressed: _pickPath,
-                    icon: const Icon(Icons.more_horiz_outlined),
+                    icon: const Icon(LucideIcons.ellipsis),
                   ),
                 ],
               ),

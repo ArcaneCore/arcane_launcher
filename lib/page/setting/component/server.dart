@@ -7,6 +7,7 @@ import 'package:arcane_launcher/widget/switch.dart';
 import 'package:arcane_launcher/widget/tag.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
 class ServersPage extends StatelessWidget {
@@ -37,7 +38,7 @@ class _CreateServerButton extends StatelessWidget {
     return ListTile(
       title: const Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [Icon(Icons.add_outlined), Text('新增服务器')],
+        children: [Icon(LucideIcons.plus), Text('新增服务器')],
       ),
       onTap: () => _createServer(context),
     );
@@ -63,7 +64,7 @@ class _ServerTile extends StatelessWidget {
     final label = server.local ? '本地' : '远程';
     final type = server.local ? TagType.secondary : TagType.tertiary;
     return ListTile(
-      leading: const Icon(Icons.dns_outlined),
+      leading: const Icon(LucideIcons.server),
       subtitle: subtitle,
       title: Row(
         children: [
@@ -79,10 +80,10 @@ class _ServerTile extends StatelessWidget {
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.chevron_right_outlined),
+          const Icon(LucideIcons.chevronRight),
           IconButton(
             onPressed: () => _destroyDialog(context),
-            icon: const Icon(Icons.delete_outline),
+            icon: const Icon(LucideIcons.trash2),
           ),
         ],
       ),
@@ -190,7 +191,7 @@ class _ServerFormState extends State<_ServerForm> {
                 const Text('服务器信息'),
                 IconButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.close_outlined),
+                  icon: const Icon(LucideIcons.x),
                 ),
               ],
             ),
@@ -291,7 +292,7 @@ class _ServerFormState extends State<_ServerForm> {
           const SizedBox(width: 8),
           IconButton(
             onPressed: onPick,
-            icon: const Icon(Icons.more_horiz_outlined),
+            icon: const Icon(LucideIcons.ellipsis),
           ),
         ],
       ),

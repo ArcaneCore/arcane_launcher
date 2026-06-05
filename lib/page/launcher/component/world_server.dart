@@ -4,6 +4,7 @@ import 'package:arcane_launcher/viewmodel/server_view_model.dart';
 import 'package:arcane_launcher/viewmodel/world_server_view_model.dart';
 import 'package:arcane_launcher/widget/service_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
 class WorldServerTile extends StatelessWidget {
@@ -17,7 +18,7 @@ class WorldServerTile extends StatelessWidget {
         final info = vm.info;
         return ServiceTile(
           active: info.status != ServiceStatus.stopped,
-          leading: const Icon(Icons.sports_esports_outlined),
+          leading: const Icon(LucideIcons.gamepad2),
           loading: info.status == ServiceStatus.starting,
           name: 'World Server',
           processIds: info.processIds,

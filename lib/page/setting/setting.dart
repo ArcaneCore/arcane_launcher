@@ -3,6 +3,7 @@ import 'package:arcane_launcher/page/setting/component/external_application.dart
 import 'package:arcane_launcher/page/setting/component/server.dart';
 import 'package:arcane_launcher/viewmodel/setting_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
 class SettingPage extends StatefulWidget {
@@ -43,25 +44,25 @@ class _SettingState extends State<SettingPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ListTile(
-                  leading: const Icon(Icons.arrow_back_outlined),
+                  leading: const Icon(LucideIcons.arrowLeft),
                   title: const Text('返回'),
                   onTap: () => Navigator.of(context).pop(),
                 ),
                 ListTile(
-                  leading: const Icon(Icons.dns_outlined),
+                  leading: const Icon(LucideIcons.server),
                   title: const Text('服务器'),
                   selected: selectedIndex == 0,
                   onTap: () => handlePageChanged(0),
                 ),
                 ListTile(
-                  leading: const Icon(Icons.apps_outlined),
+                  leading: const Icon(LucideIcons.blocks),
                   selected: selectedIndex == 1,
                   title: const Text('外部应用'),
                   onTap: () => handlePageChanged(1),
                 ),
                 const Divider(),
                 ListTile(
-                  leading: const Icon(Icons.info_outlined),
+                  leading: const Icon(LucideIcons.info),
                   title: const Text('关于'),
                   onTap: () => showAbout(context),
                 ),
@@ -128,7 +129,7 @@ class _ThemeTile extends StatelessWidget {
         final vm = getIt<SettingViewModel>();
         final s = vm.setting;
         final iconData =
-            s.darkMode ? Icons.light_mode_outlined : Icons.dark_mode_outlined;
+            s.darkMode ? LucideIcons.sun : LucideIcons.moon;
         return Wrap(
           runSpacing: 8,
           spacing: 8,
@@ -136,7 +137,7 @@ class _ThemeTile extends StatelessWidget {
             ...List.generate(Colors.primaries.length, (index) {
               final color = Colors.primaries[index];
               final bg = WidgetStatePropertyAll(color);
-              Widget icon = Icon(Icons.check_outlined, color: onPrimary);
+              Widget icon = Icon(LucideIcons.check, color: onPrimary);
               if (color.value != s.color) {
                 icon = const SizedBox();
               }

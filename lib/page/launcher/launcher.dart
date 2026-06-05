@@ -11,6 +11,7 @@ import 'package:arcane_launcher/viewmodel/server_view_model.dart';
 import 'package:arcane_launcher/widget/dropdown.dart';
 import 'package:arcane_launcher/widget/service_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
 class LauncherPage extends StatelessWidget {
@@ -45,13 +46,13 @@ class LauncherPage extends StatelessWidget {
                   const AuthServerTile(),
                   const ServiceTileDivider(label: '设置'),
                   ServiceTile(
-                    leading: const Icon(Icons.toggle_on_outlined),
+                    leading: const Icon(LucideIcons.toggleRight),
                     name: '模拟器配置',
                     trailing: const SizedBox(),
                     onChanged: () => navigateConfigPage(context),
                   ),
                   ServiceTile(
-                    leading: const Icon(Icons.settings_outlined),
+                    leading: const Icon(LucideIcons.settings),
                     name: '设置',
                     trailing: const SizedBox(),
                     onChanged: () => navigateSettingPage(context),
@@ -117,10 +118,10 @@ class _ExternalApplicationTile extends StatelessWidget {
               child: ListView.builder(
                 itemBuilder: (context, index) {
                   return ServiceTile(
-                    leading: const Icon(Icons.apps_outlined),
+                    leading: const Icon(LucideIcons.blocks),
                     name: apps[index].name,
                     trailing: Icon(
-                      Icons.open_in_new_outlined,
+                      LucideIcons.externalLink,
                       color: onSurface,
                     ),
                     onChanged: () => vm.start(index),
@@ -174,7 +175,7 @@ class _ServerSelectState extends State<_ServerSelect> {
               AnimatedRotation(
                 turns: active ? 0.5 : 0,
                 duration: const Duration(milliseconds: 200),
-                child: const Icon(Icons.expand_more_outlined),
+                child: const Icon(LucideIcons.chevronDown),
               ),
             ],
           ),
@@ -377,7 +378,7 @@ class __GameOptionState extends State<_GameOption> {
         child: Container(
           alignment: Alignment.center,
           height: 48,
-          child: const Icon(Icons.more_horiz_outlined),
+          child: const Icon(LucideIcons.ellipsis),
         ),
       ),
     );
