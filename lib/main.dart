@@ -10,6 +10,7 @@ import 'package:arcane_launcher/view_model/server_view_model.dart';
 import 'package:arcane_launcher/view_model/setting_view_model.dart';
 import 'package:arcane_launcher/view_model/world_server_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:signals/signals_flutter.dart';
 import 'package:window_manager/window_manager.dart';
 
 void main() async {
@@ -47,15 +48,19 @@ class ArcaneLauncher extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final s = getIt<SettingViewModel>().setting;
-    return MaterialApp(
-      title: 'Arcane Launcher',
-      home: const LauncherPage(),
-      theme: ThemeData(
-        brightness: s.darkMode ? Brightness.dark : Brightness.light,
-        colorSchemeSeed: Color(s.color),
-        fontFamily: 'Microsoft YaHei UI',
-      ),
+    return SignalBuilder(
+      builder: (context) {
+        final s = getIt<SettingViewModel>().setting;
+        return MaterialApp(
+        title: 'Arcane Launcher',
+        home: const LauncherPage(),
+        theme: ThemeData(
+          brightness: s.darkMode ? Brightness.dark : Brightness.light,
+          colorSchemeSeed: Color(s.color),
+          fontFamily: 'Microsoft YaHei UI',
+        ),
+      );
+      },
     );
   }
 }

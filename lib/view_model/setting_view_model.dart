@@ -17,15 +17,13 @@ class SettingViewModel {
   Future<void> updateColor(int color) async {
     await _prefs.setColor(color);
     final s = _setting.value;
-    s.color = color;
-    _setting.value = s;
+    _setting.value = Setting(id: s.id, color: color, darkMode: s.darkMode);
   }
 
   Future<void> toggleBrightness() async {
     final s = _setting.value;
     final darkMode = !s.darkMode;
     await _prefs.setDarkMode(darkMode);
-    s.darkMode = darkMode;
-    _setting.value = s;
+    _setting.value = Setting(id: s.id, color: s.color, darkMode: darkMode);
   }
 }
