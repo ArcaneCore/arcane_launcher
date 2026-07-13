@@ -10,12 +10,11 @@ class Tag extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final backgroundColor = switch (type) {
-      TagType.primary => colorScheme.primary,
-      TagType.secondary => colorScheme.secondary,
-      TagType.tertiary => colorScheme.outlineVariant,
+    final (backgroundColor, foregroundColor) = switch (type) {
+      TagType.primary => (colorScheme.primary, colorScheme.onPrimary),
+      TagType.secondary => (colorScheme.secondary, colorScheme.onSecondary),
+      TagType.tertiary => (colorScheme.outlineVariant, colorScheme.onSurfaceVariant),
     };
-    final foregroundColor = colorScheme.onPrimary;
     return Container(
       decoration: BoxDecoration(
         color: backgroundColor,

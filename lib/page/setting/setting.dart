@@ -144,12 +144,12 @@ class _ThemeTile extends StatelessWidget {
               final color = Colors.primaries[index];
               final bg = WidgetStatePropertyAll(color);
               Widget icon = Icon(LucideIcons.check, color: onPrimary);
-              if (color.value != s.color) {
+              if (color.toARGB32() != s.color) {
                 icon = const SizedBox();
               }
               return IconButton(
                 icon: icon,
-                onPressed: () => vm.updateColor(color.value),
+                onPressed: () => vm.updateColor(color.toARGB32()),
                 style: ButtonStyle(backgroundColor: bg),
               );
             }),

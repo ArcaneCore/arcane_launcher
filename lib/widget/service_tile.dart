@@ -23,10 +23,8 @@ class ServiceTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var text = name;
-    if (processIds.isNotEmpty) {
-      text = '$text ${processIds.toString()}';
-    }
+    final theme = Theme.of(context);
+    final onSurface = theme.colorScheme.onSurface.withValues(alpha: 0.5);
     final defaultTrailing = AntSwitch(
       loading: loading,
       value: active,
@@ -50,7 +48,14 @@ class ServiceTile extends StatelessWidget {
                 leading!,
                 const SizedBox(width: 8),
               ],
-              Text(text),
+              Text(name),
+              if (processIds.isNotEmpty) ...[
+                const SizedBox(width: 8),
+                Text(
+                  processIds.join(', '),
+                  style: TextStyle(color: onSurface, fontSize: 12),
+                ),
+              ],
               const Spacer(),
               trailing ?? defaultTrailing,
             ],

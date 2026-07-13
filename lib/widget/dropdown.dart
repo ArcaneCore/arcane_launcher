@@ -94,10 +94,10 @@ class _AntDropdownOverlay extends StatelessWidget {
         ),
         if (builder != null)
           CompositedTransformFollower(
-            followerAnchor: Alignment.bottomLeft,
-            targetAnchor: Alignment.bottomRight,
+            followerAnchor: Alignment.bottomRight,
+            targetAnchor: Alignment.topRight,
             link: link,
-            offset: const Offset(16, 0),
+            offset: const Offset(0, -4),
             child: Material(
               color: surface,
               borderRadius: BorderRadius.circular(8),
