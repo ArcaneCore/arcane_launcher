@@ -1,13 +1,13 @@
 import 'package:arcane_launcher/schema/external_application.dart';
-import 'package:arcane_launcher/util/json_store.dart';
 import 'package:arcane_launcher/util/process.dart';
+import 'package:arcane_launcher/util/yaml_store.dart';
 import 'package:signals/signals.dart';
 
 class ExternalApplicationViewModel {
-  static const _fileName = 'external_applications.json';
+  static const _fileName = 'external_applications.yaml';
 
   final _apps = signal<List<ExternalApplication>>([]);
-  final _store = JsonStore(_fileName);
+  final _store = YamlStore(_fileName);
 
   List<ExternalApplication> get applications => _apps.value;
 

@@ -49,6 +49,6 @@ app.*.map.json
 .claude/
 
 # Runtime config files
-servers.json
-external_applications.json
+servers.yaml
+external_applications.yaml
 *.tmp

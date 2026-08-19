@@ -1,26 +1,31 @@
-import 'dart:convert';
 import 'dart:io';
 
-/// 读写工作目录下 JSON 配置文件的工具类。
+import 'package:yaml/yaml.dart';
+import 'package:yaml_writer/yaml_writer.dart';
+
+/// 读写工作目录下 YAML 配置文件的工具类。
 ///
 /// 写入时先写临时文件再重命名覆盖，避免应用中途退出导致配置文件损坏。
-class JsonStore {
-  JsonStore(this.fileName);
+class YamlStore {
+  YamlStore(this.fileName);
 
-  /// 文件名（相对工作目录），如 servers.json。
+  /// 文件名（相对工作目录），如 servers.yaml。
   final String fileName;
 
   File get _file => File('${Directory.current.path}/$fileName');
 
-  static const _encoder = JsonEncoder.withIndent('  ');
+  final _writer = YamlWriter();
 
-  /// 读取列表型 JSON 文件，文件不存在或内容为空时返回空列表。
+  /// 读取列表型 YAML 文件，文件不存在时先创建空文件，再返回空列表。
   Future<List<Map<String, Object?>>> readList() async {
     final file = _file;
-    if (!await file.exists()) return [];
+    if (!await file.exists()) {
+      await writeList([]);
+      return [];
+    }
     final content = await file.readAsString();
     if (content.trim().isEmpty) return [];
-    final decoded = jsonDecode(content);
+    final decoded = loadYaml(content);
     if (decoded is! List) return [];
     return decoded
         .whereType<Map>()
@@ -32,7 +37,7 @@ class JsonStore {
   Future<void> writeList(List<Map<String, Object?>> data) async {
     final file = _file;
     final temp = File('${file.path}.tmp');
-    await temp.writeAsString(_encoder.convert(data), flush: true);
+    await temp.writeAsString(_writer.write(data), flush: true);
     await temp.rename(file.path);
   }
 }

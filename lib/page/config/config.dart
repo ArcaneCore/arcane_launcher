@@ -34,7 +34,11 @@ class _SettingState extends State<ConfigPage> {
               color: surface,
               borderRadius: BorderRadius.circular(8),
               boxShadow: [
-                BoxShadow(blurRadius: 16, color: shadow, offset: const Offset(0, 2)),
+                BoxShadow(
+                  blurRadius: 16,
+                  color: shadow,
+                  offset: const Offset(0, 2),
+                ),
               ],
             ),
             margin: const EdgeInsets.all(16),
@@ -71,25 +75,31 @@ class _SettingState extends State<ConfigPage> {
             child: PageView.builder(
               controller: controller,
               physics: const NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) => Material(
-                color: surface,
-                borderRadius: BorderRadius.circular(8),
-                child: Container(
-                  decoration: BoxDecoration(
+              itemBuilder:
+                  (context, index) => Material(
+                    color: surface,
                     borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                BoxShadow(blurRadius: 16, color: shadow, offset: const Offset(0, 2)),
-              ],
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        boxShadow: [
+                          BoxShadow(
+                            blurRadius: 16,
+                            color: shadow,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                        color: surface,
+                      ),
+                      margin: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(16),
+                      child: switch (selectedIndex) {
+                        0 => const WorldServerConfigPage(),
+                        1 => const AuthServerConfigPage(),
+                        _ => const SizedBox(),
+                      },
+                    ),
                   ),
-                  margin: const EdgeInsets.all(16),
-                  padding: const EdgeInsets.all(16),
-                  child: switch (selectedIndex) {
-                    0 => const WorldServerConfigPage(),
-                    1 => const AuthServerConfigPage(),
-                    _ => const SizedBox(),
-                  },
-                ),
-              ),
               itemCount: 2,
               scrollDirection: Axis.vertical,
             ),

@@ -39,7 +39,7 @@ class Server {
       name: map['name'] as String? ?? '',
       description: map['description'] as String? ?? '',
       version: map['version'] as String? ?? '',
-      local: (map['local'] as int?) == 1,
+      local: map['local'] == 1 || map['local'] == true,
       realmList: map['realm_list'] as String? ?? '127.0.0.1',
       mysqldPath: map['mysqld_path'] as String? ?? '',
       worldServerPath: map['world_server_path'] as String? ?? '',
@@ -49,7 +49,7 @@ class Server {
       authServerConfig: map['auth_server_config'] as String? ?? '',
       authServerLog: map['auth_server_log'] as String? ?? '',
       clientPath: map['client_path'] as String? ?? '',
-      active: (map['active'] as int?) == 1,
+      active: map['active'] == 1 || map['active'] == true,
     );
   }
 
@@ -59,7 +59,7 @@ class Server {
       'name': name,
       'description': description,
       'version': version,
-      'local': local ? 1 : 0,
+      'local': local,
       'realm_list': realmList,
       'mysqld_path': mysqldPath,
       'world_server_path': worldServerPath,
@@ -69,7 +69,7 @@ class Server {
       'auth_server_config': authServerConfig,
       'auth_server_log': authServerLog,
       'client_path': clientPath,
-      'active': active ? 1 : 0,
+      'active': active,
     };
   }
 

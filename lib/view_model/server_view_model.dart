@@ -1,13 +1,13 @@
 import 'package:arcane_launcher/schema/server.dart';
-import 'package:arcane_launcher/util/json_store.dart';
+import 'package:arcane_launcher/util/yaml_store.dart';
 import 'package:signals/signals.dart';
 
 class ServerViewModel {
-  static const _fileName = 'servers.json';
+  static const _fileName = 'servers.yaml';
 
   final _servers = signal<List<Server>>([]);
   late final Computed<Server> _activeServer;
-  final _store = JsonStore(_fileName);
+  final _store = YamlStore(_fileName);
 
   ServerViewModel() {
     _activeServer = computed<Server>(() {
