@@ -41,7 +41,9 @@ class AuthServerLog extends StatelessWidget {
       decoration: BoxDecoration(
         color: surface,
         borderRadius: BorderRadius.circular(8),
-        boxShadow: [BoxShadow(blurRadius: 16, color: shadow)],
+        boxShadow: [
+          BoxShadow(blurRadius: 16, color: shadow, offset: const Offset(0, 2)),
+        ],
       ),
       padding: const EdgeInsets.all(16),
       child: Stack(

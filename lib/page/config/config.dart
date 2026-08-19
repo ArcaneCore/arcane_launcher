@@ -33,7 +33,9 @@ class _SettingState extends State<ConfigPage> {
             decoration: BoxDecoration(
               color: surface,
               borderRadius: BorderRadius.circular(8),
-              boxShadow: [BoxShadow(blurRadius: 16, color: shadow)],
+              boxShadow: [
+                BoxShadow(blurRadius: 16, color: shadow, offset: const Offset(0, 2)),
+              ],
             ),
             margin: const EdgeInsets.all(16),
             padding: const EdgeInsets.all(16),
@@ -75,7 +77,9 @@ class _SettingState extends State<ConfigPage> {
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
-                    boxShadow: [BoxShadow(blurRadius: 16, color: shadow)],
+                    boxShadow: [
+                BoxShadow(blurRadius: 16, color: shadow, offset: const Offset(0, 2)),
+              ],
                   ),
                   margin: const EdgeInsets.all(16),
                   padding: const EdgeInsets.all(16),

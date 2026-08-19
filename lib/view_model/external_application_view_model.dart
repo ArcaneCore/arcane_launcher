@@ -1,17 +1,19 @@
 import 'package:arcane_launcher/schema/external_application.dart';
-import 'package:arcane_launcher/database/database.dart';
+import 'package:arcane_launcher/util/json_store.dart';
 import 'package:arcane_launcher/util/process.dart';
 import 'package:signals/signals.dart';
 
 class ExternalApplicationViewModel {
+  static const _fileName = 'external_applications.json';
+
   final _apps = signal<List<ExternalApplication>>([]);
+  final _store = JsonStore(_fileName);
 
   List<ExternalApplication> get applications => _apps.value;
 
   Future<void> fetch() async {
-    final results = await laconic.table('external_applications').get();
-    _apps.value =
-        results.map((r) => ExternalApplication.fromMap(r.toMap())).toList();
+    final results = await _store.readList();
+    _apps.value = results.map(ExternalApplication.fromMap).toList();
   }
 
   void start(int index) {
@@ -22,24 +24,34 @@ class ExternalApplicationViewModel {
 
   Future<void> store(ExternalApplication application) async {
     if (application.id != null && application.id != 0) {
-      await laconic
-          .table('external_applications')
-          .where('id', application.id!)
-          .update(application.toMap());
+      _apps.value = [
+        for (final a in _apps.value)
+          a.id == application.id ? application : a,
+      ];
     } else {
-      final id = await laconic
-          .table('external_applications')
-          .insertGetId(application.toMap());
-      application.id = id;
+      application.id = _nextId();
+      _apps.value = [..._apps.value, application];
     }
-    await fetch();
+    await _save();
   }
 
   Future<void> destroy(ExternalApplication application) async {
-    await laconic
-        .table('external_applications')
-        .where('id', application.id!)
-        .delete();
-    await fetch();
+    _apps.value =
+        _apps.value.where((a) => a.id != application.id).toList();
+    await _save();
+  }
+
+  int _nextId() {
+    var maxId = 0;
+    for (final a in _apps.value) {
+      if ((a.id ?? 0) > maxId) maxId = a.id!;
+    }
+    return maxId + 1;
+  }
+
+  Future<void> _save() async {
+    await _store.writeList([
+      for (final a in _apps.value) a.toMap(),
+    ]);
   }
 }

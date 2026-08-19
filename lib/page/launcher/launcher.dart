@@ -32,7 +32,9 @@ class LauncherPage extends StatelessWidget {
               decoration: BoxDecoration(
                 color: surface,
                 borderRadius: BorderRadius.circular(8),
-                boxShadow: [BoxShadow(blurRadius: 16, color: shadow)],
+                boxShadow: [
+                  BoxShadow(blurRadius: 16, color: shadow, offset: const Offset(0, 2)),
+                ],
               ),
               padding: const EdgeInsets.all(16),
               width: 320,
@@ -224,7 +226,9 @@ class _SelectOverlay extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
-                boxShadow: [BoxShadow(blurRadius: 16, color: shadow)],
+                boxShadow: [
+                  BoxShadow(blurRadius: 16, color: shadow, offset: const Offset(0, 2)),
+                ],
               ),
               width: 288,
               height: 200,

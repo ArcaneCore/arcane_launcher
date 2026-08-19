@@ -1,10 +1,13 @@
-import 'package:arcane_launcher/database/database.dart';
 import 'package:arcane_launcher/schema/server.dart';
+import 'package:arcane_launcher/util/json_store.dart';
 import 'package:signals/signals.dart';
 
 class ServerViewModel {
+  static const _fileName = 'servers.json';
+
   final _servers = signal<List<Server>>([]);
   late final Computed<Server> _activeServer;
+  final _store = JsonStore(_fileName);
 
   ServerViewModel() {
     _activeServer = computed<Server>(() {
@@ -18,33 +21,45 @@ class ServerViewModel {
   Server get activeServer => _activeServer.value;
 
   Future<void> fetch() async {
-    final results = await laconic.table('servers').get();
-    _servers.value =
-        results.map((r) => Server.fromMap(r.toMap())).toList();
+    final results = await _store.readList();
+    _servers.value = results.map(Server.fromMap).toList();
   }
 
   Future<void> store(Server server) async {
     if (server.id != null && server.id != 0) {
-      await laconic
-          .table('servers')
-          .where('id', server.id!)
-          .update(server.toMap());
+      _servers.value = [
+        for (final s in _servers.value) s.id == server.id ? server : s,
+      ];
     } else {
-      final id =
-          await laconic.table('servers').insertGetId(server.toMap());
-      server.id = id;
+      server.id = _nextId();
+      _servers.value = [..._servers.value, server];
     }
-    await fetch();
+    await _save();
   }
 
   Future<void> destroy(Server server) async {
-    await laconic.table('servers').where('id', server.id!).delete();
-    await fetch();
+    _servers.value = _servers.value.where((s) => s.id != server.id).toList();
+    await _save();
   }
 
   Future<void> activate(Server server) async {
-    await laconic.statement('UPDATE servers SET active = 0');
-    server.active = true;
-    await store(server);
+    _servers.value = [
+      for (final s in _servers.value) s.copyWith(active: s.id == server.id),
+    ];
+    await _save();
+  }
+
+  int _nextId() {
+    var maxId = 0;
+    for (final s in _servers.value) {
+      if ((s.id ?? 0) > maxId) maxId = s.id!;
+    }
+    return maxId + 1;
+  }
+
+  Future<void> _save() async {
+    await _store.writeList([
+      for (final s in _servers.value) s.toMap(),
+    ]);
   }
 }
