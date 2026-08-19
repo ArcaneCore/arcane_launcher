@@ -239,20 +239,23 @@ class _SelectOverlay extends StatelessWidget {
                 color: surface,
               ),
               width: 288,
-              height: 200,
-              child: SignalBuilder(
-                builder: (context) {
-                  final list = getIt<ServerViewModel>().servers;
-                  return ListView.builder(
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(list[index].name),
-                        onTap: () => selectServer(list[index]),
-                      );
-                    },
-                    itemCount: list.length,
-                  );
-                },
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxHeight: 240),
+                child: SignalBuilder(
+                  builder: (context) {
+                    final list = getIt<ServerViewModel>().servers;
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: Text(list[index].name),
+                          onTap: () => selectServer(list[index]),
+                        );
+                      },
+                      itemCount: list.length,
+                    );
+                  },
+                ),
               ),
             ),
           ),
