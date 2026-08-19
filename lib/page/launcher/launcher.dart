@@ -5,11 +5,18 @@ import 'package:arcane_launcher/page/config/config.dart';
 import 'package:arcane_launcher/page/setting/setting.dart';
 import 'package:arcane_launcher/page/launcher/component/world_server.dart';
 import 'package:arcane_launcher/schema/server.dart';
+import 'package:arcane_launcher/theme/arcane_theme.dart';
+import 'package:arcane_launcher/view_model/auth_server_view_model.dart';
 import 'package:arcane_launcher/view_model/external_application_view_model.dart';
 import 'package:arcane_launcher/view_model/game_view_model.dart';
+import 'package:arcane_launcher/view_model/mysqld_view_model.dart';
 import 'package:arcane_launcher/view_model/server_view_model.dart';
+import 'package:arcane_launcher/view_model/world_server_view_model.dart';
 import 'package:arcane_launcher/widget/dropdown.dart';
+import 'package:arcane_launcher/widget/log_view.dart';
+import 'package:arcane_launcher/widget/page_layout.dart';
 import 'package:arcane_launcher/widget/service_tile.dart';
+import 'package:arcane_launcher/widget/start_button.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
@@ -19,70 +26,68 @@ class LauncherPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final surface = colorScheme.surface;
-    final shadow = colorScheme.shadow.withValues(alpha: 0.125);
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
+      body: ArcanePageLayout(
+        sidebar: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              decoration: BoxDecoration(
-                color: surface,
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  BoxShadow(
-                    blurRadius: 16,
-                    color: shadow,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              padding: const EdgeInsets.all(16),
-              width: 320,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Image.asset('asset/world-of-warcraft.png', fit: BoxFit.cover),
-                  const ServiceTileDivider(label: '核心服务'),
-                  const MysqldTile(),
-                  const WorldServerTile(),
-                  const AuthServerTile(),
-                  const ServiceTileDivider(label: '设置'),
-                  ServiceTile(
-                    leading: const Icon(LucideIcons.toggleRight),
-                    name: '模拟器配置',
-                    trailing: const SizedBox(),
-                    onChanged: () => navigateConfigPage(context),
-                  ),
-                  ServiceTile(
-                    leading: const Icon(LucideIcons.settings),
-                    name: '设置',
-                    trailing: const SizedBox(),
-                    onChanged: () => navigateSettingPage(context),
-                  ),
-                  const Expanded(child: _ExternalApplicationTile()),
-                  const SizedBox(height: 8),
-                  const Text('服务器'),
-                  const SizedBox(height: 8),
-                  const _ServerSelect(),
-                  const SizedBox(height: 8),
-                  const _GameStarter(),
-                ],
+            Image.asset('asset/world-of-warcraft.png', fit: BoxFit.cover),
+            const ServiceTileDivider(label: '核心服务'),
+            const MysqldTile(),
+            const WorldServerTile(),
+            const AuthServerTile(),
+            const ServiceTileDivider(label: '设置'),
+            ServiceTile(
+              leading: const Icon(LucideIcons.toggleRight),
+              name: '模拟器配置',
+              trailing: const SizedBox(),
+              onChanged: () => navigateConfigPage(context),
+            ),
+            ServiceTile(
+              leading: const Icon(LucideIcons.settings),
+              name: '设置',
+              trailing: const SizedBox(),
+              onChanged: () => navigateSettingPage(context),
+            ),
+            const Expanded(child: _ExternalApplicationTile()),
+            const ServiceTileDivider(label: '服务器'),
+            const _ServerSelect(),
+            const SizedBox(height: 8),
+            _GameStarter(),
+          ],
+        ),
+        content: Column(
+          children: [
+            Expanded(
+              child: SignalBuilder(
+                builder: (context) {
+                  return ArcaneLogView(
+                    watermark: 'MYSQLD',
+                    logs: getIt<MysqldViewModel>().info.logs,
+                  );
+                },
               ),
             ),
-            const SizedBox(width: 32),
-            const Expanded(
-              child: Column(
-                children: [
-                  Expanded(child: MysqldLog()),
-                  SizedBox(height: 16),
-                  Expanded(child: WorldServerLog()),
-                  SizedBox(height: 16),
-                  Expanded(child: AuthServerLog()),
-                ],
+            const SizedBox(height: 16),
+            Expanded(
+              child: SignalBuilder(
+                builder: (context) {
+                  return ArcaneLogView(
+                    watermark: 'WORLD SERVER',
+                    logs: getIt<WorldServerViewModel>().info.logs,
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 16),
+            Expanded(
+              child: SignalBuilder(
+                builder: (context) {
+                  return ArcaneLogView(
+                    watermark: 'AUTH SERVER',
+                    logs: getIt<AuthServerViewModel>().info.logs,
+                  );
+                },
               ),
             ),
           ],
@@ -148,186 +153,7 @@ class _ServerSelect extends StatefulWidget {
 }
 
 class _ServerSelectState extends State<_ServerSelect> {
-  LayerLink link = LayerLink();
-  OverlayEntry? entry;
-  bool active = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final shadow = theme.colorScheme.shadow.withValues(alpha: 0.125);
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: insertOverlay,
-      child: CompositedTransformTarget(
-        link: link,
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: shadow),
-            borderRadius: BorderRadius.circular(4),
-          ),
-          padding: const EdgeInsets.all(8),
-          child: Row(
-            children: [
-              SignalBuilder(
-                builder: (context) {
-                  return Text(getIt<ServerViewModel>().activeServer.name);
-                },
-              ),
-              const Spacer(),
-              AnimatedRotation(
-                turns: active ? 0.5 : 0,
-                duration: const Duration(milliseconds: 200),
-                child: const Icon(LucideIcons.chevronDown),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void insertOverlay() {
-    entry = OverlayEntry(
-      builder: (context) => _SelectOverlay(link: link, onTap: removeOverlay),
-    );
-    Overlay.of(context).insert(entry!);
-    setState(() => active = !active);
-  }
-
-  void removeOverlay() {
-    entry?.remove();
-    setState(() => active = !active);
-  }
-}
-
-class _SelectOverlay extends StatelessWidget {
-  const _SelectOverlay({required this.link, this.onTap});
-
-  final LayerLink link;
-  final void Function()? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final surface = theme.colorScheme.surface;
-    final shadow = theme.colorScheme.shadow.withValues(alpha: 0.125);
-    return Stack(
-      children: [
-        GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: () => onTap?.call(),
-          child: Container(color: Colors.transparent),
-        ),
-        CompositedTransformFollower(
-          followerAnchor: Alignment.bottomCenter,
-          targetAnchor: Alignment.topCenter,
-          link: link,
-          offset: const Offset(0, -16),
-          child: Material(
-            borderRadius: BorderRadius.circular(8),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  BoxShadow(
-                    blurRadius: 16,
-                    color: shadow,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-                color: surface,
-              ),
-              width: 288,
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxHeight: 240),
-                child: SignalBuilder(
-                  builder: (context) {
-                    final list = getIt<ServerViewModel>().servers;
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          title: Text(list[index].name),
-                          onTap: () => selectServer(list[index]),
-                        );
-                      },
-                      itemCount: list.length,
-                    );
-                  },
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  void selectServer(Server server) {
-    getIt<ServerViewModel>().activate(server);
-    onTap?.call();
-  }
-}
-
-class _GameStarter extends StatelessWidget {
-  const _GameStarter();
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final primary = theme.colorScheme.primary;
-    final onPrimary = theme.colorScheme.onPrimary;
-    final surface = theme.colorScheme.surface;
-    return Row(
-      children: [
-        Expanded(
-          child: SignalBuilder(
-            builder: (context) {
-              final loading = getIt<GameViewModel>().loading;
-              return ElevatedButton(
-                style: ButtonStyle(
-                  backgroundColor: WidgetStatePropertyAll(primary),
-                  foregroundColor: WidgetStatePropertyAll(onPrimary),
-                  surfaceTintColor: WidgetStatePropertyAll(surface),
-                  shape: const WidgetStatePropertyAll(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(4),
-                        topLeft: Radius.circular(4),
-                      ),
-                    ),
-                  ),
-                ),
-                onPressed: () {
-                  if (loading) return;
-                  getIt<GameViewModel>().startGame();
-                },
-                child: Container(
-                  alignment: Alignment.center,
-                  height: 48,
-                  child: Text(loading ? '正在启动' : '开始游戏'),
-                ),
-              );
-            },
-          ),
-        ),
-        Container(color: surface, height: 48, width: 0.5),
-        const _GameOption(),
-      ],
-    );
-  }
-}
-
-class _GameOption extends StatefulWidget {
-  const _GameOption();
-
-  @override
-  State<_GameOption> createState() => __GameOptionState();
-}
-
-class __GameOptionState extends State<_GameOption> {
-  AntDropdownController controller = AntDropdownController();
+  final controller = ArcaneDropdownController();
 
   @override
   void dispose() {
@@ -337,63 +163,103 @@ class __GameOptionState extends State<_GameOption> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final primary = theme.colorScheme.primary;
-    final onPrimary = theme.colorScheme.onPrimary;
-    final surface = theme.colorScheme.surface;
+    final cs = Theme.of(context).colorScheme;
     return ArcaneDropdown(
+      controller: controller,
+      width: 288,
       builder: (context) {
-        final gameVM = getIt<GameViewModel>();
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              title: const Text('启动所有服务'),
-              onTap: () {
-                gameVM.startServices();
-                controller.removeOverlayEntry();
+        return SignalBuilder(
+          builder: (context) {
+            final list = getIt<ServerViewModel>().servers;
+            return ListView.builder(
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(list[index].name),
+                  onTap: () => selectServer(list[index]),
+                );
               },
-            ),
-            ListTile(
-              title: const Text('关闭所有服务'),
-              onTap: () {
-                gameVM.stopServices();
-                controller.removeOverlayEntry();
-              },
-            ),
-            const Divider(),
-            ListTile(
-              title: const Text('启动客户端'),
-              onTap: () {
-                gameVM.startClient();
-                controller.removeOverlayEntry();
-              },
-            ),
-          ],
+              itemCount: list.length,
+            );
+          },
         );
       },
-      controller: controller,
-      child: ElevatedButton(
-        style: ButtonStyle(
-          backgroundColor: WidgetStatePropertyAll(primary),
-          foregroundColor: WidgetStatePropertyAll(onPrimary),
-          surfaceTintColor: WidgetStatePropertyAll(surface),
-          shape: const WidgetStatePropertyAll(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                bottomRight: Radius.circular(4),
-                topRight: Radius.circular(4),
-              ),
+      child: AnimatedBuilder(
+        animation: controller,
+        builder: (context, child) {
+          return Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: Arcane.border(cs)),
+              borderRadius: BorderRadius.circular(Arcane.radiusControl),
             ),
-          ),
-        ),
-        onPressed: () {},
-        child: Container(
-          alignment: Alignment.center,
-          height: 48,
-          child: const Icon(LucideIcons.ellipsis),
-        ),
+            padding: const EdgeInsets.all(8),
+            child: Row(
+              children: [
+                SignalBuilder(
+                  builder: (context) {
+                    return Text(getIt<ServerViewModel>().activeServer.name);
+                  },
+                ),
+                const Spacer(),
+                AnimatedRotation(
+                  turns: controller.showOverlay ? 0.5 : 0,
+                  duration: Arcane.duration,
+                  child: const Icon(LucideIcons.chevronDown),
+                ),
+              ],
+            ),
+          );
+        },
       ),
+    );
+  }
+
+  void selectServer(Server server) {
+    getIt<ServerViewModel>().activate(server);
+    controller.removeOverlayEntry();
+  }
+}
+
+class _GameStarter extends StatelessWidget {
+  const _GameStarter();
+
+  @override
+  Widget build(BuildContext context) {
+    return SignalBuilder(
+      builder: (context) {
+        final gameVM = getIt<GameViewModel>();
+        return ArcaneStartButton(
+          onPlay: gameVM.startGame,
+          loading: gameVM.loading,
+          optionsBuilder: (context, close) => Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: const Text('启动所有服务'),
+                onTap: () {
+                  gameVM.startServices();
+                  close();
+                },
+              ),
+              ListTile(
+                title: const Text('关闭所有服务'),
+                onTap: () {
+                  gameVM.stopServices();
+                  close();
+                },
+              ),
+              const Divider(),
+              ListTile(
+                title: const Text('启动客户端'),
+                onTap: () {
+                  gameVM.startClient();
+                  close();
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

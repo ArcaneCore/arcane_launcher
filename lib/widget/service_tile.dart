@@ -25,7 +25,7 @@ class ServiceTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final onSurface = theme.colorScheme.onSurface.withValues(alpha: 0.5);
-    final defaultTrailing = AntSwitch(
+    final defaultTrailing = ArcaneSwitch(
       loading: loading,
       value: active,
       onChanged: handleChange,

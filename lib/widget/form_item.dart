@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class AntFormItem extends StatelessWidget {
-  const AntFormItem({super.key, required this.label, required this.child});
+class ArcaneFormItem extends StatelessWidget {
+  const ArcaneFormItem({super.key, required this.label, required this.child});
 
   final String label;
   final Widget child;

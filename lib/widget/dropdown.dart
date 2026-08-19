@@ -5,11 +5,13 @@ class ArcaneDropdown extends StatefulWidget {
     super.key,
     this.controller,
     this.builder,
+    this.width = 160,
     required this.child,
   });
 
-  final AntDropdownController? controller;
+  final ArcaneDropdownController? controller;
   final Widget Function(BuildContext)? builder;
+  final double width;
   final Widget child;
 
   @override
@@ -49,10 +51,11 @@ class ArcaneDropdownState extends State<ArcaneDropdown> {
   void insertOverlay() {
     entry = OverlayEntry(
       builder: (context) {
-        return _AntDropdownOverlay(
+        return _ArcaneDropdownOverlay(
           builder: widget.builder,
           link: link,
           onTap: removeOverlay,
+          width: widget.width,
         );
       },
     );
@@ -72,12 +75,18 @@ class ArcaneDropdownState extends State<ArcaneDropdown> {
   }
 }
 
-class _AntDropdownOverlay extends StatelessWidget {
-  const _AntDropdownOverlay({this.builder, required this.link, this.onTap});
+class _ArcaneDropdownOverlay extends StatelessWidget {
+  const _ArcaneDropdownOverlay({
+    this.builder,
+    required this.link,
+    this.onTap,
+    this.width = 160,
+  });
 
   final Widget Function(BuildContext)? builder;
   final LayerLink link;
   final void Function()? onTap;
+  final double width;
 
   @override
   Widget build(BuildContext context) {
@@ -113,10 +122,10 @@ class _AntDropdownOverlay extends StatelessWidget {
                   ],
                   color: surface,
                 ),
-                constraints: const BoxConstraints(
+                constraints: BoxConstraints(
                   maxHeight: 200,
-                  maxWidth: 160,
-                  minWidth: 160,
+                  maxWidth: width,
+                  minWidth: width,
                 ),
                 child: builder?.call(context),
               ),
@@ -131,7 +140,7 @@ class _AntDropdownOverlay extends StatelessWidget {
   }
 }
 
-class AntDropdownController extends ChangeNotifier {
+class ArcaneDropdownController extends ChangeNotifier {
   bool showOverlay = false;
 
   void removeOverlayEntry() {

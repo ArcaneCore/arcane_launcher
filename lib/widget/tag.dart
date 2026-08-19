@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
 
-class Tag extends StatelessWidget {
-  const Tag({super.key, required this.label, this.type = TagType.tertiary});
+class ArcaneTag extends StatelessWidget {
+  const ArcaneTag({super.key, required this.label, this.type = ArcaneTagType.tertiary});
 
   final String label;
-  final TagType type;
+  final ArcaneTagType type;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final (backgroundColor, foregroundColor) = switch (type) {
-      TagType.primary => (colorScheme.primary, colorScheme.onPrimary),
-      TagType.secondary => (colorScheme.secondary, colorScheme.onSecondary),
-      TagType.tertiary => (colorScheme.outlineVariant, colorScheme.onSurfaceVariant),
+      ArcaneTagType.primary => (colorScheme.primary, colorScheme.onPrimary),
+      ArcaneTagType.secondary => (colorScheme.secondary, colorScheme.onSecondary),
+      ArcaneTagType.tertiary => (
+        colorScheme.outlineVariant,
+        colorScheme.onSurfaceVariant,
+      ),
     };
     return Container(
       decoration: BoxDecoration(
@@ -29,4 +32,4 @@ class Tag extends StatelessWidget {
   }
 }
 
-enum TagType { primary, secondary, tertiary }
+enum ArcaneTagType { primary, secondary, tertiary }

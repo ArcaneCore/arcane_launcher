@@ -1,5 +1,8 @@
 import 'package:arcane_launcher/page/config/component/auth_server.dart';
 import 'package:arcane_launcher/page/config/component/world_server.dart';
+import 'package:arcane_launcher/theme/arcane_theme.dart';
+import 'package:arcane_launcher/widget/card.dart';
+import 'package:arcane_launcher/widget/page_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
@@ -22,95 +25,46 @@ class _SettingState extends State<ConfigPage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final surface = colorScheme.surface;
-    final shadow = colorScheme.shadow.withValues(alpha: 0.125);
     return Scaffold(
-      body: Row(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              color: surface,
-              borderRadius: BorderRadius.circular(8),
-              boxShadow: [
-                BoxShadow(
-                  blurRadius: 16,
-                  color: shadow,
-                  offset: const Offset(0, 2),
-                ),
-              ],
+      body: ArcanePageLayout(
+        sidebar: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ListTile(
+              leading: const Icon(LucideIcons.arrowLeft),
+              title: const Text('返回'),
+              onTap: () => Navigator.of(context).pop(),
             ),
-            margin: const EdgeInsets.all(16),
-            padding: const EdgeInsets.all(16),
-            width: 320,
-            child: Material(
-              type: MaterialType.transparency,
-              borderRadius: BorderRadius.circular(8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ListTile(
-                    leading: const Icon(LucideIcons.arrowLeft),
-                    title: const Text('返回'),
-                    onTap: () => handleTap(context),
-                  ),
-                  ListTile(
-                    leading: const Icon(LucideIcons.gamepad2),
-                    title: const Text('World Server'),
-                    selected: selectedIndex == 0,
-                    onTap: () => handlePageChanged(0),
-                  ),
-                  ListTile(
-                    leading: const Icon(LucideIcons.user),
-                    selected: selectedIndex == 1,
-                    title: const Text('Auth Server'),
-                    onTap: () => handlePageChanged(1),
-                  ),
-                ],
+            ListTile(
+              leading: const Icon(LucideIcons.gamepad2),
+              title: const Text('世界服务器'),
+              selected: selectedIndex == 0,
+              onTap: () => handlePageChanged(0),
+            ),
+            ListTile(
+              leading: const Icon(LucideIcons.user),
+              selected: selectedIndex == 1,
+              title: const Text('认证服务器'),
+              onTap: () => handlePageChanged(1),
+            ),
+          ],
+        ),
+        content: PageView.builder(
+          controller: controller,
+          physics: const NeverScrollableScrollPhysics(),
+          itemBuilder:
+              (context, index) => ArcaneCard(
+                child: switch (selectedIndex) {
+                  0 => const WorldServerConfigPage(),
+                  1 => const AuthServerConfigPage(),
+                  _ => const SizedBox(),
+                },
               ),
-            ),
-          ),
-          Expanded(
-            child: PageView.builder(
-              controller: controller,
-              physics: const NeverScrollableScrollPhysics(),
-              itemBuilder:
-                  (context, index) => Material(
-                    color: surface,
-                    borderRadius: BorderRadius.circular(8),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        boxShadow: [
-                          BoxShadow(
-                            blurRadius: 16,
-                            color: shadow,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                        color: surface,
-                      ),
-                      margin: const EdgeInsets.all(16),
-                      padding: const EdgeInsets.all(16),
-                      child: switch (selectedIndex) {
-                        0 => const WorldServerConfigPage(),
-                        1 => const AuthServerConfigPage(),
-                        _ => const SizedBox(),
-                      },
-                    ),
-                  ),
-              itemCount: 2,
-              scrollDirection: Axis.vertical,
-            ),
-          ),
-        ],
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+          itemCount: 2,
+          scrollDirection: Axis.vertical,
+        ),
+      ),
     );
-  }
-
-  void handleTap(BuildContext context) {
-    Navigator.of(context).pop();
   }
 
   void handlePageChanged(int index) {
@@ -119,16 +73,8 @@ class _SettingState extends State<ConfigPage> {
     });
     controller.animateToPage(
       index,
-      duration: const Duration(milliseconds: 200),
-      curve: Curves.bounceInOut,
-    );
-  }
-
-  void showAbout(BuildContext context) {
-    showAboutDialog(
-      context: context,
-      applicationName: 'Arcane Launcher',
-      applicationVersion: '1.0.0+1',
+      duration: Arcane.duration,
+      curve: Arcane.curve,
     );
   }
 }

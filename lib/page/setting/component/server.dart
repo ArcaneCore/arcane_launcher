@@ -1,6 +1,7 @@
 import 'package:arcane_launcher/di.dart';
 import 'package:arcane_launcher/schema/server.dart';
 import 'package:arcane_launcher/view_model/server_view_model.dart';
+import 'package:arcane_launcher/widget/dialog.dart';
 import 'package:arcane_launcher/widget/form_item.dart';
 import 'package:arcane_launcher/widget/input.dart';
 import 'package:arcane_launcher/widget/switch.dart';
@@ -62,7 +63,7 @@ class _ServerTile extends StatelessWidget {
     Widget? subtitle;
     if (server.description.isNotEmpty) subtitle = Text(server.description);
     final label = server.local ? '本地' : '远程';
-    final type = server.local ? TagType.secondary : TagType.tertiary;
+    final type = server.local ? ArcaneTagType.secondary : ArcaneTagType.tertiary;
     return ListTile(
       leading: const Icon(LucideIcons.server),
       subtitle: subtitle,
@@ -71,10 +72,10 @@ class _ServerTile extends StatelessWidget {
           Text(server.name),
           if (server.version.isNotEmpty) ...[
             const SizedBox(width: 8),
-            Tag(label: server.version, type: TagType.primary),
+            ArcaneTag(label: server.version, type: ArcaneTagType.primary),
           ],
           const SizedBox(width: 8),
-          Tag(label: label, type: type),
+          ArcaneTag(label: label, type: type),
         ],
       ),
       trailing: Row(
@@ -101,35 +102,11 @@ class _ServerTile extends StatelessWidget {
   void _destroyDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => _ServerAlertDialog(server: server),
-    );
-  }
-}
-
-class _ServerAlertDialog extends StatelessWidget {
-  const _ServerAlertDialog({required this.server});
-
-  final Server server;
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('删除服务器'),
-      content: const Text('你确认要删除这个服务器吗？删除后不可恢复。'),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('取消'),
-        ),
-        TextButton(
-          onPressed: () async {
-            await getIt<ServerViewModel>().destroy(server);
-            if (!context.mounted) return;
-            Navigator.of(context).pop();
-          },
-          child: const Text('确认'),
-        ),
-      ],
+      builder: (context) => ArcaneConfirmDialog(
+        title: '删除服务器',
+        content: '你确认要删除这个服务器吗？删除后不可恢复。',
+        onConfirm: () => getIt<ServerViewModel>().destroy(server),
+      ),
     );
   }
 }
@@ -178,103 +155,89 @@ class _ServerFormState extends State<_ServerForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        width: 600,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('服务器信息'),
-                IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(LucideIcons.x),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: AntFormItem(
-                    label: '名称',
-                    child: AntInput(controller: nameCtrl),
-                  ),
-                ),
-                Expanded(
-                  child: AntFormItem(
-                    label: '版本',
-                    child: AntInput(controller: versionCtrl),
-                  ),
-                ),
-              ],
-            ),
-            AntFormItem(label: '描述', child: AntInput(controller: descCtrl)),
-            AntFormItem(
-              label: '是否本地',
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: UnconstrainedBox(
-                  child: AntSwitch(
-                    value: local,
-                    onChanged: (v) => setState(() => local = v),
-                  ),
+    return ArcaneFormDialog(
+      title: '服务器信息',
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: ArcaneFormItem(
+                  label: '名称',
+                  child: ArcaneInput(controller: nameCtrl),
                 ),
               ),
-            ),
-            if (local) ...[
-              _pathField(
-                'Mysqld',
-                mysqldPathCtrl,
-                () => _pickFile(mysqldPathCtrl),
-              ),
-              _pathField(
-                'World Server',
-                worldServerPathCtrl,
-                () => _pickFile(worldServerPathCtrl),
-              ),
-              _pathField(
-                'World Server Config',
-                worldServerConfigCtrl,
-                () => _pickFile(worldServerConfigCtrl),
-              ),
-              _pathField(
-                'World Server Log',
-                worldServerLogCtrl,
-                () => _pickFile(worldServerLogCtrl),
-              ),
-              _pathField(
-                'Auth Server',
-                authServerPathCtrl,
-                () => _pickFile(authServerPathCtrl),
-              ),
-              _pathField(
-                'Auth Server Config',
-                authServerConfigCtrl,
-                () => _pickFile(authServerConfigCtrl),
-              ),
-              _pathField(
-                'Auth Server Log',
-                authServerLogCtrl,
-                () => _pickFile(authServerLogCtrl),
+              Expanded(
+                child: ArcaneFormItem(
+                  label: '版本',
+                  child: ArcaneInput(controller: versionCtrl),
+                ),
               ),
             ],
-            if (!local)
-              AntFormItem(
-                label: '地址',
-                child: AntInput(controller: realmListCtrl),
+          ),
+          ArcaneFormItem(label: '描述', child: ArcaneInput(controller: descCtrl)),
+          ArcaneFormItem(
+            label: '是否本地',
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: UnconstrainedBox(
+                child: ArcaneSwitch(
+                  value: local,
+                  onChanged: (v) => setState(() => local = v),
+                ),
               ),
-            _pathField(
-              'Client',
-              clientPathCtrl,
-              () => _pickFile(clientPathCtrl),
             ),
-            ElevatedButton(onPressed: _store, child: const Text('保存')),
+          ),
+          if (local) ...[
+            _pathField(
+              'Mysqld',
+              mysqldPathCtrl,
+              () => _pickFile(mysqldPathCtrl),
+            ),
+            _pathField(
+              'World Server',
+              worldServerPathCtrl,
+              () => _pickFile(worldServerPathCtrl),
+            ),
+            _pathField(
+              'World Server Config',
+              worldServerConfigCtrl,
+              () => _pickFile(worldServerConfigCtrl),
+            ),
+            _pathField(
+              'World Server Log',
+              worldServerLogCtrl,
+              () => _pickFile(worldServerLogCtrl),
+            ),
+            _pathField(
+              'Auth Server',
+              authServerPathCtrl,
+              () => _pickFile(authServerPathCtrl),
+            ),
+            _pathField(
+              'Auth Server Config',
+              authServerConfigCtrl,
+              () => _pickFile(authServerConfigCtrl),
+            ),
+            _pathField(
+              'Auth Server Log',
+              authServerLogCtrl,
+              () => _pickFile(authServerLogCtrl),
+            ),
           ],
-        ),
+          if (!local)
+            ArcaneFormItem(
+              label: '地址',
+              child: ArcaneInput(controller: realmListCtrl),
+            ),
+          _pathField(
+            'Client',
+            clientPathCtrl,
+            () => _pickFile(clientPathCtrl),
+          ),
+          ElevatedButton(onPressed: _store, child: const Text('保存')),
+        ],
       ),
     );
   }
@@ -284,11 +247,11 @@ class _ServerFormState extends State<_ServerForm> {
     TextEditingController ctrl,
     VoidCallback onPick,
   ) {
-    return AntFormItem(
+    return ArcaneFormItem(
       label: label,
       child: Row(
         children: [
-          Expanded(child: AntInput(controller: ctrl)),
+          Expanded(child: ArcaneInput(controller: ctrl)),
           const SizedBox(width: 8),
           IconButton(onPressed: onPick, icon: const Icon(LucideIcons.ellipsis)),
         ],
@@ -319,7 +282,7 @@ class _ServerFormState extends State<_ServerForm> {
     server.authServerLog = authServerLogCtrl.text;
     server.clientPath = clientPathCtrl.text;
     await getIt<ServerViewModel>().store(server);
-    if (!context.mounted) return;
+    if (!mounted) return;
     Navigator.of(context).pop();
   }
 }

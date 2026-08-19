@@ -1,7 +1,8 @@
+import 'package:arcane_launcher/theme/arcane_theme.dart';
 import 'package:flutter/material.dart';
 
-class AntInput extends StatelessWidget {
-  const AntInput({
+class ArcaneInput extends StatelessWidget {
+  const ArcaneInput({
     super.key,
     this.controller,
     this.placeholder,
@@ -14,14 +15,11 @@ class AntInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final shadow = colorScheme.shadow.withValues(alpha: 0.125);
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        border: Border.all(color: shadow),
-        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: Arcane.border(Theme.of(context).colorScheme)),
+        borderRadius: BorderRadius.circular(Arcane.radiusControl),
       ),
       child: TextField(
         controller: controller,

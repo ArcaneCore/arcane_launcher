@@ -1,6 +1,7 @@
 import 'package:arcane_launcher/di.dart';
 import 'package:arcane_launcher/schema/external_application.dart';
 import 'package:arcane_launcher/view_model/external_application_view_model.dart';
+import 'package:arcane_launcher/widget/dialog.dart';
 import 'package:arcane_launcher/widget/form_item.dart';
 import 'package:arcane_launcher/widget/input.dart';
 import 'package:arcane_launcher/widget/tag.dart';
@@ -71,7 +72,7 @@ class _Tile extends StatelessWidget {
         children: [
           Text(application.name),
           const SizedBox(width: 8),
-          Tag(label: application.path, type: TagType.tertiary),
+          ArcaneTag(label: application.path, type: ArcaneTagType.tertiary),
         ],
       ),
       trailing: Row(
@@ -98,35 +99,13 @@ class _Tile extends StatelessWidget {
   void _destroyDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => _AlertDialog(application: application),
-    );
-  }
-}
-
-class _AlertDialog extends StatelessWidget {
-  const _AlertDialog({required this.application});
-
-  final ExternalApplication application;
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('删除外部程序'),
-      content: const Text('你确认要删除这个外部程序吗？删除后不可恢复。'),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('取消'),
+      builder: (context) => ArcaneConfirmDialog(
+        title: '删除外部程序',
+        content: '你确认要删除这个外部程序吗？删除后不可恢复。',
+        onConfirm: () => getIt<ExternalApplicationViewModel>().destroy(
+          application,
         ),
-        TextButton(
-          onPressed: () async {
-            await getIt<ExternalApplicationViewModel>().destroy(application);
-            if (!context.mounted) return;
-            Navigator.of(context).pop();
-          },
-          child: const Text('确认'),
-        ),
-      ],
+      ),
     );
   }
 }
@@ -155,42 +134,28 @@ class _FormState extends State<_Form> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        width: 600,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return ArcaneFormDialog(
+      title: '外部程序信息',
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ArcaneFormItem(label: '名称', child: ArcaneInput(controller: nameCtrl)),
+          ArcaneFormItem(label: '描述', child: ArcaneInput(controller: descCtrl)),
+          ArcaneFormItem(
+            label: 'Client',
+            child: Row(
               children: [
-                const Text('外部程序信息'),
+                Expanded(child: ArcaneInput(controller: pathCtrl)),
+                const SizedBox(width: 8),
                 IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(LucideIcons.x),
+                  onPressed: _pickPath,
+                  icon: const Icon(LucideIcons.ellipsis),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
-            AntFormItem(label: '名称', child: AntInput(controller: nameCtrl)),
-            AntFormItem(label: '描述', child: AntInput(controller: descCtrl)),
-            AntFormItem(
-              label: 'Client',
-              child: Row(
-                children: [
-                  Expanded(child: AntInput(controller: pathCtrl)),
-                  const SizedBox(width: 8),
-                  IconButton(
-                    onPressed: _pickPath,
-                    icon: const Icon(LucideIcons.ellipsis),
-                  ),
-                ],
-              ),
-            ),
-            ElevatedButton(onPressed: _store, child: const Text('保存')),
-          ],
-        ),
+          ),
+          ElevatedButton(onPressed: _store, child: const Text('保存')),
+        ],
       ),
     );
   }
@@ -208,7 +173,7 @@ class _FormState extends State<_Form> {
     app.description = descCtrl.text;
     app.path = pathCtrl.text;
     await getIt<ExternalApplicationViewModel>().store(app);
-    if (!context.mounted) return;
+    if (!mounted) return;
     Navigator.of(context).pop();
   }
 }

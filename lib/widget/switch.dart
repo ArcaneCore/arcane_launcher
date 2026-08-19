@@ -2,8 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-class AntSwitch extends StatelessWidget {
-  const AntSwitch({
+class ArcaneSwitch extends StatelessWidget {
+  const ArcaneSwitch({
     super.key,
     this.loading = false,
     required this.value,
@@ -50,7 +50,7 @@ class AntSwitch extends StatelessWidget {
                 color: surface,
                 shape: BoxShape.circle,
               ),
-              child: loading ? const _AntSwitchLoadingIndicator() : null,
+              child: loading ? const _ArcaneSwitchLoadingIndicator() : null,
             ),
           ),
         ),
@@ -64,15 +64,15 @@ class AntSwitch extends StatelessWidget {
   }
 }
 
-class _AntSwitchLoadingIndicator extends StatefulWidget {
-  const _AntSwitchLoadingIndicator();
+class _ArcaneSwitchLoadingIndicator extends StatefulWidget {
+  const _ArcaneSwitchLoadingIndicator();
 
   @override
-  State<_AntSwitchLoadingIndicator> createState() =>
-      __AntSwitchLoadingIndicatorState();
+  State<_ArcaneSwitchLoadingIndicator> createState() =>
+      __ArcaneSwitchLoadingIndicatorState();
 }
 
-class __AntSwitchLoadingIndicatorState extends State<_AntSwitchLoadingIndicator>
+class __ArcaneSwitchLoadingIndicatorState extends State<_ArcaneSwitchLoadingIndicator>
     with SingleTickerProviderStateMixin {
   late AnimationController controller;
 
@@ -105,7 +105,7 @@ class __AntSwitchLoadingIndicatorState extends State<_AntSwitchLoadingIndicator>
           animation: Tween(begin: 0.0, end: 1).animate(controller),
           builder: (context, child) {
             return CustomPaint(
-              painter: _AntSwitchLoadingIndicatorPainter(
+              painter: _ArcaneSwitchLoadingIndicatorPainter(
                 color: primary,
                 startAngle: controller.value * pi * 2,
               ),
@@ -118,8 +118,8 @@ class __AntSwitchLoadingIndicatorState extends State<_AntSwitchLoadingIndicator>
   }
 }
 
-class _AntSwitchLoadingIndicatorPainter extends CustomPainter {
-  _AntSwitchLoadingIndicatorPainter({
+class _ArcaneSwitchLoadingIndicatorPainter extends CustomPainter {
+  _ArcaneSwitchLoadingIndicatorPainter({
     required this.color,
     required this.startAngle,
   });
