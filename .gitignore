@@ -50,5 +50,5 @@ app.*.map.json
 
 # Runtime config files
 servers.yaml
-external_applications.yaml
+applications.yaml
 *.tmp

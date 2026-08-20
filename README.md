@@ -101,7 +101,7 @@ The app reads and writes the following YAML files in the **working directory** (
 | `client_path` | Game client executable |
 | `active` | Whether this is the active server |
 
-### external_applications.yaml
+### applications.yaml
 
 | Field | Description |
 | --- | --- |

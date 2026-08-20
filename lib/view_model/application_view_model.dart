@@ -4,7 +4,7 @@ import 'package:arcane_launcher/util/yaml_store.dart';
 import 'package:signals/signals.dart';
 
 class ApplicationViewModel {
-  static const _fileName = 'external_applications.yaml';
+  static const _fileName = 'applications.yaml';
 
   final _apps = signal<List<ApplicationEntity>>([]);
   final _store = YamlStore(_fileName);
