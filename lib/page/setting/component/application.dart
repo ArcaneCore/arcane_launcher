@@ -1,7 +1,8 @@
 import 'package:arcane_launcher/schema/application.dart';
 import 'package:arcane_launcher/theme/arcane_theme.dart';
 import 'package:arcane_launcher/view_model/application_view_model.dart';
-import 'package:arcane_launcher/widget/dialog.dart';
+import 'package:arcane_launcher/widget/dialog/confirm_dialog.dart';
+import 'package:arcane_launcher/widget/dialog/form_dialog.dart';
 import 'package:arcane_launcher/widget/form_item.dart';
 import 'package:arcane_launcher/widget/input.dart';
 import 'package:arcane_launcher/widget/tag.dart';
