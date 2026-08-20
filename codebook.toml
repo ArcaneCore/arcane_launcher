@@ -1,4 +1,8 @@
 words = [
+    "authserver",
     "lucide",
     "mysqld",
+    "realmlist",
+    "worldserver",
+    "wtf",
 ]

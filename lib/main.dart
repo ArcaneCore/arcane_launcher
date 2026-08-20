@@ -16,7 +16,7 @@ import 'package:window_manager/window_manager.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await WindowInitializer.ensureInitialized();
-  setupDependencies();
+  Di.instance.ensureInitialized();
   await GetIt.instance.get<SharedPreferenceUtil>().init();
 
   final serverVM = GetIt.instance.get<ServerViewModel>();
