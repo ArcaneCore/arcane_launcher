@@ -3,20 +3,21 @@ import 'dart:io';
 import 'package:yaml/yaml.dart';
 import 'package:yaml_writer/yaml_writer.dart';
 
-/// 读写工作目录下 YAML 配置文件的工具类。
+/// Utility for reading and writing YAML config files in the working directory.
 ///
-/// 写入时先写临时文件再重命名覆盖，避免应用中途退出导致配置文件损坏。
+/// Writes atomically via a temp file + rename so a crash mid-write cannot
+/// corrupt the config file.
 class YamlStore {
   YamlStore(this.fileName);
 
-  /// 文件名（相对工作目录），如 servers.yaml。
+  /// File name (relative to the working directory), e.g. servers.yaml.
   final String fileName;
 
   File get _file => File('${Directory.current.path}/$fileName');
 
   final _writer = YamlWriter();
 
-  /// 读取列表型 YAML 文件，文件不存在时先创建空文件，再返回空列表。
+  /// Reads a list-shaped YAML file, creating an empty file first when missing.
   Future<List<Map<String, Object?>>> readList() async {
     final file = _file;
     if (!await file.exists()) {
@@ -33,7 +34,7 @@ class YamlStore {
         .toList();
   }
 
-  /// 原子写入：先写 `.tmp` 临时文件，再重命名覆盖原文件。
+  /// Atomic write: write a `.tmp` file first, then rename over the target.
   Future<void> writeList(List<Map<String, Object?>> data) async {
     final file = _file;
     final temp = File('${file.path}.tmp');

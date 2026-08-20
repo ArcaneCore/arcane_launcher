@@ -24,7 +24,7 @@ class ArcaneInput extends StatelessWidget {
       child: TextField(
         controller: controller,
         decoration: InputDecoration.collapsed(
-          hintText: placeholder ?? '请输入',
+          hintText: placeholder ?? 'Enter',
         ),
         onChanged: onChanged,
       ),

@@ -79,7 +79,7 @@ class ProcessUtil {
       workingDirectory = patterns.take(patterns.length - 1).join(r'\');
     }
     if (detached) {
-      // 使用Windows的start命令来确保最小化启动
+      // Use the Windows `start` command to launch minimized.
       executable = 'start';
       formattedArguments = ['/MIN', name, ...formattedArguments];
       mode = ProcessStartMode.detached;

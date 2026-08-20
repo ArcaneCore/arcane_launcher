@@ -2,7 +2,8 @@ import 'package:arcane_launcher/theme/arcane_theme.dart';
 import 'package:arcane_launcher/widget/card.dart';
 import 'package:flutter/material.dart';
 
-/// 服务日志卡片：底部淡印服务名水印（签名元素）+ 反向追加的日志列表。
+/// Service log card: a faint service-name watermark (signature element) plus
+/// a reversed log list.
 class ArcaneLogView extends StatelessWidget {
   const ArcaneLogView({super.key, required this.watermark, required this.logs});
 

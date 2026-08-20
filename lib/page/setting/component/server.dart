@@ -43,7 +43,7 @@ class _CreateServerButton extends StatelessWidget {
     return ListTile(
       title: const Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [Icon(LucideIcons.plus), Text('新增服务器')],
+        children: [Icon(LucideIcons.plus), Text('Add Server')],
       ),
       onTap: () => _createServer(context),
     );
@@ -66,7 +66,7 @@ class _ServerTile extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget? subtitle;
     if (server.description.isNotEmpty) subtitle = Text(server.description);
-    final label = server.local ? '本地' : '远程';
+    final label = server.local ? 'Local' : 'Remote';
     final type = server.local ? ArcaneTagType.secondary : ArcaneTagType.tertiary;
     return ListTile(
       leading: const Icon(LucideIcons.server),
@@ -107,8 +107,8 @@ class _ServerTile extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => ArcaneConfirmDialog(
-        title: '删除服务器',
-        content: '你确认要删除这个服务器吗？删除后不可恢复。',
+        title: 'Delete Server',
+        content: 'Are you sure you want to delete this server? This cannot be undone.',
         onConfirm: () => getIt<ServerViewModel>().destroy(server),
       ),
     );
@@ -187,7 +187,7 @@ class _ServerFormState extends State<_ServerForm> {
   @override
   Widget build(BuildContext context) {
     return ArcaneFormDialog(
-      title: '服务器信息',
+      title: 'Server Details',
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -195,21 +195,21 @@ class _ServerFormState extends State<_ServerForm> {
             children: [
               Expanded(
                 child: ArcaneFormItem(
-                  label: '名称',
+                  label: 'Name',
                   child: ArcaneInput(controller: nameCtrl),
                 ),
               ),
               Expanded(
                 child: ArcaneFormItem(
-                  label: '版本',
+                  label: 'Version',
                   child: ArcaneInput(controller: versionCtrl),
                 ),
               ),
             ],
           ),
-          ArcaneFormItem(label: '描述', child: ArcaneInput(controller: descCtrl)),
+          ArcaneFormItem(label: 'Description', child: ArcaneInput(controller: descCtrl)),
           ArcaneFormItem(
-            label: '是否本地',
+            label: 'Local',
             child: Align(
               alignment: Alignment.centerLeft,
               child: UnconstrainedBox(
@@ -222,29 +222,29 @@ class _ServerFormState extends State<_ServerForm> {
           ),
           if (local) ...[
             _directoryField(
-              '服务端目录',
+              'Server Directory',
               serverDirCtrl,
-              '选择模拟器根目录,自动发现服务配置',
+              'Select the emulator root; config is auto-discovered',
             ),
             _directoryField(
-              '客户端目录',
+              'Client Directory',
               clientDirCtrl,
-              '选择客户端根目录,自动发现主程序',
+              'Select the client root; the executable is auto-discovered',
             ),
             _discoveryStatus(),
             _advancedSection(),
           ] else
             ArcaneFormItem(
-              label: '地址',
+              label: 'Address',
               child: ArcaneInput(controller: realmListCtrl),
             ),
-          ElevatedButton(onPressed: _store, child: const Text('保存')),
+          ElevatedButton(onPressed: _store, child: const Text('Save')),
         ],
       ),
     );
   }
 
-  /// 目录输入行:路径输入(防抖触发发现)+ 文件夹选择。
+  /// Directory input row: path input (debounced discovery) + folder picker.
   Widget _directoryField(
     String label,
     TextEditingController ctrl,
@@ -271,7 +271,7 @@ class _ServerFormState extends State<_ServerForm> {
     );
   }
 
-  /// 发现状态行:进行中提示 / 未命中警告 / 全部命中。
+  /// Discovery status row: in-progress hint, missing-item warnings, all-found.
   Widget _discoveryStatus() {
     final cs = Theme.of(context).colorScheme;
     if (discovering) {
@@ -285,7 +285,7 @@ class _ServerFormState extends State<_ServerForm> {
               child: CircularProgressIndicator(strokeWidth: 2),
             ),
             SizedBox(width: Arcane.space8),
-            Text('正在自动发现配置...'),
+            Text('Discovering configuration...'),
           ],
         ),
       );
@@ -298,7 +298,7 @@ class _ServerFormState extends State<_ServerForm> {
           children: [
             const Icon(LucideIcons.checkCircle2, size: 18, color: Colors.green),
             const SizedBox(width: Arcane.space8),
-            const Text('已自动发现全部配置项'),
+            const Text('All configuration items discovered'),
           ],
         ),
       );
@@ -333,7 +333,7 @@ class _ServerFormState extends State<_ServerForm> {
     );
   }
 
-  /// 高级配置折叠区:所有发现字段,可手动修正。
+  /// Collapsible advanced section: all discovered fields, manually editable.
   Widget _advancedSection() {
     return Column(
       children: [
@@ -350,7 +350,7 @@ class _ServerFormState extends State<_ServerForm> {
                   child: const Icon(LucideIcons.chevronDown, size: 18),
                 ),
                 const SizedBox(width: Arcane.space4),
-                const Text('高级配置'),
+                const Text('Advanced'),
               ],
             ),
           ),
@@ -400,14 +400,14 @@ class _ServerFormState extends State<_ServerForm> {
                           () => _pickFile(authServerLogCtrl),
                         ),
                         ArcaneFormItem(
-                          label: '登录地址',
+                          label: 'Realm List',
                           child: ArcaneInput(
                             controller: realmListCtrl,
-                            placeholder: '默认 127.0.0.1',
+                            placeholder: 'Default: 127.0.0.1',
                           ),
                         ),
                         _pathField(
-                          '客户端主程序',
+                          'Client Executable',
                           clientPathCtrl,
                           () => _pickFile(clientPathCtrl),
                         ),
@@ -470,7 +470,8 @@ class _ServerFormState extends State<_ServerForm> {
     });
   }
 
-  /// 将发现结果填充到表单;仅覆盖非空字段,名称仅在为空时填入。
+  /// Applies discovery results to the form; only non-empty fields are
+  /// overwritten, and the name is filled only when empty.
   void applyDiscovery(Server discovered) {
     if (nameCtrl.text.isEmpty && discovered.name.isNotEmpty) {
       nameCtrl.text = discovered.name;

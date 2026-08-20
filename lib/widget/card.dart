@@ -1,8 +1,8 @@
 import 'package:arcane_launcher/theme/arcane_theme.dart';
 import 'package:flutter/material.dart';
 
-/// 表面卡片：颜色 + 圆角 + 阴影 + 内边距一体，替换所有手写的
-/// BoxDecoration / BoxShadow 组合。
+/// Surface card: color + radius + shadow + padding in one, replacing all
+/// hand-written BoxDecoration / BoxShadow combinations.
 class ArcaneCard extends StatelessWidget {
   const ArcaneCard({
     super.key,
@@ -29,8 +29,8 @@ class ArcaneCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(Arcane.radiusCard),
         boxShadow: Arcane.shadow(cs),
       ),
-      // 透明的 Material 作为 ListTile 等控件的 ink 载体，
-      // 避免 ink 溅射被卡片的背景色遮挡。
+      // Transparent Material acts as the ink host for ListTile etc., so ink
+      // splashes are not hidden behind the card background.
       child: Material(type: MaterialType.transparency, child: child),
     );
   }

@@ -35,25 +35,25 @@ class _SettingState extends State<SettingPage> {
           children: [
             ListTile(
               leading: const Icon(LucideIcons.arrowLeft),
-              title: const Text('返回'),
+              title: const Text('Back'),
               onTap: () => Navigator.of(context).pop(),
             ),
             ListTile(
               leading: const Icon(LucideIcons.server),
-              title: const Text('服务器'),
+              title: const Text('Servers'),
               selected: selectedIndex == 0,
               onTap: () => handlePageChanged(0),
             ),
             ListTile(
               leading: const Icon(LucideIcons.blocks),
               selected: selectedIndex == 1,
-              title: const Text('外部应用'),
+              title: const Text('External Apps'),
               onTap: () => handlePageChanged(1),
             ),
             const Divider(),
             ListTile(
               leading: const Icon(LucideIcons.info),
-              title: const Text('关于'),
+              title: const Text('About'),
               onTap: () => showAbout(context),
             ),
             const Spacer(),

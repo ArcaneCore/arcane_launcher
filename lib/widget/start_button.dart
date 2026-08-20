@@ -3,14 +3,15 @@ import 'package:arcane_launcher/widget/dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-/// 主操作按钮组：主按钮（左侧圆角）+ 选项下拉（右侧圆角），中间以细线分隔。
+/// Primary action button group: main button (left radius) + options dropdown
+/// (right radius), separated by a hairline.
 class ArcaneStartButton extends StatefulWidget {
   const ArcaneStartButton({
     super.key,
     required this.onPlay,
     this.loading = false,
-    this.playLabel = '开始游戏',
-    this.loadingLabel = '正在启动',
+    this.playLabel = 'Play',
+    this.loadingLabel = 'Starting...',
     this.optionsBuilder,
   });
 
@@ -19,7 +20,7 @@ class ArcaneStartButton extends StatefulWidget {
   final String playLabel;
   final String loadingLabel;
 
-  /// 下拉菜单内容，[close] 用于点击菜单项后收起下拉。
+  /// Dropdown menu content; [close] collapses the menu after an item is tapped.
   final Widget Function(BuildContext context, VoidCallback close)? optionsBuilder;
 
   @override

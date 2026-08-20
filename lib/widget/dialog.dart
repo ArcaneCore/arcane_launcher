@@ -2,7 +2,7 @@ import 'package:arcane_launcher/theme/arcane_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-/// 确认对话框：统一的圆角与「取消 / 确认」按钮布局。
+/// Confirmation dialog: shared radius and Cancel / Confirm button layout.
 class ArcaneConfirmDialog extends StatelessWidget {
   const ArcaneConfirmDialog({
     super.key,
@@ -26,21 +26,21 @@ class ArcaneConfirmDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('取消'),
+          child: const Text('Cancel'),
         ),
         TextButton(
           onPressed: () async {
             await onConfirm();
             if (context.mounted) Navigator.of(context).pop();
           },
-          child: const Text('确认'),
+          child: const Text('Confirm'),
         ),
       ],
     );
   }
 }
 
-/// 表单对话框：统一的头部（标题 + 关闭按钮）、圆角与宽度。
+/// Form dialog: shared header (title + close button), radius, and width.
 class ArcaneFormDialog extends StatelessWidget {
   const ArcaneFormDialog({super.key, required this.title, required this.child});
 

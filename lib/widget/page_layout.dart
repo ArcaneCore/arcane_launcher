@@ -2,7 +2,8 @@ import 'package:arcane_launcher/theme/arcane_theme.dart';
 import 'package:arcane_launcher/widget/card.dart';
 import 'package:flutter/material.dart';
 
-/// 页面骨架：左侧 [sidebarWidth] 卡片 + 右侧内容区，launcher / config / setting 共用。
+/// Page skeleton: [sidebarWidth] card on the left, content on the right;
+/// shared by launcher / config / setting pages.
 class ArcanePageLayout extends StatelessWidget {
   const ArcanePageLayout({super.key, required this.sidebar, required this.content});
 

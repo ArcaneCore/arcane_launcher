@@ -1,128 +1,128 @@
-# Arcane Launcher 奥术启动器
+# Arcane Launcher
 
-基于 Flutter 的《魔兽世界》模拟器桌面启动器,用于一键管理 TrinityCore 系模拟器的核心服务并启动游戏客户端。支持 **Windows / macOS / Linux** 三大桌面平台。
+A Flutter-based desktop launcher for World of Warcraft emulators, built to manage TrinityCore-style servers and launch the game client with one click. Supports **Windows / macOS / Linux**.
 
 ![Flutter](https://img.shields.io/badge/Flutter-3.29+-02569B?logo=flutter) ![Dart](https://img.shields.io/badge/Dart-3.7+-0175C2?logo=dart) ![License](https://img.shields.io/badge/License-MIT-green)
 
-## 功能特性
+## Features
 
-- **一键启动游戏** — 按依赖顺序依次启动 `mysqld` → `worldserver` / `authserver`,待世界服务就绪后自动拉起客户端
-- **客户端自动配置** — 启动前自动清理客户端 `Cache` 目录,并写入 `realmlist.wtf` 登录地址
-- **服务管理** — 对 MySQL、世界服务器、登录服务器进行启动 / 停止 / 状态切换,侧边栏实时展示运行状态
-- **实时日志** — 主界面三块日志面板实时展示 mysqld / worldserver / authserver 输出,并可手动刷新
-- **进程守护** — 每 15 秒轮询进程,服务异常退出时自动同步为停止状态
-- **自动发现配置** — 只需选择服务端与客户端目录,自动扫描模拟器根目录、解析 conf,填充 mysqld / worldserver / authserver 的路径、配置与日志,未命中的项可在高级配置中手动指定
-- **多服务器配置** — 支持维护多套服务器配置(路径、版本、登录地址等),下拉切换激活
-- **模拟器配置编辑** — 应用内直接读写 `worldserver.conf` / `authserver.conf`
-- **外部应用快捷启动** — 自定义添加常用外部程序,一键启动
-- **个性化主题** — 主题色自定义 + 深色 / 浅色模式切换
+- **One-click play** — starts services in dependency order (`mysqld` → `worldserver` / `authserver`) and launches the client once the world server is ready
+- **Automatic client setup** — cleans the client `Cache` directory and writes the login address into `realmlist.wtf` before launch
+- **Service management** — start / stop / toggle MySQL, world server, and auth server with live status in the sidebar
+- **Real-time logs** — three log panels showing mysqld / worldserver / authserver output
+- **Process watchdog** — polls processes every 15 seconds and syncs service status when a process exits unexpectedly
+- **Auto-discovered config** — pick the server and client directories and the launcher scans the emulator root and parses conf files to fill in mysqld / worldserver / authserver paths, configs, and logs; anything not found can be set manually in the Advanced section
+- **Multiple servers** — maintain any number of server profiles (paths, version, realm list, etc.) and switch between them from a dropdown
+- **In-app conf editing** — read and edit `worldserver.conf` / `authserver.conf` directly
+- **External apps** — add shortcuts to frequently used programs and launch them with one click
+- **Theming** — custom accent color and dark / light mode
 
-## 界面概览
+## Screens
 
-- **启动器页** — 核心服务状态、实时日志、服务器切换、一键开始/关闭服务与启动客户端
-- **模拟器配置页** — 编辑当前服务器的 worldserver / authserver 配置文件
-- **设置页** — 服务器管理、外部应用管理、主题设置
+- **Launcher** — service status, live logs, server switcher, one-click start / stop and client launch
+- **Emulator Config** — edit the active server's worldserver / authserver config files
+- **Settings** — server management, external apps, theme
 
-## 技术栈
+## Tech Stack
 
-| 分类 | 技术 |
+| Category | Technology |
 | --- | --- |
-| UI 框架 | Flutter (Material 3) |
-| 状态管理 | [signals](https://pub.dev/packages/signals) |
-| 依赖注入 | [get_it](https://pub.dev/packages/get_it) |
-| 配置存储 | [yaml](https://pub.dev/packages/yaml) / [yaml_writer](https://pub.dev/packages/yaml_writer) + [shared_preferences](https://pub.dev/packages/shared_preferences) |
-| 窗口管理 | [window_manager](https://pub.dev/packages/window_manager) |
-| 文件选择 | [file_picker](https://pub.dev/packages/file_picker) |
-| 图标 | [lucide_icons_flutter](https://pub.dev/packages/lucide_icons_flutter) |
+| UI framework | Flutter (Material 3) |
+| State management | [signals](https://pub.dev/packages/signals) |
+| Dependency injection | [get_it](https://pub.dev/packages/get_it) |
+| Config storage | [yaml](https://pub.dev/packages/yaml) / [yaml_writer](https://pub.dev/packages/yaml_writer) + [shared_preferences](https://pub.dev/packages/shared_preferences) |
+| Window management | [window_manager](https://pub.dev/packages/window_manager) |
+| File picking | [file_picker](https://pub.dev/packages/file_picker) |
+| Icons | [lucide_icons_flutter](https://pub.dev/packages/lucide_icons_flutter) |
 
-## 架构
+## Architecture
 
-采用 MVVM 模式,页面与状态解耦:
+MVVM, with pages decoupled from state:
 
 ```
 lib/
-├── main.dart                  # 入口:初始化窗口、依赖注入、预加载数据
-├── di.dart                    # get_it 依赖注册
-├── page/                      # 页面层
-│   ├── launcher/              # 启动器主界面(服务状态 + 日志 + 一键启动)
-│   ├── config/                # 模拟器配置页(worldserver / authserver 配置编辑)
-│   └── setting/               # 设置页(服务器、外部应用、主题)
-├── view_model/                # ViewModel 层(signals 响应式状态)
+├── main.dart                  # Entry: window init, DI setup, data preloading
+├── di.dart                    # get_it registration
+├── page/                      # Pages
+│   ├── launcher/              # Launcher home (service status + logs + one-click play)
+│   ├── config/                # Emulator config (worldserver / authserver conf editing)
+│   └── setting/               # Settings (servers, external apps, theme)
+├── view_model/                # ViewModels (signals-based reactive state)
 │   ├── server_view_model.dart
-│   ├── game_view_model.dart   # 启动编排与进程守护
+│   ├── game_view_model.dart   # Start orchestration and process watchdog
 │   ├── mysqld_view_model.dart
 │   ├── world_server_view_model.dart
 │   ├── auth_server_view_model.dart
 │   └── ...
-├── schema/                    # 数据模型(Server / Setting / ExternalApplication)
-├── model/                     # 服务信息模型(ServiceInformation)
-├── util/                      # 进程工具、YAML 存储、偏好设置
-├── widget/                    # 通用组件(按钮、卡片、日志视图、表单等)
-└── theme/                     # 主题与设计令牌
+├── schema/                    # Data models (Server / Setting / ExternalApplication)
+├── model/                     # Service information model (ServiceInformation)
+├── util/                      # Process utils, YAML store, discovery, preferences
+├── widget/                    # Shared widgets (buttons, cards, log views, forms, etc.)
+└── theme/                     # Theme and design tokens
 ```
 
-## 环境要求
+## Requirements
 
-- Flutter SDK(Dart SDK **^3.7.2**,见 `pubspec.yaml`)
-- 桌面平台工具链:Windows (VS 2022 + C++ 工具链)、macOS (Xcode)、Linux (CMake + GTK)
+- Flutter SDK (Dart SDK **^3.7.2**, see `pubspec.yaml`)
+- Desktop toolchains: Windows (VS 2022 + C++), macOS (Xcode), Linux (CMake + GTK)
 
-## 快速开始
+## Quick Start
 
 ```bash
-# 1. 获取依赖
+# 1. Fetch dependencies
 flutter pub get
 
-# 2. 运行(选择目标平台)
+# 2. Run (pick a platform)
 flutter run -d windows
 flutter run -d macos
 flutter run -d linux
 
-# 3. 构建发布版本
+# 3. Build a release
 flutter build windows --release
 flutter build macos --release
 flutter build linux --release
 ```
 
-## 配置文件
+## Config Files
 
-应用在**工作目录**下读写以下 YAML 文件(写入采用临时文件 + 原子重命名,避免中途退出损坏配置):
+The app reads and writes the following YAML files in the **working directory** (written atomically via temp file + rename to survive crashes):
 
 ### servers.yaml
 
-| 字段 | 说明 |
+| Field | Description |
 | --- | --- |
-| `name` / `description` / `version` | 服务器名称、描述、版本 |
-| `local` | 是否本地服务器 |
-| `realm_list` | 客户端 `realmlist.wtf` 中写入的登录地址 |
-| `mysqld_path` | mysqld 可执行文件路径 |
-| `world_server_path` / `auth_server_path` | 世界 / 登录服务可执行文件路径 |
-| `world_server_config` / `auth_server_config` | 对应 conf 配置文件路径 |
-| `world_server_log` / `auth_server_log` | 对应日志文件路径(用于日志面板轮询) |
-| `client_path` | 游戏客户端主程序路径 |
-| `active` | 是否为当前激活服务器 |
+| `name` / `description` / `version` | Server name, description, version |
+| `local` | Whether this is a local server |
+| `realm_list` | Login address written to the client's `realmlist.wtf` |
+| `mysqld_path` | Path to the mysqld executable |
+| `world_server_path` / `auth_server_path` | World / auth server executables |
+| `world_server_config` / `auth_server_config` | Corresponding conf file paths |
+| `world_server_log` / `auth_server_log` | Log file paths (polled by the log panels) |
+| `client_path` | Game client executable |
+| `active` | Whether this is the active server |
 
 ### external_applications.yaml
 
-| 字段 | 说明 |
+| Field | Description |
 | --- | --- |
-| `name` | 显示名称 |
-| `path` | 程序路径 |
-| `description` | 描述 |
+| `name` | Display name |
+| `path` | Program path |
+| `description` | Description |
 
-> 主题色与深色模式等界面偏好存储于 `shared_preferences`。
+> Theme color and dark mode are stored in `shared_preferences`.
 
-## 使用流程
+## Usage
 
-1. 在 **设置 → 服务器** 中添加服务器,选择服务端与客户端目录,程序自动发现各服务路径、conf 与日志(展开「高级配置」可手动修正)
-2. 在 **设置 → 外部应用** 中按需添加快捷启动程序
-3. 回到启动器页选择目标服务器,点击 **开始** 一键启动(服务会按 mysqld → worldserver / authserver 的顺序拉起,世界服务就绪后自动启动客户端)
-4. 通过主按钮旁的菜单可单独「启动所有服务」「关闭所有服务」「启动客户端」
+1. In **Settings → Servers**, add a server and pick the server and client directories — the launcher auto-discovers service paths, confs, and logs (expand **Advanced** to fix anything manually)
+2. Add external app shortcuts in **Settings → External Apps** if needed
+3. Back on the launcher, select a server and press **Play** — services start in order (mysqld → worldserver / authserver) and the client launches once the world server is ready
+4. The menu next to the play button offers **Start All Services**, **Stop All Services**, and **Launch Client** individually
 
-## 常见问题
+## Troubleshooting
 
-- **服务启动失败?** 检查 `servers.yaml` 中各路径是否正确,首次启动前请确保数据库已初始化(数据库初始化不属于本启动器职责)。
-- **客户端无法登录?** 确认 `realm_list` 与实际登录服务器地址一致,且客户端版本与模拟器版本匹配。
-- **日志面板无输出?** 确认 worldserver / authserver 配置了日志文件路径,并在服务器配置中正确填写。
+- **Service fails to start?** Check the paths in `servers.yaml`. The database must be initialized before first use (initialization is outside this launcher's scope).
+- **Cannot log in?** Make sure `realm_list` matches the auth server address and the client version matches the emulator.
+- **Log panels empty?** Ensure the world/auth servers are configured with log file paths and the paths are set on the server profile.
 
 ## License
 

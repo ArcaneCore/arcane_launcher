@@ -32,25 +32,25 @@ class LauncherPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Image.asset('asset/world-of-warcraft.png', fit: BoxFit.cover),
-            const ServiceTileDivider(label: '核心服务'),
+            const ServiceTileDivider(label: 'Core Services'),
             const MysqldTile(),
             const WorldServerTile(),
             const AuthServerTile(),
-            const ServiceTileDivider(label: '设置'),
+            const ServiceTileDivider(label: 'Settings'),
             ServiceTile(
               leading: const Icon(LucideIcons.toggleRight),
-              name: '模拟器配置',
+              name: 'Emulator Config',
               trailing: const SizedBox(),
               onChanged: () => navigateConfigPage(context),
             ),
             ServiceTile(
               leading: const Icon(LucideIcons.settings),
-              name: '设置',
+              name: 'Settings',
               trailing: const SizedBox(),
               onChanged: () => navigateSettingPage(context),
             ),
             const Expanded(child: _ExternalApplicationTile()),
-            const ServiceTileDivider(label: '服务器'),
+            const ServiceTileDivider(label: 'Servers'),
             const _ServerSelect(),
             const SizedBox(height: Arcane.space8),
             _GameStarter(),
@@ -124,7 +124,7 @@ class _ExternalApplicationTile extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const ServiceTileDivider(label: '外部应用程序'),
+            const ServiceTileDivider(label: 'External Applications'),
             Expanded(
               child: ListView.builder(
                 itemBuilder: (context, index) {
@@ -235,14 +235,14 @@ class _GameStarter extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                title: const Text('启动所有服务'),
+                title: const Text('Start All Services'),
                 onTap: () {
                   gameVM.startServices();
                   close();
                 },
               ),
               ListTile(
-                title: const Text('关闭所有服务'),
+                title: const Text('Stop All Services'),
                 onTap: () {
                   gameVM.stopServices();
                   close();
@@ -250,7 +250,7 @@ class _GameStarter extends StatelessWidget {
               ),
               const Divider(),
               ListTile(
-                title: const Text('启动客户端'),
+                title: const Text('Launch Client'),
                 onTap: () {
                   gameVM.startClient();
                   close();

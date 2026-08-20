@@ -32,19 +32,19 @@ class _SettingState extends State<ConfigPage> {
           children: [
             ListTile(
               leading: const Icon(LucideIcons.arrowLeft),
-              title: const Text('返回'),
+              title: const Text('Back'),
               onTap: () => Navigator.of(context).pop(),
             ),
             ListTile(
               leading: const Icon(LucideIcons.gamepad2),
-              title: const Text('世界服务器'),
+              title: const Text('World Server'),
               selected: selectedIndex == 0,
               onTap: () => handlePageChanged(0),
             ),
             ListTile(
               leading: const Icon(LucideIcons.user),
               selected: selectedIndex == 1,
-              title: const Text('认证服务器'),
+              title: const Text('Auth Server'),
               onTap: () => handlePageChanged(1),
             ),
           ],

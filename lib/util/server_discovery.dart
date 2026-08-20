@@ -2,22 +2,24 @@ import 'dart:io';
 
 import 'package:arcane_launcher/schema/server.dart';
 
-/// 服务器配置自动发现结果。
+/// Result of automatic server configuration discovery.
 class ServerDiscoveryResult {
   ServerDiscoveryResult({required this.server, required this.warnings});
 
-  /// 部分填充的服务器配置,未命中的字段为空字符串。
+  /// Partially filled server config; unmatched fields are empty strings.
   final Server server;
 
-  /// 发现过程中的提示,如「未找到 MySQL」。
+  /// Hints collected during discovery, e.g. "MySQL not found".
   final List<String> warnings;
 }
 
-/// 通过扫描服务端 / 客户端目录,自动发现模拟器各服务路径、配置与日志。
+/// Discovers emulator service paths, configs, and logs by scanning the server
+/// and client directories.
 ///
-/// 针对 TrinityCore 系目录结构:
-/// - 服务端根目录下 `bin/`(worldserver / authserver 及 conf)、`mysql/bin/mysqld`
-/// - conf 为 `Key = "Value"` 格式,`#` 开头为注释
+/// Targets TrinityCore-style directory layouts:
+/// - server root with `bin/` (worldserver / authserver and confs) and
+///   `mysql/bin/mysqld`
+/// - conf uses `Key = "Value"` lines, with `#`-prefixed comments
 Future<ServerDiscoveryResult> discoverServer({
   required String serverDir,
   required String clientDir,
@@ -59,16 +61,20 @@ Future<ServerDiscoveryResult> discoverServer({
       }
 
       if (server.mysqldPath.isEmpty) {
-        warnings.add('未找到 MySQL(mysqld),可在高级配置中手动指定');
+        warnings.add('MySQL (mysqld) not found; specify it in Advanced settings');
       }
       if (server.worldServerPath.isEmpty) {
-        warnings.add('未找到 World Server(worldserver),可在高级配置中手动指定');
+        warnings.add(
+          'World Server (worldserver) not found; specify it in Advanced settings',
+        );
       }
       if (server.authServerPath.isEmpty) {
-        warnings.add('未找到 Auth Server(authserver),可在高级配置中手动指定');
+        warnings.add(
+          'Auth Server (authserver) not found; specify it in Advanced settings',
+        );
       }
     } else {
-      warnings.add('服务端目录不存在:$serverDir');
+      warnings.add('Server directory does not exist: $serverDir');
     }
   }
 
@@ -92,17 +98,19 @@ Future<ServerDiscoveryResult> discoverServer({
         );
         server.clientPath = matches.first.path;
       } else {
-        warnings.add('未找到客户端主程序(Wow.exe),可在高级配置中手动指定');
+        warnings.add(
+          'Client executable (Wow.exe) not found; specify it in Advanced settings',
+        );
       }
     } else {
-      warnings.add('客户端目录不存在:$clientDir');
+      warnings.add('Client directory does not exist: $clientDir');
     }
   }
 
   return ServerDiscoveryResult(server: server, warnings: warnings);
 }
 
-/// 常见魔兽客户端主程序名,按优先级排列。
+/// Common WoW client executables, ordered by priority.
 const _clientCandidates = [
   'wow.exe',
   'wow-64.exe',
@@ -111,7 +119,8 @@ const _clientCandidates = [
   'wow_beta.exe',
 ];
 
-/// 服务端可执行文件 / 配置文件,按文件名小写匹配,兼容 `.exe` 与无扩展名的 Linux 版。
+/// Matches server executables / configs by lowercase file name, handling both
+/// `.exe` and extensionless Linux builds.
 void _matchServerFile(File file, Map<String, File> found) {
   final name = _basename(file.path).toLowerCase();
   if (name == 'mysqld.exe' || name == 'mysqld') {
@@ -121,7 +130,7 @@ void _matchServerFile(File file, Map<String, File> found) {
   } else if (name == 'authserver.exe' || name == 'authserver') {
     found.putIfAbsent('authserver', () => file);
   } else if (name == 'worldserver.conf' || name == 'worldserver.conf.dist') {
-    // 真实 conf 优先于 .dist 模板
+    // Prefer the real conf over the .dist template.
     final current = found['worldserver_conf'];
     if (current == null || current.path.endsWith('.dist')) {
       found['worldserver_conf'] = file;
@@ -134,7 +143,8 @@ void _matchServerFile(File file, Map<String, File> found) {
   }
 }
 
-/// 有限深度递归扫描目录,越界或无权访问的目录直接跳过。
+/// Recursively scans a directory up to [maxDepth], skipping inaccessible
+/// entries.
 Future<void> _scan(
   Directory dir,
   int maxDepth,
@@ -150,11 +160,11 @@ Future<void> _scan(
       }
     }
   } catch (_) {
-    // 忽略无权限等扫描异常
+    // Ignore scan errors such as permission issues.
   }
 }
 
-/// 解析 `Key = "Value"` 格式的模拟器 conf,返回键值映射。
+/// Parses an emulator conf (`Key = "Value"` lines) into a key-value map.
 Map<String, String> _parseConf(File confFile) {
   final result = <String, String>{};
   String? content;
@@ -179,7 +189,7 @@ Map<String, String> _parseConf(File confFile) {
   return result;
 }
 
-/// 由 conf 推导日志文件完整路径:conf 所在目录 + LogFileDir/LogsDir + LogFile。
+/// Derives the full log path from conf: conf dir + LogFileDir/LogsDir + LogFile.
 String _resolveLogPath(File confFile, Map<String, String> conf, String defaultName) {
   final logDir = (conf['LogFileDir'] ?? conf['LogsDir'] ?? '').trim();
   final logName = (conf['LogFile'] ?? '').trim();
@@ -193,7 +203,7 @@ String _resolveLogPath(File confFile, Map<String, String> conf, String defaultNa
   return '$dir$sep$logName';
 }
 
-/// 取路径最后一段,兼容 `\` 与 `/` 分隔符。
+/// Returns the last path segment, accepting both `\` and `/` separators.
 String _basename(String path) {
   final parts = path.split(RegExp(r'[\\/]'));
   return parts.where((p) => p.isNotEmpty).lastOrNull ?? '';

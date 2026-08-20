@@ -36,7 +36,7 @@ class _State extends State<WorldServerConfigPage> {
                 maxLines: null,
               ),
             ),
-            ElevatedButton(onPressed: _store, child: const Text('保存')),
+            ElevatedButton(onPressed: _store, child: const Text('Save')),
           ],
         );
       },
@@ -49,6 +49,6 @@ class _State extends State<WorldServerConfigPage> {
     if (!mounted) return;
     ScaffoldMessenger.of(context)
       ..removeCurrentSnackBar()
-      ..showSnackBar(const SnackBar(content: Text('保存成功')));
+      ..showSnackBar(const SnackBar(content: Text('Saved')));
   }
 }

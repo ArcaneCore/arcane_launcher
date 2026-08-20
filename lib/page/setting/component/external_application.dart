@@ -41,7 +41,7 @@ class _CreateButton extends StatelessWidget {
     return ListTile(
       title: const Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [Icon(LucideIcons.plus), Text('新增外部程序')],
+        children: [Icon(LucideIcons.plus), Text('Add External App')],
       ),
       onTap: () => _create(context),
     );
@@ -101,8 +101,8 @@ class _Tile extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => ArcaneConfirmDialog(
-        title: '删除外部程序',
-        content: '你确认要删除这个外部程序吗？删除后不可恢复。',
+        title: 'Delete External App',
+        content: 'Are you sure you want to delete this external app? This cannot be undone.',
         onConfirm: () => getIt<ExternalApplicationViewModel>().destroy(
           application,
         ),
@@ -136,12 +136,12 @@ class _FormState extends State<_Form> {
   @override
   Widget build(BuildContext context) {
     return ArcaneFormDialog(
-      title: '外部程序信息',
+      title: 'External App Details',
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          ArcaneFormItem(label: '名称', child: ArcaneInput(controller: nameCtrl)),
-          ArcaneFormItem(label: '描述', child: ArcaneInput(controller: descCtrl)),
+          ArcaneFormItem(label: 'Name', child: ArcaneInput(controller: nameCtrl)),
+          ArcaneFormItem(label: 'Description', child: ArcaneInput(controller: descCtrl)),
           ArcaneFormItem(
             label: 'Client',
             child: Row(
@@ -155,7 +155,7 @@ class _FormState extends State<_Form> {
               ],
             ),
           ),
-          ElevatedButton(onPressed: _store, child: const Text('保存')),
+          ElevatedButton(onPressed: _store, child: const Text('Save')),
         ],
       ),
     );

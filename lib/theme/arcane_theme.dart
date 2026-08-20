@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 
-/// 全局设计 tokens：圆角、间距、布局、阴影、动效。
+/// Global design tokens: radii, spacing, layout, shadows, motion.
 ///
-/// 统一设计语言，任何视觉常量只能在此定义，页面不得再手写
-/// BoxDecoration / BoxShadow / 魔法数字。
+/// Unified design language. All visual constants must be defined here;
+/// pages must not hand-write BoxDecoration / BoxShadow / magic numbers.
 abstract final class Arcane {
-  // 圆角
-  static const double radiusControl = 4; // 输入框、按钮
-  static const double radiusCard = 8; // 卡片、overlay
-  static const double radiusTag = 24; // 药丸标签
-  static const double radiusPill = 50; // 胶囊全圆角（switch 等）
+  // Radii
+  static const double radiusControl = 4; // inputs, buttons
+  static const double radiusCard = 8; // cards, overlays
+  static const double radiusTag = 24; // pill tags
+  static const double radiusPill = 50; // capsule (switch)
 
-  // 布局
+  // Layout
   static const double sidebarWidth = 320;
-  static const double controlHeight = 40; // 服务行高
-  static const double buttonHeight = 48; // 开始游戏按钮高
+  static const double controlHeight = 40; // service row height
+  static const double buttonHeight = 48; // play button height
   static const double formLabelWidth = 96;
 
-  // 间距刻度（唯一来源，页面不得再手写间距数字）
+  // Spacing scale (single source; never hand-write spacing numbers)
   static const double space2 = 2;
   static const double space4 = 4;
   static const double space8 = 8;
@@ -26,7 +26,7 @@ abstract final class Arcane {
   static const double space24 = 24;
   static const double space32 = 32;
 
-  // 阴影（全项目唯一写法）
+  // Shadows (the only allowed form in the project)
   static List<BoxShadow> shadow(ColorScheme cs) => [
     BoxShadow(
       blurRadius: 16,
@@ -35,14 +35,14 @@ abstract final class Arcane {
     ),
   ];
 
-  // 控件描边
+  // Control border
   static Color border(ColorScheme cs) => cs.shadow.withValues(alpha: 0.125);
 
-  // 动效
+  // Motion
   static const Duration duration = Duration(milliseconds: 200);
   static const Curve curve = Curves.easeInOutCubic;
 
-  // 日志区水印（签名元素）
+  // Log area watermark (signature element)
   static TextStyle watermark(ColorScheme cs) => TextStyle(
     color: cs.shadow.withValues(alpha: 0.05),
     fontSize: 120,

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('ArcaneCard 为 ListTile 提供 ink 载体', (WidgetTester tester) async {
+  testWidgets('ArcaneCard provides an ink host for ListTile', (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -14,8 +14,8 @@ void main() {
       ),
     );
 
-    // debug 模式下若 ListTile 的 ink 效果被背景色遮挡会抛断言，
-    // 这里断言构建过程无任何异常。
+    // In debug mode Flutter asserts when ListTile ink is hidden behind a
+    // background, so this just asserts the build completes without exceptions.
     expect(tester.takeException(), isNull);
     expect(find.text('item'), findsOneWidget);
   });
