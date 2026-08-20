@@ -109,8 +109,8 @@ class _ThemeTile extends StatelessWidget {
         final s = vm.setting;
         final iconData = s.darkMode ? LucideIcons.sun : LucideIcons.moon;
         return Wrap(
-          runSpacing: 8,
-          spacing: 8,
+          runSpacing: Arcane.space8,
+          spacing: Arcane.space8,
           children: [
             ...List.generate(Colors.primaries.length, (index) {
               final color = Colors.primaries[index];

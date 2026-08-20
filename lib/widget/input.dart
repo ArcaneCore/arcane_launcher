@@ -16,7 +16,7 @@ class ArcaneInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(Arcane.space8),
       decoration: BoxDecoration(
         border: Border.all(color: Arcane.border(Theme.of(context).colorScheme)),
         borderRadius: BorderRadius.circular(Arcane.radiusControl),

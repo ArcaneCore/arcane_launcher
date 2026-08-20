@@ -1,1 +1,4 @@
-words = ["lucide"]
+words = [
+    "lucide",
+    "mysqld",
+]

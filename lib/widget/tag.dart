@@ -1,3 +1,4 @@
+import 'package:arcane_launcher/theme/arcane_theme.dart';
 import 'package:flutter/material.dart';
 
 class ArcaneTag extends StatelessWidget {
@@ -21,9 +22,12 @@ class ArcaneTag extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: backgroundColor,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(Arcane.radiusTag),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      padding: const EdgeInsets.symmetric(
+        horizontal: Arcane.space8,
+        vertical: Arcane.space2,
+      ),
       child: Text(
         label,
         style: TextStyle(color: foregroundColor, fontSize: 12),

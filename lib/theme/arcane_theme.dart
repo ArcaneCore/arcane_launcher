@@ -9,13 +9,22 @@ abstract final class Arcane {
   static const double radiusControl = 4; // 输入框、按钮
   static const double radiusCard = 8; // 卡片、overlay
   static const double radiusTag = 24; // 药丸标签
+  static const double radiusPill = 50; // 胶囊全圆角（switch 等）
 
   // 布局
   static const double sidebarWidth = 320;
   static const double controlHeight = 40; // 服务行高
   static const double buttonHeight = 48; // 开始游戏按钮高
   static const double formLabelWidth = 96;
-  static const double pageGap = 16;
+
+  // 间距刻度（唯一来源，页面不得再手写间距数字）
+  static const double space2 = 2;
+  static const double space4 = 4;
+  static const double space8 = 8;
+  static const double space12 = 12;
+  static const double space16 = 16;
+  static const double space24 = 24;
+  static const double space32 = 32;
 
   // 阴影（全项目唯一写法）
   static List<BoxShadow> shadow(ColorScheme cs) => [

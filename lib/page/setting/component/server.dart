@@ -75,10 +75,10 @@ class _ServerTile extends StatelessWidget {
         children: [
           Text(server.name),
           if (server.version.isNotEmpty) ...[
-            const SizedBox(width: 8),
+            const SizedBox(width: Arcane.space8),
             ArcaneTag(label: server.version, type: ArcaneTagType.primary),
           ],
-          const SizedBox(width: 8),
+          const SizedBox(width: Arcane.space8),
           ArcaneTag(label: label, type: type),
         ],
       ),
@@ -261,7 +261,7 @@ class _ServerFormState extends State<_ServerForm> {
               onChanged: (_) => scheduleDiscover(),
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: Arcane.space8),
           IconButton(
             onPressed: () => pickDirectory(ctrl),
             icon: const Icon(LucideIcons.folder),
@@ -276,7 +276,7 @@ class _ServerFormState extends State<_ServerForm> {
     final cs = Theme.of(context).colorScheme;
     if (discovering) {
       return const Padding(
-        padding: EdgeInsets.only(bottom: 16),
+        padding: EdgeInsets.only(bottom: Arcane.space16),
         child: Row(
           children: [
             SizedBox(
@@ -284,7 +284,7 @@ class _ServerFormState extends State<_ServerForm> {
               height: 16,
               child: CircularProgressIndicator(strokeWidth: 2),
             ),
-            SizedBox(width: 8),
+            SizedBox(width: Arcane.space8),
             Text('正在自动发现配置...'),
           ],
         ),
@@ -293,24 +293,24 @@ class _ServerFormState extends State<_ServerForm> {
     if (!discovered) return const SizedBox.shrink();
     if (warnings.isEmpty) {
       return Padding(
-        padding: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.only(bottom: Arcane.space16),
         child: Row(
           children: [
             const Icon(LucideIcons.checkCircle2, size: 18, color: Colors.green),
-            const SizedBox(width: 8),
+            const SizedBox(width: Arcane.space8),
             const Text('已自动发现全部配置项'),
           ],
         ),
       );
     }
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.only(bottom: Arcane.space16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           for (final warning in warnings)
             Padding(
-              padding: const EdgeInsets.only(bottom: 4),
+              padding: const EdgeInsets.only(bottom: Arcane.space4),
               child: Row(
                 children: [
                   Icon(
@@ -318,7 +318,7 @@ class _ServerFormState extends State<_ServerForm> {
                     size: 16,
                     color: cs.error,
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: Arcane.space8),
                   Expanded(
                     child: Text(
                       warning,
@@ -341,7 +341,7 @@ class _ServerFormState extends State<_ServerForm> {
           onTap: () => setState(() => advancedExpanded = !advancedExpanded),
           borderRadius: BorderRadius.circular(Arcane.radiusControl),
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4),
+            padding: const EdgeInsets.symmetric(vertical: Arcane.space4),
             child: Row(
               children: [
                 AnimatedRotation(
@@ -349,7 +349,7 @@ class _ServerFormState extends State<_ServerForm> {
                   duration: Arcane.duration,
                   child: const Icon(LucideIcons.chevronDown, size: 18),
                 ),
-                const SizedBox(width: 4),
+                const SizedBox(width: Arcane.space4),
                 const Text('高级配置'),
               ],
             ),
@@ -361,7 +361,7 @@ class _ServerFormState extends State<_ServerForm> {
             curve: Arcane.curve,
             child: advancedExpanded
                 ? Padding(
-                    padding: const EdgeInsets.only(left: 16),
+                    padding: const EdgeInsets.only(left: Arcane.space16),
                     child: Column(
                       children: [
                         _pathField(
@@ -417,7 +417,7 @@ class _ServerFormState extends State<_ServerForm> {
                 : const SizedBox(width: double.infinity),
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: Arcane.space8),
       ],
     );
   }
@@ -432,7 +432,7 @@ class _ServerFormState extends State<_ServerForm> {
       child: Row(
         children: [
           Expanded(child: ArcaneInput(controller: ctrl)),
-          const SizedBox(width: 8),
+          const SizedBox(width: Arcane.space8),
           IconButton(onPressed: onPick, icon: const Icon(LucideIcons.ellipsis)),
         ],
       ),

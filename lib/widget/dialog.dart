@@ -54,7 +54,7 @@ class ArcaneFormDialog extends StatelessWidget {
         borderRadius: BorderRadius.circular(Arcane.radiusCard),
       ),
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(Arcane.space16),
         width: 600,
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -69,7 +69,7 @@ class ArcaneFormDialog extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: Arcane.space16),
             Flexible(child: SingleChildScrollView(child: child)),
           ],
         ),

@@ -1,3 +1,4 @@
+import 'package:arcane_launcher/theme/arcane_theme.dart';
 import 'package:arcane_launcher/widget/switch.dart';
 import 'package:flutter/material.dart';
 
@@ -41,16 +42,16 @@ class ServiceTile extends StatelessWidget {
         cursor: cursor,
         child: Container(
           alignment: Alignment.center,
-          height: 40,
+          height: Arcane.controlHeight,
           child: Row(
             children: [
               if (leading != null) ...[
                 leading!,
-                const SizedBox(width: 8),
+                const SizedBox(width: Arcane.space8),
               ],
               Text(name),
               if (processIds.isNotEmpty) ...[
-                const SizedBox(width: 8),
+                const SizedBox(width: Arcane.space8),
                 Text(
                   processIds.join(', '),
                   style: TextStyle(color: onSurface, fontSize: 12),
@@ -86,7 +87,10 @@ class ServiceTileDivider extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final onSurface = colorScheme.onSurface.withValues(alpha: 0.5);
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
+      padding: const EdgeInsets.symmetric(
+        horizontal: Arcane.space32,
+        vertical: Arcane.space8,
+      ),
       child: Text(label, style: TextStyle(color: onSurface)),
     );
   }

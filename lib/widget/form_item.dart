@@ -1,3 +1,4 @@
+import 'package:arcane_launcher/theme/arcane_theme.dart';
 import 'package:flutter/material.dart';
 
 class ArcaneFormItem extends StatelessWidget {
@@ -9,15 +10,15 @@ class ArcaneFormItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
+      padding: const EdgeInsets.only(bottom: Arcane.space16),
       child: Row(
         children: [
           Container(
             alignment: Alignment.centerRight,
-            width: 96,
+            width: Arcane.formLabelWidth,
             child: Text(label, textAlign: TextAlign.end),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: Arcane.space8),
           Expanded(child: child),
         ],
       ),

@@ -52,7 +52,7 @@ class LauncherPage extends StatelessWidget {
             const Expanded(child: _ExternalApplicationTile()),
             const ServiceTileDivider(label: '服务器'),
             const _ServerSelect(),
-            const SizedBox(height: 8),
+            const SizedBox(height: Arcane.space8),
             _GameStarter(),
           ],
         ),
@@ -68,7 +68,7 @@ class LauncherPage extends StatelessWidget {
                 },
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: Arcane.space16),
             Expanded(
               child: SignalBuilder(
                 builder: (context) {
@@ -79,7 +79,7 @@ class LauncherPage extends StatelessWidget {
                 },
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: Arcane.space16),
             Expanded(
               child: SignalBuilder(
                 builder: (context) {
@@ -192,7 +192,7 @@ class _ServerSelectState extends State<_ServerSelect> {
               border: Border.all(color: Arcane.border(cs)),
               borderRadius: BorderRadius.circular(Arcane.radiusControl),
             ),
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(Arcane.space8),
             child: Row(
               children: [
                 SignalBuilder(

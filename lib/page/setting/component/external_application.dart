@@ -1,5 +1,6 @@
 import 'package:arcane_launcher/di.dart';
 import 'package:arcane_launcher/schema/external_application.dart';
+import 'package:arcane_launcher/theme/arcane_theme.dart';
 import 'package:arcane_launcher/view_model/external_application_view_model.dart';
 import 'package:arcane_launcher/widget/dialog.dart';
 import 'package:arcane_launcher/widget/form_item.dart';
@@ -71,7 +72,7 @@ class _Tile extends StatelessWidget {
       title: Row(
         children: [
           Text(application.name),
-          const SizedBox(width: 8),
+          const SizedBox(width: Arcane.space8),
           ArcaneTag(label: application.path, type: ArcaneTagType.tertiary),
         ],
       ),
@@ -146,7 +147,7 @@ class _FormState extends State<_Form> {
             child: Row(
               children: [
                 Expanded(child: ArcaneInput(controller: pathCtrl)),
-                const SizedBox(width: 8),
+                const SizedBox(width: Arcane.space8),
                 IconButton(
                   onPressed: _pickPath,
                   icon: const Icon(LucideIcons.ellipsis),

@@ -7,7 +7,7 @@ class ArcaneCard extends StatelessWidget {
   const ArcaneCard({
     super.key,
     this.margin,
-    this.padding = const EdgeInsets.all(16),
+    this.padding = const EdgeInsets.all(Arcane.space16),
     this.width,
     required this.child,
   });

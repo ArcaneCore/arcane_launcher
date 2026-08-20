@@ -14,13 +14,13 @@ class ArcanePageLayout extends StatelessWidget {
     return Row(
       children: [
         ArcaneCard(
-          margin: const EdgeInsets.all(Arcane.pageGap),
+          margin: const EdgeInsets.all(Arcane.space16),
           width: Arcane.sidebarWidth,
           child: sidebar,
         ),
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.all(Arcane.pageGap),
+            padding: const EdgeInsets.all(Arcane.space16),
             child: content,
           ),
         ),

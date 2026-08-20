@@ -1,3 +1,4 @@
+import 'package:arcane_launcher/theme/arcane_theme.dart';
 import 'package:flutter/material.dart';
 
 class ArcaneDropdown extends StatefulWidget {
@@ -93,7 +94,6 @@ class _ArcaneDropdownOverlay extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final surface = colorScheme.surface;
-    final shadow = colorScheme.shadow.withValues(alpha: 0.125);
     return Stack(
       children: [
         GestureDetector(
@@ -106,20 +106,14 @@ class _ArcaneDropdownOverlay extends StatelessWidget {
             followerAnchor: Alignment.bottomRight,
             targetAnchor: Alignment.topRight,
             link: link,
-            offset: const Offset(0, -4),
+            offset: const Offset(0, -Arcane.space4),
             child: Material(
               color: surface,
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(Arcane.radiusCard),
               child: Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      blurRadius: 16,
-                      color: shadow,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
+                  borderRadius: BorderRadius.circular(Arcane.radiusCard),
+                  boxShadow: Arcane.shadow(colorScheme),
                   color: surface,
                 ),
                 constraints: BoxConstraints(

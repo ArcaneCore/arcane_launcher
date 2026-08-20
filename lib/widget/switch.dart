@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:arcane_launcher/theme/arcane_theme.dart';
 import 'package:flutter/material.dart';
 
 class ArcaneSwitch extends StatelessWidget {
@@ -37,11 +38,11 @@ class ArcaneSwitch extends StatelessWidget {
           width: 52,
           height: 28,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(50),
+            borderRadius: BorderRadius.circular(Arcane.radiusPill),
             color: value ? primary : surfaceContainerHighest,
           ),
-          duration: const Duration(milliseconds: 150),
-          padding: const EdgeInsets.all(2),
+          duration: Arcane.duration,
+          padding: const EdgeInsets.all(Arcane.space2),
           child: UnconstrainedBox(
             child: Container(
               height: 24,
