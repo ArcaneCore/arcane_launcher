@@ -14,14 +14,14 @@ A Flutter-based desktop launcher for World of Warcraft emulators, built to manag
 - **Auto-discovered config** — pick the server and client directories and the launcher scans the emulator root and parses conf files to fill in mysqld / worldserver / authserver paths, configs, and logs; anything not found can be set manually in the Advanced section
 - **Multiple servers** — maintain any number of server profiles (paths, version, realm list, etc.) and switch between them from a dropdown
 - **In-app conf editing** — read and edit `worldserver.conf` / `authserver.conf` directly
-- **External apps** — add shortcuts to frequently used programs and launch them with one click
+- **Applications** — add shortcuts to frequently used programs and launch them with one click
 - **Theming** — custom accent color and dark / light mode
 
 ## Screens
 
 - **Launcher** — service status, live logs, server switcher, one-click start / stop and client launch
 - **Emulator Config** — edit the active server's worldserver / authserver config files
-- **Settings** — server management, external apps, theme
+- **Settings** — server management, apps, theme
 
 ## Tech Stack
 
@@ -46,7 +46,7 @@ lib/
 ├── page/                      # Pages
 │   ├── launcher/              # Launcher home (service status + logs + one-click play)
 │   ├── config/                # Emulator config (worldserver / authserver conf editing)
-│   └── setting/               # Settings (servers, external apps, theme)
+│   └── setting/               # Settings (servers, apps, theme)
 ├── view_model/                # ViewModels (signals-based reactive state)
 │   ├── server_view_model.dart
 │   ├── game_view_model.dart   # Start orchestration and process watchdog
@@ -54,7 +54,7 @@ lib/
 │   ├── world_server_view_model.dart
 │   ├── auth_server_view_model.dart
 │   └── ...
-├── schema/                    # Data models (Server / Setting / ExternalApplication)
+├── schema/                    # Data models (Server / Setting / Application)
 ├── model/                     # Service information model (ServiceInformation)
 ├── util/                      # Process utils, YAML store, discovery, preferences
 ├── widget/                    # Shared widgets (buttons, cards, log views, forms, etc.)
@@ -114,7 +114,7 @@ The app reads and writes the following YAML files in the **working directory** (
 ## Usage
 
 1. In **Settings → Servers**, add a server and pick the server and client directories — the launcher auto-discovers service paths, confs, and logs (expand **Advanced** to fix anything manually)
-2. Add external app shortcuts in **Settings → External Apps** if needed
+2. Add app shortcuts in **Settings → Apps** if needed
 3. Back on the launcher, select a server and press **Play** — services start in order (mysqld → worldserver / authserver) and the client launches once the world server is ready
 4. The menu next to the play button offers **Start All Services**, **Stop All Services**, and **Launch Client** individually
 

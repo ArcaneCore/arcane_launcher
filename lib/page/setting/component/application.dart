@@ -41,7 +41,7 @@ class _CreateButton extends StatelessWidget {
     return ListTile(
       title: const Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [Icon(LucideIcons.plus), Text('Add External App')],
+        children: [Icon(LucideIcons.plus), Text('Add App')],
       ),
       onTap: () => _create(context),
     );
@@ -101,8 +101,9 @@ class _Tile extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => ArcaneConfirmDialog(
-        title: 'Delete External App',
-        content: 'Are you sure you want to delete this external app? This cannot be undone.',
+            title: 'Delete App',
+            content:
+                'Are you sure you want to delete this app? This cannot be undone.',
         onConfirm: () => getIt<ApplicationViewModel>().destroy(
           application,
         ),
@@ -136,7 +137,7 @@ class _FormState extends State<_Form> {
   @override
   Widget build(BuildContext context) {
     return ArcaneFormDialog(
-      title: 'External App Details',
+      title: 'App Details',
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

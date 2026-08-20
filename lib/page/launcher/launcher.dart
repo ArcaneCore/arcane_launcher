@@ -49,7 +49,7 @@ class LauncherPage extends StatelessWidget {
               trailing: const SizedBox(),
               onChanged: () => navigateSettingPage(context),
             ),
-            const Expanded(child: _ExternalApplicationTile()),
+            const Expanded(child: _ApplicationTile()),
             const ServiceTileDivider(label: 'Servers'),
             const _ServerSelect(),
             const SizedBox(height: Arcane.space8),
@@ -109,8 +109,8 @@ class LauncherPage extends StatelessWidget {
   }
 }
 
-class _ExternalApplicationTile extends StatelessWidget {
-  const _ExternalApplicationTile();
+class _ApplicationTile extends StatelessWidget {
+  const _ApplicationTile();
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +124,7 @@ class _ExternalApplicationTile extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const ServiceTileDivider(label: 'External Applications'),
+            const ServiceTileDivider(label: 'Applications'),
             Expanded(
               child: ListView.builder(
                 itemBuilder: (context, index) {

@@ -47,7 +47,7 @@ class _SettingState extends State<SettingPage> {
             ListTile(
               leading: const Icon(LucideIcons.blocks),
               selected: selectedIndex == 1,
-              title: const Text('External Apps'),
+              title: const Text('Apps'),
               onTap: () => handlePageChanged(1),
             ),
             const Divider(),
