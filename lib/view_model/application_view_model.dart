@@ -1,9 +1,9 @@
-import 'package:arcane_launcher/schema/external_application.dart';
+import 'package:arcane_launcher/schema/application.dart';
 import 'package:arcane_launcher/util/process.dart';
 import 'package:arcane_launcher/util/yaml_store.dart';
 import 'package:signals/signals.dart';
 
-class ExternalApplicationViewModel {
+class ApplicationViewModel {
   static const _fileName = 'external_applications.yaml';
 
   final _apps = signal<List<ApplicationEntity>>([]);

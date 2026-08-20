@@ -2,7 +2,7 @@ import 'package:arcane_launcher/di.dart';
 import 'package:arcane_launcher/page/launcher/launcher.dart';
 import 'package:arcane_launcher/util/shared_preference_util.dart';
 import 'package:arcane_launcher/view_model/auth_server_view_model.dart';
-import 'package:arcane_launcher/view_model/external_application_view_model.dart';
+import 'package:arcane_launcher/view_model/application_view_model.dart';
 import 'package:arcane_launcher/view_model/game_view_model.dart';
 import 'package:arcane_launcher/view_model/mysqld_view_model.dart';
 import 'package:arcane_launcher/view_model/server_view_model.dart';
@@ -23,7 +23,7 @@ void main() async {
 
   await Future.wait([
     serverVM.fetch(),
-    getIt<ExternalApplicationViewModel>().fetch(),
+    getIt<ApplicationViewModel>().fetch(),
     settingVM.fetch(),
     getIt<MysqldViewModel>().init(),
   ]);

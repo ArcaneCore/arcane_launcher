@@ -7,7 +7,7 @@ import 'package:arcane_launcher/page/launcher/component/world_server.dart';
 import 'package:arcane_launcher/schema/server.dart';
 import 'package:arcane_launcher/theme/arcane_theme.dart';
 import 'package:arcane_launcher/view_model/auth_server_view_model.dart';
-import 'package:arcane_launcher/view_model/external_application_view_model.dart';
+import 'package:arcane_launcher/view_model/application_view_model.dart';
 import 'package:arcane_launcher/view_model/game_view_model.dart';
 import 'package:arcane_launcher/view_model/mysqld_view_model.dart';
 import 'package:arcane_launcher/view_model/server_view_model.dart';
@@ -118,7 +118,7 @@ class _ExternalApplicationTile extends StatelessWidget {
     final onSurface = theme.colorScheme.onSurface.withValues(alpha: 0.25);
     return SignalBuilder(
       builder: (context) {
-        final vm = getIt<ExternalApplicationViewModel>();
+        final vm = getIt<ApplicationViewModel>();
         final apps = vm.applications;
         if (apps.isEmpty) return const SizedBox();
         return Column(

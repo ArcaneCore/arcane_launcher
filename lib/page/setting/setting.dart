@@ -1,5 +1,5 @@
 import 'package:arcane_launcher/di.dart';
-import 'package:arcane_launcher/page/setting/component/external_application.dart';
+import 'package:arcane_launcher/page/setting/component/application.dart';
 import 'package:arcane_launcher/page/setting/component/server.dart';
 import 'package:arcane_launcher/theme/arcane_theme.dart';
 import 'package:arcane_launcher/view_model/setting_view_model.dart';
@@ -67,7 +67,7 @@ class _SettingState extends State<SettingPage> {
               (context, index) => ArcaneCard(
                 child: switch (selectedIndex) {
                   0 => const ServersPage(),
-                  1 => const ExternalApplicationsPage(),
+                  1 => const ApplicationsPage(),
                   _ => const SizedBox(),
                 },
               ),

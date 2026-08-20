@@ -1,7 +1,7 @@
 import 'package:arcane_launcher/di.dart';
-import 'package:arcane_launcher/schema/external_application.dart';
+import 'package:arcane_launcher/schema/application.dart';
 import 'package:arcane_launcher/theme/arcane_theme.dart';
-import 'package:arcane_launcher/view_model/external_application_view_model.dart';
+import 'package:arcane_launcher/view_model/application_view_model.dart';
 import 'package:arcane_launcher/widget/dialog.dart';
 import 'package:arcane_launcher/widget/form_item.dart';
 import 'package:arcane_launcher/widget/input.dart';
@@ -11,14 +11,14 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
-class ExternalApplicationsPage extends StatelessWidget {
-  const ExternalApplicationsPage({super.key});
+class ApplicationsPage extends StatelessWidget {
+  const ApplicationsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return SignalBuilder(
       builder: (context) {
-        final apps = getIt<ExternalApplicationViewModel>().applications;
+        final apps = getIt<ApplicationViewModel>().applications;
         return ListView.builder(
           itemBuilder: (context, index) {
             if (index == apps.length) {
@@ -103,7 +103,7 @@ class _Tile extends StatelessWidget {
       builder: (context) => ArcaneConfirmDialog(
         title: 'Delete External App',
         content: 'Are you sure you want to delete this external app? This cannot be undone.',
-        onConfirm: () => getIt<ExternalApplicationViewModel>().destroy(
+        onConfirm: () => getIt<ApplicationViewModel>().destroy(
           application,
         ),
       ),
@@ -173,7 +173,7 @@ class _FormState extends State<_Form> {
     app.name = nameCtrl.text;
     app.description = descCtrl.text;
     app.path = pathCtrl.text;
-    await getIt<ExternalApplicationViewModel>().store(app);
+    await getIt<ApplicationViewModel>().store(app);
     if (!mounted) return;
     Navigator.of(context).pop();
   }
