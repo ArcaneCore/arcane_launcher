@@ -1,5 +1,5 @@
 import 'package:arcane_launcher/schema/application.dart';
-import 'package:arcane_launcher/util/process.dart';
+import 'package:arcane_launcher/util/process_util.dart';
 import 'package:arcane_launcher/util/yaml_store.dart';
 import 'package:signals/signals.dart';
 

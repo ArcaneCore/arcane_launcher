@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:arcane_launcher/model/service_information.dart';
 import 'package:arcane_launcher/schema/server.dart';
-import 'package:arcane_launcher/util/process.dart';
+import 'package:arcane_launcher/util/process_util.dart';
 import 'package:signals/signals.dart';
 
 class WorldServerViewModel {

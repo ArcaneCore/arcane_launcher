@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:arcane_launcher/model/service_information.dart';
 import 'package:arcane_launcher/schema/server.dart';
-import 'package:arcane_launcher/util/process.dart';
+import 'package:arcane_launcher/util/process_util.dart';
 import 'package:arcane_launcher/view_model/auth_server_view_model.dart';
 import 'package:arcane_launcher/view_model/mysqld_view_model.dart';
 import 'package:arcane_launcher/view_model/server_view_model.dart';
