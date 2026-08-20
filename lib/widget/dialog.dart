@@ -70,7 +70,7 @@ class ArcaneFormDialog extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            child,
+            Flexible(child: SingleChildScrollView(child: child)),
           ],
         ),
       ),

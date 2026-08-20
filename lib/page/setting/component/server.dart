@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:arcane_launcher/di.dart';
 import 'package:arcane_launcher/schema/server.dart';
+import 'package:arcane_launcher/theme/arcane_theme.dart';
+import 'package:arcane_launcher/util/server_discovery.dart';
 import 'package:arcane_launcher/view_model/server_view_model.dart';
 import 'package:arcane_launcher/widget/dialog.dart';
 import 'package:arcane_launcher/widget/form_item.dart';
@@ -124,6 +128,8 @@ class _ServerFormState extends State<_ServerForm> {
   final nameCtrl = TextEditingController();
   final versionCtrl = TextEditingController();
   final descCtrl = TextEditingController();
+  final serverDirCtrl = TextEditingController();
+  final clientDirCtrl = TextEditingController();
   final mysqldPathCtrl = TextEditingController();
   final worldServerPathCtrl = TextEditingController();
   final worldServerConfigCtrl = TextEditingController();
@@ -134,6 +140,11 @@ class _ServerFormState extends State<_ServerForm> {
   final realmListCtrl = TextEditingController();
   final clientPathCtrl = TextEditingController();
   late bool local = widget.server.local;
+  late bool advancedExpanded = widget.server.id != null;
+  bool discovering = false;
+  bool discovered = false;
+  List<String> warnings = [];
+  Timer? debounce;
 
   @override
   void initState() {
@@ -151,6 +162,26 @@ class _ServerFormState extends State<_ServerForm> {
     authServerLogCtrl.text = s.authServerLog;
     realmListCtrl.text = s.realmList;
     clientPathCtrl.text = s.clientPath;
+  }
+
+  @override
+  void dispose() {
+    debounce?.cancel();
+    nameCtrl.dispose();
+    versionCtrl.dispose();
+    descCtrl.dispose();
+    serverDirCtrl.dispose();
+    clientDirCtrl.dispose();
+    mysqldPathCtrl.dispose();
+    worldServerPathCtrl.dispose();
+    worldServerConfigCtrl.dispose();
+    worldServerLogCtrl.dispose();
+    authServerPathCtrl.dispose();
+    authServerConfigCtrl.dispose();
+    authServerLogCtrl.dispose();
+    realmListCtrl.dispose();
+    clientPathCtrl.dispose();
+    super.dispose();
   }
 
   @override
@@ -190,55 +221,204 @@ class _ServerFormState extends State<_ServerForm> {
             ),
           ),
           if (local) ...[
-            _pathField(
-              'Mysqld',
-              mysqldPathCtrl,
-              () => _pickFile(mysqldPathCtrl),
+            _directoryField(
+              '服务端目录',
+              serverDirCtrl,
+              '选择模拟器根目录,自动发现服务配置',
             ),
-            _pathField(
-              'World Server',
-              worldServerPathCtrl,
-              () => _pickFile(worldServerPathCtrl),
+            _directoryField(
+              '客户端目录',
+              clientDirCtrl,
+              '选择客户端根目录,自动发现主程序',
             ),
-            _pathField(
-              'World Server Config',
-              worldServerConfigCtrl,
-              () => _pickFile(worldServerConfigCtrl),
-            ),
-            _pathField(
-              'World Server Log',
-              worldServerLogCtrl,
-              () => _pickFile(worldServerLogCtrl),
-            ),
-            _pathField(
-              'Auth Server',
-              authServerPathCtrl,
-              () => _pickFile(authServerPathCtrl),
-            ),
-            _pathField(
-              'Auth Server Config',
-              authServerConfigCtrl,
-              () => _pickFile(authServerConfigCtrl),
-            ),
-            _pathField(
-              'Auth Server Log',
-              authServerLogCtrl,
-              () => _pickFile(authServerLogCtrl),
-            ),
-          ],
-          if (!local)
+            _discoveryStatus(),
+            _advancedSection(),
+          ] else
             ArcaneFormItem(
               label: '地址',
               child: ArcaneInput(controller: realmListCtrl),
             ),
-          _pathField(
-            'Client',
-            clientPathCtrl,
-            () => _pickFile(clientPathCtrl),
-          ),
           ElevatedButton(onPressed: _store, child: const Text('保存')),
         ],
       ),
+    );
+  }
+
+  /// 目录输入行:路径输入(防抖触发发现)+ 文件夹选择。
+  Widget _directoryField(
+    String label,
+    TextEditingController ctrl,
+    String placeholder,
+  ) {
+    return ArcaneFormItem(
+      label: label,
+      child: Row(
+        children: [
+          Expanded(
+            child: ArcaneInput(
+              controller: ctrl,
+              placeholder: placeholder,
+              onChanged: (_) => scheduleDiscover(),
+            ),
+          ),
+          const SizedBox(width: 8),
+          IconButton(
+            onPressed: () => pickDirectory(ctrl),
+            icon: const Icon(LucideIcons.folder),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 发现状态行:进行中提示 / 未命中警告 / 全部命中。
+  Widget _discoveryStatus() {
+    final cs = Theme.of(context).colorScheme;
+    if (discovering) {
+      return const Padding(
+        padding: EdgeInsets.only(bottom: 16),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+            SizedBox(width: 8),
+            Text('正在自动发现配置...'),
+          ],
+        ),
+      );
+    }
+    if (!discovered) return const SizedBox.shrink();
+    if (warnings.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 16),
+        child: Row(
+          children: [
+            const Icon(LucideIcons.checkCircle2, size: 18, color: Colors.green),
+            const SizedBox(width: 8),
+            const Text('已自动发现全部配置项'),
+          ],
+        ),
+      );
+    }
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          for (final warning in warnings)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Row(
+                children: [
+                  Icon(
+                    LucideIcons.alertTriangle,
+                    size: 16,
+                    color: cs.error,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      warning,
+                      style: TextStyle(color: cs.error, fontSize: 13),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  /// 高级配置折叠区:所有发现字段,可手动修正。
+  Widget _advancedSection() {
+    return Column(
+      children: [
+        InkWell(
+          onTap: () => setState(() => advancedExpanded = !advancedExpanded),
+          borderRadius: BorderRadius.circular(Arcane.radiusControl),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Row(
+              children: [
+                AnimatedRotation(
+                  turns: advancedExpanded ? 0.5 : 0,
+                  duration: Arcane.duration,
+                  child: const Icon(LucideIcons.chevronDown, size: 18),
+                ),
+                const SizedBox(width: 4),
+                const Text('高级配置'),
+              ],
+            ),
+          ),
+        ),
+        ClipRect(
+          child: AnimatedSize(
+            duration: Arcane.duration,
+            curve: Arcane.curve,
+            child: advancedExpanded
+                ? Padding(
+                    padding: const EdgeInsets.only(left: 16),
+                    child: Column(
+                      children: [
+                        _pathField(
+                          'Mysqld',
+                          mysqldPathCtrl,
+                          () => _pickFile(mysqldPathCtrl),
+                        ),
+                        _pathField(
+                          'World Server',
+                          worldServerPathCtrl,
+                          () => _pickFile(worldServerPathCtrl),
+                        ),
+                        _pathField(
+                          'World Server Config',
+                          worldServerConfigCtrl,
+                          () => _pickFile(worldServerConfigCtrl),
+                        ),
+                        _pathField(
+                          'World Server Log',
+                          worldServerLogCtrl,
+                          () => _pickFile(worldServerLogCtrl),
+                        ),
+                        _pathField(
+                          'Auth Server',
+                          authServerPathCtrl,
+                          () => _pickFile(authServerPathCtrl),
+                        ),
+                        _pathField(
+                          'Auth Server Config',
+                          authServerConfigCtrl,
+                          () => _pickFile(authServerConfigCtrl),
+                        ),
+                        _pathField(
+                          'Auth Server Log',
+                          authServerLogCtrl,
+                          () => _pickFile(authServerLogCtrl),
+                        ),
+                        ArcaneFormItem(
+                          label: '登录地址',
+                          child: ArcaneInput(
+                            controller: realmListCtrl,
+                            placeholder: '默认 127.0.0.1',
+                          ),
+                        ),
+                        _pathField(
+                          '客户端主程序',
+                          clientPathCtrl,
+                          () => _pickFile(clientPathCtrl),
+                        ),
+                      ],
+                    ),
+                  )
+                : const SizedBox(width: double.infinity),
+          ),
+        ),
+        const SizedBox(height: 8),
+      ],
     );
   }
 
@@ -257,6 +437,59 @@ class _ServerFormState extends State<_ServerForm> {
         ],
       ),
     );
+  }
+
+  void scheduleDiscover() {
+    debounce?.cancel();
+    debounce = Timer(const Duration(milliseconds: 400), discover);
+  }
+
+  Future<void> pickDirectory(TextEditingController ctrl) async {
+    final path = await FilePicker.platform.getDirectoryPath();
+    if (path == null) return;
+    ctrl.text = path;
+    await discover();
+  }
+
+  Future<void> discover() async {
+    final serverDir = serverDirCtrl.text.trim();
+    final clientDir = clientDirCtrl.text.trim();
+    if (serverDir.isEmpty && clientDir.isEmpty) return;
+    setState(() => discovering = true);
+    final result = await discoverServer(
+      serverDir: serverDir,
+      clientDir: clientDir,
+    );
+    if (!mounted) return;
+    setState(() {
+      discovering = false;
+      discovered = true;
+      warnings = result.warnings;
+      advancedExpanded = true;
+      applyDiscovery(result.server);
+    });
+  }
+
+  /// 将发现结果填充到表单;仅覆盖非空字段,名称仅在为空时填入。
+  void applyDiscovery(Server discovered) {
+    if (nameCtrl.text.isEmpty && discovered.name.isNotEmpty) {
+      nameCtrl.text = discovered.name;
+    }
+    void cover(TextEditingController ctrl, String value) {
+      if (value.isNotEmpty) ctrl.text = value;
+    }
+
+    cover(mysqldPathCtrl, discovered.mysqldPath);
+    cover(worldServerPathCtrl, discovered.worldServerPath);
+    cover(worldServerConfigCtrl, discovered.worldServerConfig);
+    cover(worldServerLogCtrl, discovered.worldServerLog);
+    cover(authServerPathCtrl, discovered.authServerPath);
+    cover(authServerConfigCtrl, discovered.authServerConfig);
+    cover(authServerLogCtrl, discovered.authServerLog);
+    if (discovered.realmList.isNotEmpty && discovered.realmList != '127.0.0.1') {
+      realmListCtrl.text = discovered.realmList;
+    }
+    cover(clientPathCtrl, discovered.clientPath);
   }
 
   void _pickFile(TextEditingController ctrl) async {
