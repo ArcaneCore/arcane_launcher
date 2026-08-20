@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:arcane_launcher/di.dart';
 import 'package:arcane_launcher/schema/server.dart';
 import 'package:arcane_launcher/theme/arcane_theme.dart';
 import 'package:arcane_launcher/util/server_discovery.dart';
@@ -12,6 +11,7 @@ import 'package:arcane_launcher/widget/switch.dart';
 import 'package:arcane_launcher/widget/tag.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
@@ -22,7 +22,7 @@ class ServersPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SignalBuilder(
       builder: (context) {
-        final list = getIt<ServerViewModel>().servers;
+        final list = GetIt.instance.get<ServerViewModel>().servers;
         return ListView.builder(
           itemBuilder: (context, index) {
             if (index == list.length) return const _CreateServerButton();
@@ -112,7 +112,8 @@ class _ServerTile extends StatelessWidget {
             title: 'Delete Server',
             content:
                 'Are you sure you want to delete this server? This cannot be undone.',
-            onConfirm: () => getIt<ServerViewModel>().destroy(server),
+            onConfirm:
+                () => GetIt.instance.get<ServerViewModel>().destroy(server),
           ),
     );
   }
@@ -459,7 +460,7 @@ class _ServerFormState extends State<_ServerForm> {
     final clientDir = clientDirCtrl.text.trim();
     if (serverDir.isEmpty && clientDir.isEmpty) return;
     setState(() => discovering = true);
-    final result = await ServerDiscovery.instance.discover(
+    final result = await GetIt.instance.get<ServerDiscovery>().discover(
       serverDir: serverDir,
       clientDir: clientDir,
     );
@@ -519,7 +520,7 @@ class _ServerFormState extends State<_ServerForm> {
     server.authServerConfig = authServerConfigCtrl.text;
     server.authServerLog = authServerLogCtrl.text;
     server.clientPath = clientPathCtrl.text;
-    await getIt<ServerViewModel>().store(server);
+    await GetIt.instance.get<ServerViewModel>().store(server);
     if (!mounted) return;
     Navigator.of(context).pop();
   }

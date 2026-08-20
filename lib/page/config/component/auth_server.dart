@@ -1,7 +1,7 @@
-import 'package:arcane_launcher/di.dart';
 import 'package:arcane_launcher/view_model/auth_server_view_model.dart';
 import 'package:arcane_launcher/view_model/server_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:signals/signals_flutter.dart';
 
 class AuthServerConfigPage extends StatefulWidget {
@@ -24,7 +24,7 @@ class _State extends State<AuthServerConfigPage> {
   Widget build(BuildContext context) {
     return SignalBuilder(
       builder: (context) {
-        final config = getIt<AuthServerViewModel>().config;
+        final config = GetIt.instance.get<AuthServerViewModel>().config;
         controller.text = config;
         return Column(
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -44,8 +44,11 @@ class _State extends State<AuthServerConfigPage> {
   }
 
   void _store() async {
-    final server = getIt<ServerViewModel>().activeServer;
-    await getIt<AuthServerViewModel>().storeConfig(server, controller.text);
+    final server = GetIt.instance.get<ServerViewModel>().activeServer;
+    await GetIt.instance.get<AuthServerViewModel>().storeConfig(
+      server,
+      controller.text,
+    );
     if (!mounted) return;
     ScaffoldMessenger.of(context)
       ..removeCurrentSnackBar()

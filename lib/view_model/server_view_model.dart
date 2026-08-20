@@ -1,3 +1,4 @@
+import 'package:get_it/get_it.dart';
 import 'package:arcane_launcher/schema/server.dart';
 import 'package:arcane_launcher/util/yaml_store.dart';
 import 'package:signals/signals.dart';
@@ -7,6 +8,7 @@ class ServerViewModel {
 
   final _servers = signal<List<ServerEntity>>([]);
   late final Computed<ServerEntity> _activeServer;
+  final _store = GetIt.instance.get<YamlStore>();
 
   ServerViewModel() {
     _activeServer = computed<ServerEntity>(() {
@@ -22,7 +24,7 @@ class ServerViewModel {
   ServerEntity get activeServer => _activeServer.value;
 
   Future<void> fetch() async {
-    final results = await YamlStore.instance.readList(_fileName);
+    final results = await _store.readList(_fileName);
     _servers.value = results.map(ServerEntity.fromMap).toList();
   }
 
@@ -59,7 +61,7 @@ class ServerViewModel {
   }
 
   Future<void> _save() async {
-    await YamlStore.instance.writeList(_fileName, [
+    await _store.writeList(_fileName, [
       for (final s in _servers.value) s.toMap(),
     ]);
   }

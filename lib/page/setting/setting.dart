@@ -1,4 +1,3 @@
-import 'package:arcane_launcher/di.dart';
 import 'package:arcane_launcher/page/setting/component/application.dart';
 import 'package:arcane_launcher/page/setting/component/server.dart';
 import 'package:arcane_launcher/theme/arcane_theme.dart';
@@ -6,6 +5,7 @@ import 'package:arcane_launcher/view_model/setting_view_model.dart';
 import 'package:arcane_launcher/widget/card.dart';
 import 'package:arcane_launcher/widget/page_layout.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
@@ -105,7 +105,7 @@ class _ThemeTile extends StatelessWidget {
       builder: (context) {
         final theme = Theme.of(context);
         final onPrimary = theme.colorScheme.onPrimary;
-        final vm = getIt<SettingViewModel>();
+        final vm = GetIt.instance.get<SettingViewModel>();
         final s = vm.setting;
         final iconData = s.darkMode ? LucideIcons.sun : LucideIcons.moon;
         return Wrap(

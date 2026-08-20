@@ -1,3 +1,4 @@
+import 'package:get_it/get_it.dart';
 import 'package:arcane_launcher/schema/application.dart';
 import 'package:arcane_launcher/util/process_util.dart';
 import 'package:arcane_launcher/util/yaml_store.dart';
@@ -7,18 +8,20 @@ class ApplicationViewModel {
   static const _fileName = 'applications.yaml';
 
   final _apps = signal<List<ApplicationEntity>>([]);
+  final _store = GetIt.instance.get<YamlStore>();
+  final _process = GetIt.instance.get<ProcessUtil>();
 
   List<ApplicationEntity> get applications => _apps.value;
 
   Future<void> fetch() async {
-    final results = await YamlStore.instance.readList(_fileName);
+    final results = await _store.readList(_fileName);
     _apps.value = results.map(ApplicationEntity.fromMap).toList();
   }
 
   void start(int index) {
     final apps = _apps.value;
     if (index >= apps.length) return;
-    ProcessUtil.instance.start(apps[index].path);
+    _process.start(apps[index].path);
   }
 
   Future<void> store(ApplicationEntity application) async {
@@ -47,8 +50,6 @@ class ApplicationViewModel {
   }
 
   Future<void> _save() async {
-    await YamlStore.instance.writeList(_fileName, [
-      for (final a in _apps.value) a.toMap(),
-    ]);
+    await _store.writeList(_fileName, [for (final a in _apps.value) a.toMap()]);
   }
 }

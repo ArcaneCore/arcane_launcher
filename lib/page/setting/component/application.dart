@@ -1,4 +1,3 @@
-import 'package:arcane_launcher/di.dart';
 import 'package:arcane_launcher/schema/application.dart';
 import 'package:arcane_launcher/theme/arcane_theme.dart';
 import 'package:arcane_launcher/view_model/application_view_model.dart';
@@ -8,6 +7,7 @@ import 'package:arcane_launcher/widget/input.dart';
 import 'package:arcane_launcher/widget/tag.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
@@ -18,7 +18,7 @@ class ApplicationsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SignalBuilder(
       builder: (context) {
-        final apps = getIt<ApplicationViewModel>().applications;
+        final apps = GetIt.instance.get<ApplicationViewModel>().applications;
         return ListView.builder(
           itemBuilder: (context, index) {
             if (index == apps.length) {
@@ -105,7 +105,10 @@ class _Tile extends StatelessWidget {
             title: 'Delete App',
             content:
                 'Are you sure you want to delete this app? This cannot be undone.',
-            onConfirm: () => getIt<ApplicationViewModel>().destroy(application),
+            onConfirm:
+                () => GetIt.instance.get<ApplicationViewModel>().destroy(
+                  application,
+                ),
           ),
     );
   }
@@ -179,7 +182,7 @@ class _FormState extends State<_Form> {
     app.name = nameCtrl.text;
     app.description = descCtrl.text;
     app.path = pathCtrl.text;
-    await getIt<ApplicationViewModel>().store(app);
+    await GetIt.instance.get<ApplicationViewModel>().store(app);
     if (!mounted) return;
     Navigator.of(context).pop();
   }

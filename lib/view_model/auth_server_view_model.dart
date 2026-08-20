@@ -4,10 +4,12 @@ import 'dart:io';
 import 'package:arcane_launcher/model/service_information.dart';
 import 'package:arcane_launcher/schema/server.dart';
 import 'package:arcane_launcher/util/process_util.dart';
+import 'package:get_it/get_it.dart';
 import 'package:signals/signals.dart';
 
 class AuthServerViewModel {
   final _info = signal(ServiceInformation());
+  final _process = GetIt.instance.get<ProcessUtil>();
   final _config = signal('');
   Timer? _timer;
 
@@ -16,7 +18,7 @@ class AuthServerViewModel {
 
   Future<void> init(ServerEntity server) async {
     final info = ServiceInformation();
-    final processIds = await ProcessUtil.instance.getProcessIds('authserver.exe');
+    final processIds = await _process.getProcessIds('authserver.exe');
     if (processIds.isNotEmpty) {
       info.logs = await _getLogs(server);
       info.processIds = processIds;
@@ -42,7 +44,7 @@ class AuthServerViewModel {
     final info = _info.value;
     if (info.status != ServiceStatus.stopped) return;
     if (server.authServerPath.isEmpty) return;
-    ProcessUtil.instance.start(server.authServerPath, detached: true);
+    _process.start(server.authServerPath, detached: true);
     _info.value = info.copyWith(status: ServiceStatus.starting);
     _listenLogs(server);
   }
@@ -50,7 +52,7 @@ class AuthServerViewModel {
   void stop() async {
     final info = _info.value;
     if (info.status != ServiceStatus.running) return;
-    ProcessUtil.instance.stop(info.processIds);
+    _process.stop(info.processIds);
     _info.value = ServiceInformation();
     _timer?.cancel();
   }
@@ -83,9 +85,7 @@ class AuthServerViewModel {
       _info.value = _info.value.copyWith(logs: lines);
       for (var line in lines) {
         if (line.contains('Added realm')) {
-          final processIds = await ProcessUtil.instance.getProcessIds(
-            'authserver.exe',
-          );
+          final processIds = await _process.getProcessIds('authserver.exe');
           _info.value = _info.value.copyWith(
             processIds: processIds,
             status: ServiceStatus.running,

@@ -14,21 +14,21 @@ import 'package:signals/signals.dart';
 class GameViewModel {
   final _loading = signal(false);
   Timer? _watchTimer;
+  final _process = GetIt.instance.get<ProcessUtil>();
 
   bool get loading => _loading.value;
 
   void init() {
     _watchTimer = Timer.periodic(const Duration(seconds: 15), (_) async {
-      final processes = await ProcessUtil.instance.getProcessNames();
-      final getIt = GetIt.instance;
+      final processes = await _process.getProcessNames();
       if (!processes.contains('mysqld.exe')) {
-        getIt<MysqldViewModel>().stop();
+        GetIt.instance.get<MysqldViewModel>().stop();
       }
       if (!processes.contains('worldserver.exe')) {
-        getIt<WorldServerViewModel>().stop();
+        GetIt.instance.get<WorldServerViewModel>().stop();
       }
       if (!processes.contains('authserver.exe')) {
-        getIt<AuthServerViewModel>().stop();
+        GetIt.instance.get<AuthServerViewModel>().stop();
       }
     });
   }
@@ -40,16 +40,16 @@ class GameViewModel {
   void startGame() {
     _startServices();
     Timer.periodic(const Duration(seconds: 1), (timer) {
-      final getIt = GetIt.instance;
-      if (getIt<WorldServerViewModel>().info.status == ServiceStatus.running) {
-        _startClient(getIt<ServerViewModel>().activeServer);
+      if (GetIt.instance.get<WorldServerViewModel>().info.status ==
+          ServiceStatus.running) {
+        _startClient(GetIt.instance.get<ServerViewModel>().activeServer);
         timer.cancel();
       }
     });
   }
 
   void startClient() {
-    _startClient(GetIt.instance<ServerViewModel>().activeServer);
+    _startClient(GetIt.instance.get<ServerViewModel>().activeServer);
   }
 
   void _startClient(ServerEntity server) {
@@ -67,7 +67,7 @@ class GameViewModel {
       if (!exists) file.create();
     });
     file.writeAsString('SET realmlist "${server.realmList}"');
-    ProcessUtil.instance.start(server.clientPath);
+    _process.start(server.clientPath);
   }
 
   void startServices() {
@@ -75,24 +75,25 @@ class GameViewModel {
   }
 
   void _startServices() {
-    final getIt = GetIt.instance;
-    final server = getIt<ServerViewModel>().activeServer;
+    final server = GetIt.instance.get<ServerViewModel>().activeServer;
     final tasks = _createTasks(server);
     if (tasks.isEmpty) return;
     _loading.value = true;
     if (tasks.contains('mysqld')) {
-      getIt<MysqldViewModel>().start(server);
+      GetIt.instance.get<MysqldViewModel>().start(server);
       tasks.remove('mysqld');
     }
     Timer.periodic(const Duration(seconds: 1), (timer) {
-      final getIt = GetIt.instance;
-      if (getIt<MysqldViewModel>().info.status != ServiceStatus.running) return;
+      if (GetIt.instance.get<MysqldViewModel>().info.status !=
+          ServiceStatus.running) {
+        return;
+      }
       if (tasks.contains('worldserver')) {
-        getIt<WorldServerViewModel>().start(server);
+        GetIt.instance.get<WorldServerViewModel>().start(server);
         tasks.remove('worldserver');
       }
       if (tasks.contains('authserver')) {
-        getIt<AuthServerViewModel>().start(server);
+        GetIt.instance.get<AuthServerViewModel>().start(server);
         tasks.remove('authserver');
       }
       if (tasks.isEmpty) {
@@ -103,25 +104,26 @@ class GameViewModel {
   }
 
   void stopServices() {
-    final getIt = GetIt.instance;
-    getIt<WorldServerViewModel>().stop();
-    getIt<AuthServerViewModel>().stop();
-    getIt<MysqldViewModel>().stop();
+    GetIt.instance.get<WorldServerViewModel>().stop();
+    GetIt.instance.get<AuthServerViewModel>().stop();
+    GetIt.instance.get<MysqldViewModel>().stop();
   }
 
   List<String> _createTasks(ServerEntity server) {
-    final getIt = GetIt.instance;
     final tasks = <String>[];
     if (server.mysqldPath.isEmpty) return tasks;
-    if (getIt<MysqldViewModel>().info.status == ServiceStatus.stopped) {
+    if (GetIt.instance.get<MysqldViewModel>().info.status ==
+        ServiceStatus.stopped) {
       tasks.add('mysqld');
     }
     if (server.worldServerPath.isEmpty) return tasks;
-    if (getIt<WorldServerViewModel>().info.status == ServiceStatus.stopped) {
+    if (GetIt.instance.get<WorldServerViewModel>().info.status ==
+        ServiceStatus.stopped) {
       tasks.add('worldserver');
     }
     if (server.authServerPath.isEmpty) return tasks;
-    if (getIt<AuthServerViewModel>().info.status == ServiceStatus.stopped) {
+    if (GetIt.instance.get<AuthServerViewModel>().info.status ==
+        ServiceStatus.stopped) {
       tasks.add('authserver');
     }
     return tasks;

@@ -39,7 +39,7 @@ void main() {
     );
     File('${clientRoot.path}/Wow.exe').createSync();
 
-    final result = await ServerDiscovery.instance.discover(
+    final result = await ServerDiscovery().discover(
       serverDir: serverRoot.path,
       clientDir: clientRoot.path,
     );
@@ -69,7 +69,7 @@ void main() {
       write('${bin.path}/worldserver.conf.dist', 'LogFile = "Server.log"\n');
       // authserver has no conf.
 
-      final result = await ServerDiscovery.instance.discover(
+      final result = await ServerDiscovery().discover(
         serverDir: serverRoot.path,
         clientDir: clientRoot.path,
       );
@@ -99,7 +99,7 @@ void main() {
       'BindIP = "192.168.1.10"\nLogFile = "Auth.log"\n',
     );
 
-    final result = await ServerDiscovery.instance.discover(
+    final result = await ServerDiscovery().discover(
       serverDir: serverRoot.path,
       clientDir: clientRoot.path,
     );
@@ -112,7 +112,7 @@ void main() {
       File('${clientRoot.path}/wowclassic.exe').createSync();
       File('${clientRoot.path}/wow-64.exe').createSync();
 
-      final result = await ServerDiscovery.instance.discover(
+      final result = await ServerDiscovery().discover(
         serverDir: '',
         clientDir: clientRoot.path,
       );
@@ -123,7 +123,7 @@ void main() {
   test('warns about missing items', () async {
     File('${clientRoot.path}/something.txt').createSync();
 
-    final result = await ServerDiscovery.instance.discover(
+    final result = await ServerDiscovery().discover(
       serverDir: serverRoot.path,
       clientDir: clientRoot.path,
     );
@@ -140,7 +140,7 @@ void main() {
   });
 
   test('warns when a directory does not exist', () async {
-    final result = await ServerDiscovery.instance.discover(
+    final result = await ServerDiscovery().discover(
       serverDir: '${temp.path}/not_exist',
       clientDir: '',
     );

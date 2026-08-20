@@ -1,10 +1,6 @@
 import 'dart:io';
 
 class ProcessUtil {
-  ProcessUtil._();
-
-  static final ProcessUtil instance = ProcessUtil._();
-
   /// Retrieves the process IDs of the processes with the specified [name].
   ///
   /// This function runs the 'tasklist' command to list all running processes, and

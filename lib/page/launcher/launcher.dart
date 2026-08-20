@@ -1,4 +1,3 @@
-import 'package:arcane_launcher/di.dart';
 import 'package:arcane_launcher/page/launcher/component/auth_server.dart';
 import 'package:arcane_launcher/page/launcher/component/mysqld.dart';
 import 'package:arcane_launcher/page/config/config.dart';
@@ -18,6 +17,7 @@ import 'package:arcane_launcher/widget/page_layout.dart';
 import 'package:arcane_launcher/widget/service_tile.dart';
 import 'package:arcane_launcher/widget/start_button.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
@@ -63,7 +63,7 @@ class LauncherPage extends StatelessWidget {
                 builder: (context) {
                   return ArcaneLogView(
                     watermark: 'MYSQLD',
-                    logs: getIt<MysqldViewModel>().info.logs,
+                    logs: GetIt.instance.get<MysqldViewModel>().info.logs,
                   );
                 },
               ),
@@ -74,7 +74,7 @@ class LauncherPage extends StatelessWidget {
                 builder: (context) {
                   return ArcaneLogView(
                     watermark: 'WORLD SERVER',
-                    logs: getIt<WorldServerViewModel>().info.logs,
+                    logs: GetIt.instance.get<WorldServerViewModel>().info.logs,
                   );
                 },
               ),
@@ -85,7 +85,7 @@ class LauncherPage extends StatelessWidget {
                 builder: (context) {
                   return ArcaneLogView(
                     watermark: 'AUTH SERVER',
-                    logs: getIt<AuthServerViewModel>().info.logs,
+                    logs: GetIt.instance.get<AuthServerViewModel>().info.logs,
                   );
                 },
               ),
@@ -118,7 +118,7 @@ class _ApplicationTile extends StatelessWidget {
     final onSurface = theme.colorScheme.onSurface.withValues(alpha: 0.25);
     return SignalBuilder(
       builder: (context) {
-        final vm = getIt<ApplicationViewModel>();
+        final vm = GetIt.instance.get<ApplicationViewModel>();
         final apps = vm.applications;
         if (apps.isEmpty) return const SizedBox();
         return Column(
@@ -170,7 +170,7 @@ class _ServerSelectState extends State<_ServerSelect> {
       builder: (context) {
         return SignalBuilder(
           builder: (context) {
-            final list = getIt<ServerViewModel>().servers;
+            final list = GetIt.instance.get<ServerViewModel>().servers;
             return ListView.builder(
               shrinkWrap: true,
               itemBuilder: (context, index) {
@@ -197,7 +197,9 @@ class _ServerSelectState extends State<_ServerSelect> {
               children: [
                 SignalBuilder(
                   builder: (context) {
-                    return Text(getIt<ServerViewModel>().activeServer.name);
+                    return Text(
+                      GetIt.instance.get<ServerViewModel>().activeServer.name,
+                    );
                   },
                 ),
                 const Spacer(),
@@ -215,7 +217,7 @@ class _ServerSelectState extends State<_ServerSelect> {
   }
 
   void selectServer(ServerEntity server) {
-    getIt<ServerViewModel>().activate(server);
+    GetIt.instance.get<ServerViewModel>().activate(server);
     controller.removeOverlayEntry();
   }
 }
@@ -227,7 +229,7 @@ class _GameStarter extends StatelessWidget {
   Widget build(BuildContext context) {
     return SignalBuilder(
       builder: (context) {
-        final gameVM = getIt<GameViewModel>();
+        final gameVM = GetIt.instance.get<GameViewModel>();
         return ArcaneStartButton(
           onPlay: gameVM.startGame,
           loading: gameVM.loading,

@@ -9,34 +9,35 @@ import 'package:arcane_launcher/view_model/server_view_model.dart';
 import 'package:arcane_launcher/view_model/setting_view_model.dart';
 import 'package:arcane_launcher/view_model/world_server_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:window_manager/window_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await WindowInitializer.ensureInitialized();
-  await SharedPreferenceUtil.instance.init();
   setupDependencies();
+  await GetIt.instance.get<SharedPreferenceUtil>().init();
 
-  final serverVM = getIt<ServerViewModel>();
-  final settingVM = getIt<SettingViewModel>();
+  final serverVM = GetIt.instance.get<ServerViewModel>();
+  final settingVM = GetIt.instance.get<SettingViewModel>();
 
   await Future.wait([
     serverVM.fetch(),
-    getIt<ApplicationViewModel>().fetch(),
+    GetIt.instance.get<ApplicationViewModel>().fetch(),
     settingVM.fetch(),
-    getIt<MysqldViewModel>().init(),
+    GetIt.instance.get<MysqldViewModel>().init(),
   ]);
 
   final server = serverVM.activeServer;
   await Future.wait([
-    getIt<AuthServerViewModel>().init(server),
-    getIt<AuthServerViewModel>().fetchConfig(server),
-    getIt<WorldServerViewModel>().init(server),
-    getIt<WorldServerViewModel>().fetchConfig(server),
+    GetIt.instance.get<AuthServerViewModel>().init(server),
+    GetIt.instance.get<AuthServerViewModel>().fetchConfig(server),
+    GetIt.instance.get<WorldServerViewModel>().init(server),
+    GetIt.instance.get<WorldServerViewModel>().fetchConfig(server),
   ]);
 
-  getIt<GameViewModel>().init();
+  GetIt.instance.get<GameViewModel>().init();
 
   runApp(const ArcaneLauncher());
 }
@@ -48,7 +49,7 @@ class ArcaneLauncher extends StatelessWidget {
   Widget build(BuildContext context) {
     return SignalBuilder(
       builder: (context) {
-        final s = getIt<SettingViewModel>().setting;
+        final s = GetIt.instance.get<SettingViewModel>().setting;
         return MaterialApp(
           title: 'Arcane Launcher',
           home: const LauncherPage(),

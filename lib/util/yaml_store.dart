@@ -8,10 +8,6 @@ import 'package:yaml_writer/yaml_writer.dart';
 /// Writes atomically via a temp file + rename so a crash mid-write cannot
 /// corrupt the config file.
 class YamlStore {
-  YamlStore._();
-
-  static final YamlStore instance = YamlStore._();
-
   final _writer = YamlWriter();
 
   File _file(String fileName) => File('${Directory.current.path}/$fileName');

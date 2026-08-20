@@ -21,10 +21,6 @@ class ServerDiscoveryResult {
 ///   `mysql/bin/mysqld`
 /// - conf uses `Key = "Value"` lines, with `#`-prefixed comments
 class ServerDiscovery {
-  ServerDiscovery._();
-
-  static final ServerDiscovery instance = ServerDiscovery._();
-
   Future<ServerDiscoveryResult> discover({
     required String serverDir,
     required String clientDir,

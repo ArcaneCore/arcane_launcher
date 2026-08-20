@@ -1,10 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferenceUtil {
-  static final SharedPreferenceUtil instance = SharedPreferenceUtil._();
-
-  SharedPreferenceUtil._();
-
   final _preferences = SharedPreferences.getInstance();
 
   static const _keyColor = 'color';

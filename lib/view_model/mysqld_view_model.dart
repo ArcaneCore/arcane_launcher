@@ -4,16 +4,18 @@ import 'dart:convert';
 import 'package:arcane_launcher/model/service_information.dart';
 import 'package:arcane_launcher/schema/server.dart';
 import 'package:arcane_launcher/util/process_util.dart';
+import 'package:get_it/get_it.dart';
 import 'package:signals/signals.dart';
 
 class MysqldViewModel {
   final _info = signal(ServiceInformation());
+  final _process = GetIt.instance.get<ProcessUtil>();
 
   ServiceInformation get info => _info.value;
 
   Future<void> init() async {
     final info = ServiceInformation();
-    final processIds = await ProcessUtil.instance.getProcessIds('mysqld.exe');
+    final processIds = await _process.getProcessIds('mysqld.exe');
     if (processIds.isNotEmpty) {
       info.logs = ['Mysqld is running...'];
       info.processIds = processIds;
@@ -26,7 +28,7 @@ class MysqldViewModel {
     final info = _info.value;
     if (info.status != ServiceStatus.stopped) return;
     if (server.mysqldPath.isEmpty) return;
-    final process = await ProcessUtil.instance.start(
+    final process = await _process.start(
       server.mysqldPath,
       arguments: ['--console'],
     );
@@ -38,7 +40,7 @@ class MysqldViewModel {
   void stop() async {
     final info = _info.value;
     if (info.status != ServiceStatus.running) return;
-    ProcessUtil.instance.stop(info.processIds);
+    _process.stop(info.processIds);
     _info.value = ServiceInformation();
   }
 
@@ -54,7 +56,7 @@ class MysqldViewModel {
     final info = _info.value;
     _info.value = info.copyWith(logs: [...info.logs, log]);
     if (log.contains('ready for connections')) {
-      final processIds = await ProcessUtil.instance.getProcessIds('mysqld.exe');
+      final processIds = await _process.getProcessIds('mysqld.exe');
       _info.value = _info.value.copyWith(
         processIds: processIds,
         status: ServiceStatus.running,

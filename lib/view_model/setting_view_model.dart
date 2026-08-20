@@ -1,10 +1,11 @@
+import 'package:get_it/get_it.dart';
 import 'package:arcane_launcher/schema/setting.dart';
 import 'package:arcane_launcher/util/shared_preference_util.dart';
 import 'package:signals/signals.dart';
 
 class SettingViewModel {
   final _setting = signal(SettingEntity());
-  final _prefs = SharedPreferenceUtil.instance;
+  final _prefs = GetIt.instance.get<SharedPreferenceUtil>();
 
   SettingEntity get setting => _setting.value;
 
