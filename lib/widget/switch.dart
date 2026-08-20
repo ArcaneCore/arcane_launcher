@@ -47,10 +47,7 @@ class ArcaneSwitch extends StatelessWidget {
             child: Container(
               height: 24,
               width: 24,
-              decoration: BoxDecoration(
-                color: surface,
-                shape: BoxShape.circle,
-              ),
+              decoration: BoxDecoration(color: surface, shape: BoxShape.circle),
               child: loading ? const _ArcaneSwitchLoadingIndicator() : null,
             ),
           ),
@@ -73,7 +70,8 @@ class _ArcaneSwitchLoadingIndicator extends StatefulWidget {
       __ArcaneSwitchLoadingIndicatorState();
 }
 
-class __ArcaneSwitchLoadingIndicatorState extends State<_ArcaneSwitchLoadingIndicator>
+class __ArcaneSwitchLoadingIndicatorState
+    extends State<_ArcaneSwitchLoadingIndicator>
     with SingleTickerProviderStateMixin {
   late AnimationController controller;
 
@@ -128,10 +126,11 @@ class _ArcaneSwitchLoadingIndicatorPainter extends CustomPainter {
   final double startAngle;
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2;
+    final paint =
+        Paint()
+          ..color = color
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2;
     final rect = Rect.fromLTWH(0, 0, size.width, size.height);
     canvas.drawArc(rect, startAngle, pi / 2, false, paint);
   }

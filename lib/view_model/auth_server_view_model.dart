@@ -16,7 +16,7 @@ class AuthServerViewModel {
 
   Future<void> init(ServerEntity server) async {
     final info = ServiceInformation();
-    final processIds = await ProcessUtil().getProcessIds('authserver.exe');
+    final processIds = await ProcessUtil.instance.getProcessIds('authserver.exe');
     if (processIds.isNotEmpty) {
       info.logs = await _getLogs(server);
       info.processIds = processIds;
@@ -42,7 +42,7 @@ class AuthServerViewModel {
     final info = _info.value;
     if (info.status != ServiceStatus.stopped) return;
     if (server.authServerPath.isEmpty) return;
-    ProcessUtil().start(server.authServerPath, detached: true);
+    ProcessUtil.instance.start(server.authServerPath, detached: true);
     _info.value = info.copyWith(status: ServiceStatus.starting);
     _listenLogs(server);
   }
@@ -50,7 +50,7 @@ class AuthServerViewModel {
   void stop() async {
     final info = _info.value;
     if (info.status != ServiceStatus.running) return;
-    ProcessUtil().stop(info.processIds);
+    ProcessUtil.instance.stop(info.processIds);
     _info.value = ServiceInformation();
     _timer?.cancel();
   }
@@ -83,8 +83,9 @@ class AuthServerViewModel {
       _info.value = _info.value.copyWith(logs: lines);
       for (var line in lines) {
         if (line.contains('Added realm')) {
-          final processIds =
-              await ProcessUtil().getProcessIds('authserver.exe');
+          final processIds = await ProcessUtil.instance.getProcessIds(
+            'authserver.exe',
+          );
           _info.value = _info.value.copyWith(
             processIds: processIds,
             status: ServiceStatus.running,

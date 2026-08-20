@@ -231,33 +231,34 @@ class _GameStarter extends StatelessWidget {
         return ArcaneStartButton(
           onPlay: gameVM.startGame,
           loading: gameVM.loading,
-          optionsBuilder: (context, close) => Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                title: const Text('Start All Services'),
-                onTap: () {
-                  gameVM.startServices();
-                  close();
-                },
+          optionsBuilder:
+              (context, close) => Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ListTile(
+                    title: const Text('Start All Services'),
+                    onTap: () {
+                      gameVM.startServices();
+                      close();
+                    },
+                  ),
+                  ListTile(
+                    title: const Text('Stop All Services'),
+                    onTap: () {
+                      gameVM.stopServices();
+                      close();
+                    },
+                  ),
+                  const Divider(),
+                  ListTile(
+                    title: const Text('Launch Client'),
+                    onTap: () {
+                      gameVM.startClient();
+                      close();
+                    },
+                  ),
+                ],
               ),
-              ListTile(
-                title: const Text('Stop All Services'),
-                onTap: () {
-                  gameVM.stopServices();
-                  close();
-                },
-              ),
-              const Divider(),
-              ListTile(
-                title: const Text('Launch Client'),
-                onTap: () {
-                  gameVM.startClient();
-                  close();
-                },
-              ),
-            ],
-          ),
         );
       },
     );

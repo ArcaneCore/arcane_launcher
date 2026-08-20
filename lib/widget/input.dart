@@ -23,9 +23,7 @@ class ArcaneInput extends StatelessWidget {
       ),
       child: TextField(
         controller: controller,
-        decoration: InputDecoration.collapsed(
-          hintText: placeholder ?? 'Enter',
-        ),
+        decoration: InputDecoration.collapsed(hintText: placeholder ?? 'Enter'),
         onChanged: onChanged,
       ),
     );

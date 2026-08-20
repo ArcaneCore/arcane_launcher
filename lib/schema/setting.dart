@@ -3,11 +3,7 @@ class SettingEntity {
   int color;
   bool darkMode;
 
-  SettingEntity({
-    this.id,
-    this.color = 4288423856,
-    this.darkMode = false,
-  });
+  SettingEntity({this.id, this.color = 4288423856, this.darkMode = false});
 
   factory SettingEntity.fromMap(Map<String, Object?> map) {
     return SettingEntity(

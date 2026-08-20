@@ -21,7 +21,8 @@ class ArcaneStartButton extends StatefulWidget {
   final String loadingLabel;
 
   /// Dropdown menu content; [close] collapses the menu after an item is tapped.
-  final Widget Function(BuildContext context, VoidCallback close)? optionsBuilder;
+  final Widget Function(BuildContext context, VoidCallback close)?
+  optionsBuilder;
 
   @override
   State<ArcaneStartButton> createState() => _ArcaneStartButtonState();
@@ -73,11 +74,14 @@ class _ArcaneStartButtonState extends State<ArcaneStartButton> {
         ArcaneDropdown(
           controller: controller,
           builder: (context) {
-            final options = widget.optionsBuilder
-                ?.call(context, controller.removeOverlayEntry);
-            return Column(mainAxisSize: MainAxisSize.min, children: [
-              if (options != null) options,
-            ]);
+            final options = widget.optionsBuilder?.call(
+              context,
+              controller.removeOverlayEntry,
+            );
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [if (options != null) options],
+            );
           },
           child: ElevatedButton(
             style: ButtonStyle(

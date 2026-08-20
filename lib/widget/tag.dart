@@ -2,7 +2,11 @@ import 'package:arcane_launcher/theme/arcane_theme.dart';
 import 'package:flutter/material.dart';
 
 class ArcaneTag extends StatelessWidget {
-  const ArcaneTag({super.key, required this.label, this.type = ArcaneTagType.tertiary});
+  const ArcaneTag({
+    super.key,
+    required this.label,
+    this.type = ArcaneTagType.tertiary,
+  });
 
   final String label;
   final ArcaneTagType type;
@@ -13,7 +17,10 @@ class ArcaneTag extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final (backgroundColor, foregroundColor) = switch (type) {
       ArcaneTagType.primary => (colorScheme.primary, colorScheme.onPrimary),
-      ArcaneTagType.secondary => (colorScheme.secondary, colorScheme.onSecondary),
+      ArcaneTagType.secondary => (
+        colorScheme.secondary,
+        colorScheme.onSecondary,
+      ),
       ArcaneTagType.tertiary => (
         colorScheme.outlineVariant,
         colorScheme.onSurfaceVariant,

@@ -19,7 +19,7 @@ class GameViewModel {
 
   void init() {
     _watchTimer = Timer.periodic(const Duration(seconds: 15), (_) async {
-      final processes = await ProcessUtil().getProcessNames();
+      final processes = await ProcessUtil.instance.getProcessNames();
       final getIt = GetIt.instance;
       if (!processes.contains('mysqld.exe')) {
         getIt<MysqldViewModel>().stop();
@@ -67,7 +67,7 @@ class GameViewModel {
       if (!exists) file.create();
     });
     file.writeAsString('SET realmlist "${server.realmList}"');
-    ProcessUtil().start(server.clientPath);
+    ProcessUtil.instance.start(server.clientPath);
   }
 
   void startServices() {

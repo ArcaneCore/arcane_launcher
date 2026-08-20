@@ -20,13 +20,16 @@ class ArcaneLogView extends StatelessWidget {
             child: Text(
               watermark,
               maxLines: 1,
-              style: Arcane.watermark(cs).copyWith(overflow: TextOverflow.ellipsis),
+              style: Arcane.watermark(
+                cs,
+              ).copyWith(overflow: TextOverflow.ellipsis),
             ),
           ),
           ListView.builder(
             reverse: true,
             itemCount: logs.length,
-            itemBuilder: (context, index) => Text(logs[logs.length - 1 - index]),
+            itemBuilder:
+                (context, index) => Text(logs[logs.length - 1 - index]),
           ),
         ],
       ),

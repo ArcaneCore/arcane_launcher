@@ -100,14 +100,13 @@ class _Tile extends StatelessWidget {
   void _destroyDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => ArcaneConfirmDialog(
+      builder:
+          (context) => ArcaneConfirmDialog(
             title: 'Delete App',
             content:
                 'Are you sure you want to delete this app? This cannot be undone.',
-        onConfirm: () => getIt<ApplicationViewModel>().destroy(
-          application,
-        ),
-      ),
+            onConfirm: () => getIt<ApplicationViewModel>().destroy(application),
+          ),
     );
   }
 }
@@ -141,8 +140,14 @@ class _FormState extends State<_Form> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          ArcaneFormItem(label: 'Name', child: ArcaneInput(controller: nameCtrl)),
-          ArcaneFormItem(label: 'Description', child: ArcaneInput(controller: descCtrl)),
+          ArcaneFormItem(
+            label: 'Name',
+            child: ArcaneInput(controller: nameCtrl),
+          ),
+          ArcaneFormItem(
+            label: 'Description',
+            child: ArcaneInput(controller: descCtrl),
+          ),
           ArcaneFormItem(
             label: 'Client',
             child: Row(

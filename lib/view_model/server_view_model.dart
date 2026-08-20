@@ -7,13 +7,14 @@ class ServerViewModel {
 
   final _servers = signal<List<ServerEntity>>([]);
   late final Computed<ServerEntity> _activeServer;
-  final _store = YamlStore(_fileName);
 
   ServerViewModel() {
     _activeServer = computed<ServerEntity>(() {
       if (_servers.value.isEmpty) return ServerEntity();
-      return _servers.value.firstWhere((s) => s.active,
-          orElse: () => _servers.value.first);
+      return _servers.value.firstWhere(
+        (s) => s.active,
+        orElse: () => _servers.value.first,
+      );
     });
   }
 
@@ -21,7 +22,7 @@ class ServerViewModel {
   ServerEntity get activeServer => _activeServer.value;
 
   Future<void> fetch() async {
-    final results = await _store.readList();
+    final results = await YamlStore.instance.readList(_fileName);
     _servers.value = results.map(ServerEntity.fromMap).toList();
   }
 
@@ -58,7 +59,7 @@ class ServerViewModel {
   }
 
   Future<void> _save() async {
-    await _store.writeList([
+    await YamlStore.instance.writeList(_fileName, [
       for (final s in _servers.value) s.toMap(),
     ]);
   }

@@ -5,7 +5,11 @@ import 'package:flutter/material.dart';
 /// Page skeleton: [sidebarWidth] card on the left, content on the right;
 /// shared by launcher / config / setting pages.
 class ArcanePageLayout extends StatelessWidget {
-  const ArcanePageLayout({super.key, required this.sidebar, required this.content});
+  const ArcanePageLayout({
+    super.key,
+    required this.sidebar,
+    required this.content,
+  });
 
   final Widget sidebar;
   final Widget content;

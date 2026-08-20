@@ -20,94 +20,101 @@ class ServerDiscoveryResult {
 /// - server root with `bin/` (worldserver / authserver and confs) and
 ///   `mysql/bin/mysqld`
 /// - conf uses `Key = "Value"` lines, with `#`-prefixed comments
-Future<ServerDiscoveryResult> discoverServer({
-  required String serverDir,
-  required String clientDir,
-}) async {
-  final warnings = <String>[];
-  final server = ServerEntity();
-  server.name = _basename(serverDir);
+class ServerDiscovery {
+  ServerDiscovery._();
 
-  if (serverDir.isNotEmpty) {
-    final root = Directory(serverDir);
-    if (root.existsSync()) {
-      final found = <String, File>{};
-      await _scan(root, 4, (file) => _matchServerFile(file, found));
+  static final ServerDiscovery instance = ServerDiscovery._();
 
-      server.mysqldPath = found['mysqld']?.path ?? '';
-      server.worldServerPath = found['worldserver']?.path ?? '';
-      server.authServerPath = found['authserver']?.path ?? '';
-      server.worldServerConfig = found['worldserver_conf']?.path ?? '';
-      server.authServerConfig = found['authserver_conf']?.path ?? '';
+  Future<ServerDiscoveryResult> discover({
+    required String serverDir,
+    required String clientDir,
+  }) async {
+    final warnings = <String>[];
+    final server = ServerEntity();
+    server.name = _basename(serverDir);
 
-      if (found['worldserver_conf'] != null) {
-        server.worldServerLog = _resolveLogPath(
-          found['worldserver_conf']!,
-          _parseConf(found['worldserver_conf']!),
-          'Server.log',
-        );
-      }
-      if (found['authserver_conf'] != null) {
-        final authConf = _parseConf(found['authserver_conf']!);
-        server.authServerLog = _resolveLogPath(
-          found['authserver_conf']!,
-          authConf,
-          'Auth.log',
-        );
-        final bind = authConf['BindIP']?.trim() ?? '';
-        if (bind.isNotEmpty && bind != '0.0.0.0') {
-          server.realmList = bind;
+    if (serverDir.isNotEmpty) {
+      final root = Directory(serverDir);
+      if (root.existsSync()) {
+        final found = <String, File>{};
+        await _scan(root, 4, (file) => _matchServerFile(file, found));
+
+        server.mysqldPath = found['mysqld']?.path ?? '';
+        server.worldServerPath = found['worldserver']?.path ?? '';
+        server.authServerPath = found['authserver']?.path ?? '';
+        server.worldServerConfig = found['worldserver_conf']?.path ?? '';
+        server.authServerConfig = found['authserver_conf']?.path ?? '';
+
+        if (found['worldserver_conf'] != null) {
+          server.worldServerLog = _resolveLogPath(
+            found['worldserver_conf']!,
+            _parseConf(found['worldserver_conf']!),
+            'Server.log',
+          );
         }
-      }
-
-      if (server.mysqldPath.isEmpty) {
-        warnings.add('MySQL (mysqld) not found; specify it in Advanced settings');
-      }
-      if (server.worldServerPath.isEmpty) {
-        warnings.add(
-          'World Server (worldserver) not found; specify it in Advanced settings',
-        );
-      }
-      if (server.authServerPath.isEmpty) {
-        warnings.add(
-          'Auth Server (authserver) not found; specify it in Advanced settings',
-        );
-      }
-    } else {
-      warnings.add('Server directory does not exist: $serverDir');
-    }
-  }
-
-  if (clientDir.isNotEmpty) {
-    final root = Directory(clientDir);
-    if (root.existsSync()) {
-      final matches = <File>[];
-      await _scan(root, 2, (file) {
-        if (_clientCandidates.contains(_basename(file.path).toLowerCase())) {
-          matches.add(file);
+        if (found['authserver_conf'] != null) {
+          final authConf = _parseConf(found['authserver_conf']!);
+          server.authServerLog = _resolveLogPath(
+            found['authserver_conf']!,
+            authConf,
+            'Auth.log',
+          );
+          final bind = authConf['BindIP']?.trim() ?? '';
+          if (bind.isNotEmpty && bind != '0.0.0.0') {
+            server.realmList = bind;
+          }
         }
-      });
-      if (matches.isNotEmpty) {
-        matches.sort(
-          (a, b) =>
-              _clientCandidates
-                  .indexOf(_basename(a.path).toLowerCase())
-                  .compareTo(
-                    _clientCandidates.indexOf(_basename(b.path).toLowerCase()),
-                  ),
-        );
-        server.clientPath = matches.first.path;
+
+        if (server.mysqldPath.isEmpty) {
+          warnings.add(
+            'MySQL (mysqld) not found; specify it in Advanced settings',
+          );
+        }
+        if (server.worldServerPath.isEmpty) {
+          warnings.add(
+            'World Server (worldserver) not found; specify it in Advanced settings',
+          );
+        }
+        if (server.authServerPath.isEmpty) {
+          warnings.add(
+            'Auth Server (authserver) not found; specify it in Advanced settings',
+          );
+        }
       } else {
-        warnings.add(
-          'Client executable (Wow.exe) not found; specify it in Advanced settings',
-        );
+        warnings.add('Server directory does not exist: $serverDir');
       }
-    } else {
-      warnings.add('Client directory does not exist: $clientDir');
     }
-  }
 
-  return ServerDiscoveryResult(server: server, warnings: warnings);
+    if (clientDir.isNotEmpty) {
+      final root = Directory(clientDir);
+      if (root.existsSync()) {
+        final matches = <File>[];
+        await _scan(root, 2, (file) {
+          if (_clientCandidates.contains(_basename(file.path).toLowerCase())) {
+            matches.add(file);
+          }
+        });
+        if (matches.isNotEmpty) {
+          matches.sort(
+            (a, b) => _clientCandidates
+                .indexOf(_basename(a.path).toLowerCase())
+                .compareTo(
+                  _clientCandidates.indexOf(_basename(b.path).toLowerCase()),
+                ),
+          );
+          server.clientPath = matches.first.path;
+        } else {
+          warnings.add(
+            'Client executable (Wow.exe) not found; specify it in Advanced settings',
+          );
+        }
+      } else {
+        warnings.add('Client directory does not exist: $clientDir');
+      }
+    }
+
+    return ServerDiscoveryResult(server: server, warnings: warnings);
+  }
 }
 
 /// Common WoW client executables, ordered by priority.
@@ -190,16 +197,18 @@ Map<String, String> _parseConf(File confFile) {
 }
 
 /// Derives the full log path from conf: conf dir + LogFileDir/LogsDir + LogFile.
-String _resolveLogPath(File confFile, Map<String, String> conf, String defaultName) {
+String _resolveLogPath(
+  File confFile,
+  Map<String, String> conf,
+  String defaultName,
+) {
   final logDir = (conf['LogFileDir'] ?? conf['LogsDir'] ?? '').trim();
   final logName = (conf['LogFile'] ?? '').trim();
   if (logName.isEmpty) return '';
   final sep = Platform.pathSeparator;
   final base = confFile.parent.path;
   if (logDir.isEmpty || logDir == '.') return '$base$sep$logName';
-  final dir = File(logDir).isAbsolute
-      ? logDir
-      : '$base$sep$logDir';
+  final dir = File(logDir).isAbsolute ? logDir : '$base$sep$logDir';
   return '$dir$sep$logName';
 }
 

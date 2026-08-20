@@ -13,7 +13,7 @@ class MysqldViewModel {
 
   Future<void> init() async {
     final info = ServiceInformation();
-    final processIds = await ProcessUtil().getProcessIds('mysqld.exe');
+    final processIds = await ProcessUtil.instance.getProcessIds('mysqld.exe');
     if (processIds.isNotEmpty) {
       info.logs = ['Mysqld is running...'];
       info.processIds = processIds;
@@ -26,8 +26,10 @@ class MysqldViewModel {
     final info = _info.value;
     if (info.status != ServiceStatus.stopped) return;
     if (server.mysqldPath.isEmpty) return;
-    final process = await ProcessUtil().start(server.mysqldPath,
-        arguments: ['--console']);
+    final process = await ProcessUtil.instance.start(
+      server.mysqldPath,
+      arguments: ['--console'],
+    );
     _info.value = info.copyWith(status: ServiceStatus.starting);
     process.stdout.transform(utf8.decoder).listen(_listenLogs);
     process.stderr.transform(utf8.decoder).listen(_listenLogs);
@@ -36,7 +38,7 @@ class MysqldViewModel {
   void stop() async {
     final info = _info.value;
     if (info.status != ServiceStatus.running) return;
-    ProcessUtil().stop(info.processIds);
+    ProcessUtil.instance.stop(info.processIds);
     _info.value = ServiceInformation();
   }
 
@@ -52,9 +54,11 @@ class MysqldViewModel {
     final info = _info.value;
     _info.value = info.copyWith(logs: [...info.logs, log]);
     if (log.contains('ready for connections')) {
-      final processIds = await ProcessUtil().getProcessIds('mysqld.exe');
-      _info.value = _info.value
-          .copyWith(processIds: processIds, status: ServiceStatus.running);
+      final processIds = await ProcessUtil.instance.getProcessIds('mysqld.exe');
+      _info.value = _info.value.copyWith(
+        processIds: processIds,
+        status: ServiceStatus.running,
+      );
     }
   }
 }

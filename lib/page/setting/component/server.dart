@@ -67,7 +67,8 @@ class _ServerTile extends StatelessWidget {
     Widget? subtitle;
     if (server.description.isNotEmpty) subtitle = Text(server.description);
     final label = server.local ? 'Local' : 'Remote';
-    final type = server.local ? ArcaneTagType.secondary : ArcaneTagType.tertiary;
+    final type =
+        server.local ? ArcaneTagType.secondary : ArcaneTagType.tertiary;
     return ListTile(
       leading: const Icon(LucideIcons.server),
       subtitle: subtitle,
@@ -106,11 +107,13 @@ class _ServerTile extends StatelessWidget {
   void _destroyDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => ArcaneConfirmDialog(
-        title: 'Delete Server',
-        content: 'Are you sure you want to delete this server? This cannot be undone.',
-        onConfirm: () => getIt<ServerViewModel>().destroy(server),
-      ),
+      builder:
+          (context) => ArcaneConfirmDialog(
+            title: 'Delete Server',
+            content:
+                'Are you sure you want to delete this server? This cannot be undone.',
+            onConfirm: () => getIt<ServerViewModel>().destroy(server),
+          ),
     );
   }
 }
@@ -207,7 +210,10 @@ class _ServerFormState extends State<_ServerForm> {
               ),
             ],
           ),
-          ArcaneFormItem(label: 'Description', child: ArcaneInput(controller: descCtrl)),
+          ArcaneFormItem(
+            label: 'Description',
+            child: ArcaneInput(controller: descCtrl),
+          ),
           ArcaneFormItem(
             label: 'Local',
             child: Align(
@@ -313,11 +319,7 @@ class _ServerFormState extends State<_ServerForm> {
               padding: const EdgeInsets.only(bottom: Arcane.space4),
               child: Row(
                 children: [
-                  Icon(
-                    LucideIcons.alertTriangle,
-                    size: 16,
-                    color: cs.error,
-                  ),
+                  Icon(LucideIcons.alertTriangle, size: 16, color: cs.error),
                   const SizedBox(width: Arcane.space8),
                   Expanded(
                     child: Text(
@@ -359,62 +361,63 @@ class _ServerFormState extends State<_ServerForm> {
           child: AnimatedSize(
             duration: Arcane.duration,
             curve: Arcane.curve,
-            child: advancedExpanded
-                ? Padding(
-                    padding: const EdgeInsets.only(left: Arcane.space16),
-                    child: Column(
-                      children: [
-                        _pathField(
-                          'Mysqld',
-                          mysqldPathCtrl,
-                          () => _pickFile(mysqldPathCtrl),
-                        ),
-                        _pathField(
-                          'World Server',
-                          worldServerPathCtrl,
-                          () => _pickFile(worldServerPathCtrl),
-                        ),
-                        _pathField(
-                          'World Server Config',
-                          worldServerConfigCtrl,
-                          () => _pickFile(worldServerConfigCtrl),
-                        ),
-                        _pathField(
-                          'World Server Log',
-                          worldServerLogCtrl,
-                          () => _pickFile(worldServerLogCtrl),
-                        ),
-                        _pathField(
-                          'Auth Server',
-                          authServerPathCtrl,
-                          () => _pickFile(authServerPathCtrl),
-                        ),
-                        _pathField(
-                          'Auth Server Config',
-                          authServerConfigCtrl,
-                          () => _pickFile(authServerConfigCtrl),
-                        ),
-                        _pathField(
-                          'Auth Server Log',
-                          authServerLogCtrl,
-                          () => _pickFile(authServerLogCtrl),
-                        ),
-                        ArcaneFormItem(
-                          label: 'Realm List',
-                          child: ArcaneInput(
-                            controller: realmListCtrl,
-                            placeholder: 'Default: 127.0.0.1',
+            child:
+                advancedExpanded
+                    ? Padding(
+                      padding: const EdgeInsets.only(left: Arcane.space16),
+                      child: Column(
+                        children: [
+                          _pathField(
+                            'Mysqld',
+                            mysqldPathCtrl,
+                            () => _pickFile(mysqldPathCtrl),
                           ),
-                        ),
-                        _pathField(
-                          'Client Executable',
-                          clientPathCtrl,
-                          () => _pickFile(clientPathCtrl),
-                        ),
-                      ],
-                    ),
-                  )
-                : const SizedBox(width: double.infinity),
+                          _pathField(
+                            'World Server',
+                            worldServerPathCtrl,
+                            () => _pickFile(worldServerPathCtrl),
+                          ),
+                          _pathField(
+                            'World Server Config',
+                            worldServerConfigCtrl,
+                            () => _pickFile(worldServerConfigCtrl),
+                          ),
+                          _pathField(
+                            'World Server Log',
+                            worldServerLogCtrl,
+                            () => _pickFile(worldServerLogCtrl),
+                          ),
+                          _pathField(
+                            'Auth Server',
+                            authServerPathCtrl,
+                            () => _pickFile(authServerPathCtrl),
+                          ),
+                          _pathField(
+                            'Auth Server Config',
+                            authServerConfigCtrl,
+                            () => _pickFile(authServerConfigCtrl),
+                          ),
+                          _pathField(
+                            'Auth Server Log',
+                            authServerLogCtrl,
+                            () => _pickFile(authServerLogCtrl),
+                          ),
+                          ArcaneFormItem(
+                            label: 'Realm List',
+                            child: ArcaneInput(
+                              controller: realmListCtrl,
+                              placeholder: 'Default: 127.0.0.1',
+                            ),
+                          ),
+                          _pathField(
+                            'Client Executable',
+                            clientPathCtrl,
+                            () => _pickFile(clientPathCtrl),
+                          ),
+                        ],
+                      ),
+                    )
+                    : const SizedBox(width: double.infinity),
           ),
         ),
         const SizedBox(height: Arcane.space8),
@@ -456,7 +459,7 @@ class _ServerFormState extends State<_ServerForm> {
     final clientDir = clientDirCtrl.text.trim();
     if (serverDir.isEmpty && clientDir.isEmpty) return;
     setState(() => discovering = true);
-    final result = await discoverServer(
+    final result = await ServerDiscovery.instance.discover(
       serverDir: serverDir,
       clientDir: clientDir,
     );
@@ -487,7 +490,8 @@ class _ServerFormState extends State<_ServerForm> {
     cover(authServerPathCtrl, discovered.authServerPath);
     cover(authServerConfigCtrl, discovered.authServerConfig);
     cover(authServerLogCtrl, discovered.authServerLog);
-    if (discovered.realmList.isNotEmpty && discovered.realmList != '127.0.0.1') {
+    if (discovered.realmList.isNotEmpty &&
+        discovered.realmList != '127.0.0.1') {
       realmListCtrl.text = discovered.realmList;
     }
     cover(clientPathCtrl, discovered.clientPath);

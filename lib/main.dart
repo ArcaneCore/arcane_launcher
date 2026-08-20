@@ -50,14 +50,14 @@ class ArcaneLauncher extends StatelessWidget {
       builder: (context) {
         final s = getIt<SettingViewModel>().setting;
         return MaterialApp(
-        title: 'Arcane Launcher',
-        home: const LauncherPage(),
-        theme: ThemeData(
-          brightness: s.darkMode ? Brightness.dark : Brightness.light,
-          colorSchemeSeed: Color(s.color),
-          fontFamily: 'Microsoft YaHei UI',
-        ),
-      );
+          title: 'Arcane Launcher',
+          home: const LauncherPage(),
+          theme: ThemeData(
+            brightness: s.darkMode ? Brightness.dark : Brightness.light,
+            colorSchemeSeed: Color(s.color),
+            fontFamily: 'Microsoft YaHei UI',
+          ),
+        );
       },
     );
   }

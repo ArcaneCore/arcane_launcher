@@ -16,7 +16,7 @@ class WorldServerViewModel {
 
   Future<void> init(ServerEntity server) async {
     final info = ServiceInformation();
-    final processIds = await ProcessUtil().getProcessIds('worldserver.exe');
+    final processIds = await ProcessUtil.instance.getProcessIds('worldserver.exe');
     if (processIds.isNotEmpty) {
       info.logs = await _getLogs(server);
       info.processIds = processIds;
@@ -42,7 +42,7 @@ class WorldServerViewModel {
     final info = _info.value;
     if (info.status != ServiceStatus.stopped) return;
     if (server.worldServerPath.isEmpty) return;
-    await ProcessUtil().start(server.worldServerPath, detached: true);
+    await ProcessUtil.instance.start(server.worldServerPath, detached: true);
     _info.value = info.copyWith(status: ServiceStatus.starting);
     _listenLogs(server);
   }
@@ -50,7 +50,7 @@ class WorldServerViewModel {
   void stop() async {
     final info = _info.value;
     if (info.status != ServiceStatus.running) return;
-    ProcessUtil().stop(info.processIds);
+    ProcessUtil.instance.stop(info.processIds);
     _info.value = ServiceInformation();
     _timer?.cancel();
   }
@@ -83,8 +83,9 @@ class WorldServerViewModel {
       _info.value = _info.value.copyWith(logs: lines);
       for (var line in lines) {
         if (line.contains(' (worldserver-daemon) ready...')) {
-          final processIds =
-              await ProcessUtil().getProcessIds('worldserver.exe');
+          final processIds = await ProcessUtil.instance.getProcessIds(
+            'worldserver.exe',
+          );
           _info.value = _info.value.copyWith(
             processIds: processIds,
             status: ServiceStatus.running,
