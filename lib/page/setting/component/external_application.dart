@@ -50,7 +50,7 @@ class _CreateButton extends StatelessWidget {
   void _create(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => _Form(application: ExternalApplication()),
+      builder: (context) => _Form(application: ApplicationEntity()),
     );
   }
 }
@@ -58,7 +58,7 @@ class _CreateButton extends StatelessWidget {
 class _Tile extends StatelessWidget {
   const _Tile({required this.application});
 
-  final ExternalApplication application;
+  final ApplicationEntity application;
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +114,7 @@ class _Tile extends StatelessWidget {
 class _Form extends StatefulWidget {
   const _Form({required this.application});
 
-  final ExternalApplication application;
+  final ApplicationEntity application;
 
   @override
   State<_Form> createState() => _FormState();
@@ -168,7 +168,7 @@ class _FormState extends State<_Form> {
   }
 
   void _store() async {
-    final app = ExternalApplication();
+    final app = ApplicationEntity();
     app.id = widget.application.id;
     app.name = nameCtrl.text;
     app.description = descCtrl.text;

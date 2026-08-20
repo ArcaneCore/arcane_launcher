@@ -5,27 +5,27 @@ import 'package:signals/signals.dart';
 class ServerViewModel {
   static const _fileName = 'servers.yaml';
 
-  final _servers = signal<List<Server>>([]);
-  late final Computed<Server> _activeServer;
+  final _servers = signal<List<ServerEntity>>([]);
+  late final Computed<ServerEntity> _activeServer;
   final _store = YamlStore(_fileName);
 
   ServerViewModel() {
-    _activeServer = computed<Server>(() {
-      if (_servers.value.isEmpty) return Server();
+    _activeServer = computed<ServerEntity>(() {
+      if (_servers.value.isEmpty) return ServerEntity();
       return _servers.value.firstWhere((s) => s.active,
           orElse: () => _servers.value.first);
     });
   }
 
-  List<Server> get servers => _servers.value;
-  Server get activeServer => _activeServer.value;
+  List<ServerEntity> get servers => _servers.value;
+  ServerEntity get activeServer => _activeServer.value;
 
   Future<void> fetch() async {
     final results = await _store.readList();
-    _servers.value = results.map(Server.fromMap).toList();
+    _servers.value = results.map(ServerEntity.fromMap).toList();
   }
 
-  Future<void> store(Server server) async {
+  Future<void> store(ServerEntity server) async {
     if (server.id != null && server.id != 0) {
       _servers.value = [
         for (final s in _servers.value) s.id == server.id ? server : s,
@@ -37,12 +37,12 @@ class ServerViewModel {
     await _save();
   }
 
-  Future<void> destroy(Server server) async {
+  Future<void> destroy(ServerEntity server) async {
     _servers.value = _servers.value.where((s) => s.id != server.id).toList();
     await _save();
   }
 
-  Future<void> activate(Server server) async {
+  Future<void> activate(ServerEntity server) async {
     _servers.value = [
       for (final s in _servers.value) s.copyWith(active: s.id == server.id),
     ];

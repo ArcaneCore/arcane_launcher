@@ -7,7 +7,7 @@ class ServerDiscoveryResult {
   ServerDiscoveryResult({required this.server, required this.warnings});
 
   /// Partially filled server config; unmatched fields are empty strings.
-  final Server server;
+  final ServerEntity server;
 
   /// Hints collected during discovery, e.g. "MySQL not found".
   final List<String> warnings;
@@ -25,7 +25,7 @@ Future<ServerDiscoveryResult> discoverServer({
   required String clientDir,
 }) async {
   final warnings = <String>[];
-  final server = Server();
+  final server = ServerEntity();
   server.name = _basename(serverDir);
 
   if (serverDir.isNotEmpty) {

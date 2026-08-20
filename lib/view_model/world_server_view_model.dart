@@ -14,7 +14,7 @@ class WorldServerViewModel {
   ServiceInformation get info => _info.value;
   String get config => _config.value;
 
-  Future<void> init(Server server) async {
+  Future<void> init(ServerEntity server) async {
     final info = ServiceInformation();
     final processIds = await ProcessUtil().getProcessIds('worldserver.exe');
     if (processIds.isNotEmpty) {
@@ -25,7 +25,7 @@ class WorldServerViewModel {
     _info.value = info;
   }
 
-  Future<void> fetchConfig(Server server) async {
+  Future<void> fetchConfig(ServerEntity server) async {
     if (server.worldServerConfig.isEmpty) {
       _config.value = '';
       return;
@@ -33,12 +33,12 @@ class WorldServerViewModel {
     _config.value = await File(server.worldServerConfig).readAsString();
   }
 
-  Future<void> storeConfig(Server server, String config) async {
+  Future<void> storeConfig(ServerEntity server, String config) async {
     if (server.worldServerConfig.isEmpty) return;
     await File(server.worldServerConfig).writeAsString(config);
   }
 
-  void start(Server server) async {
+  void start(ServerEntity server) async {
     final info = _info.value;
     if (info.status != ServiceStatus.stopped) return;
     if (server.worldServerPath.isEmpty) return;
@@ -55,7 +55,7 @@ class WorldServerViewModel {
     _timer?.cancel();
   }
 
-  void toggle(Server server) {
+  void toggle(ServerEntity server) {
     if (_info.value.status != ServiceStatus.stopped) {
       stop();
     } else {
@@ -63,14 +63,14 @@ class WorldServerViewModel {
     }
   }
 
-  Future<List<String>> _getLogs(Server server) async {
+  Future<List<String>> _getLogs(ServerEntity server) async {
     if (server.worldServerLog.isEmpty) return [];
     final file = File(server.worldServerLog);
     if (!file.existsSync()) return [];
     return await file.readAsLines();
   }
 
-  void _listenLogs(Server server) async {
+  void _listenLogs(ServerEntity server) async {
     if (server.worldServerLog.isEmpty) return;
     final file = File(server.worldServerLog);
     int size = 0;

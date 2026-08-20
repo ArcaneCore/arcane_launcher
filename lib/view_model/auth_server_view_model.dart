@@ -14,7 +14,7 @@ class AuthServerViewModel {
   ServiceInformation get info => _info.value;
   String get config => _config.value;
 
-  Future<void> init(Server server) async {
+  Future<void> init(ServerEntity server) async {
     final info = ServiceInformation();
     final processIds = await ProcessUtil().getProcessIds('authserver.exe');
     if (processIds.isNotEmpty) {
@@ -25,7 +25,7 @@ class AuthServerViewModel {
     _info.value = info;
   }
 
-  Future<void> fetchConfig(Server server) async {
+  Future<void> fetchConfig(ServerEntity server) async {
     if (server.authServerConfig.isEmpty) {
       _config.value = '';
       return;
@@ -33,12 +33,12 @@ class AuthServerViewModel {
     _config.value = await File(server.authServerConfig).readAsString();
   }
 
-  Future<void> storeConfig(Server server, String config) async {
+  Future<void> storeConfig(ServerEntity server, String config) async {
     if (server.authServerConfig.isEmpty) return;
     await File(server.authServerConfig).writeAsString(config);
   }
 
-  void start(Server server) async {
+  void start(ServerEntity server) async {
     final info = _info.value;
     if (info.status != ServiceStatus.stopped) return;
     if (server.authServerPath.isEmpty) return;
@@ -55,7 +55,7 @@ class AuthServerViewModel {
     _timer?.cancel();
   }
 
-  void toggle(Server server) {
+  void toggle(ServerEntity server) {
     if (_info.value.status != ServiceStatus.stopped) {
       stop();
     } else {
@@ -63,14 +63,14 @@ class AuthServerViewModel {
     }
   }
 
-  Future<List<String>> _getLogs(Server server) async {
+  Future<List<String>> _getLogs(ServerEntity server) async {
     if (server.authServerLog.isEmpty) return [];
     final file = File(server.authServerLog);
     if (!file.existsSync()) return [];
     return await file.readAsLines();
   }
 
-  void _listenLogs(Server server) async {
+  void _listenLogs(ServerEntity server) async {
     if (server.authServerLog.isEmpty) return;
     final file = File(server.authServerLog);
     int size = 0;

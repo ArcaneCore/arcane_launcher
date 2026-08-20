@@ -1,16 +1,16 @@
-class Setting {
+class SettingEntity {
   int? id;
   int color;
   bool darkMode;
 
-  Setting({
+  SettingEntity({
     this.id,
     this.color = 4288423856,
     this.darkMode = false,
   });
 
-  factory Setting.fromMap(Map<String, Object?> map) {
-    return Setting(
+  factory SettingEntity.fromMap(Map<String, Object?> map) {
+    return SettingEntity(
       id: map['id'] as int?,
       color: map['color'] as int? ?? 4288423856,
       darkMode: (map['dark_mode'] as int?) == 1,

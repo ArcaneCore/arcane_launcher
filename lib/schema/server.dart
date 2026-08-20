@@ -1,4 +1,4 @@
-class Server {
+class ServerEntity {
   int? id;
   String name;
   String description;
@@ -15,7 +15,7 @@ class Server {
   String clientPath;
   bool active;
 
-  Server({
+  ServerEntity({
     this.id,
     this.name = '',
     this.description = '',
@@ -33,8 +33,8 @@ class Server {
     this.active = false,
   });
 
-  factory Server.fromMap(Map<String, Object?> map) {
-    return Server(
+  factory ServerEntity.fromMap(Map<String, Object?> map) {
+    return ServerEntity(
       id: map['id'] as int?,
       name: map['name'] as String? ?? '',
       description: map['description'] as String? ?? '',
@@ -73,7 +73,7 @@ class Server {
     };
   }
 
-  Server copyWith({
+  ServerEntity copyWith({
     int? id,
     String? name,
     String? description,
@@ -90,7 +90,7 @@ class Server {
     String? clientPath,
     bool? active,
   }) {
-    return Server(
+    return ServerEntity(
       id: id ?? this.id,
       name: name ?? this.name,
       description: description ?? this.description,

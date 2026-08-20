@@ -6,14 +6,14 @@ import 'package:signals/signals.dart';
 class ExternalApplicationViewModel {
   static const _fileName = 'external_applications.yaml';
 
-  final _apps = signal<List<ExternalApplication>>([]);
+  final _apps = signal<List<ApplicationEntity>>([]);
   final _store = YamlStore(_fileName);
 
-  List<ExternalApplication> get applications => _apps.value;
+  List<ApplicationEntity> get applications => _apps.value;
 
   Future<void> fetch() async {
     final results = await _store.readList();
-    _apps.value = results.map(ExternalApplication.fromMap).toList();
+    _apps.value = results.map(ApplicationEntity.fromMap).toList();
   }
 
   void start(int index) {
@@ -22,7 +22,7 @@ class ExternalApplicationViewModel {
     ProcessUtil().start(apps[index].path);
   }
 
-  Future<void> store(ExternalApplication application) async {
+  Future<void> store(ApplicationEntity application) async {
     if (application.id != null && application.id != 0) {
       _apps.value = [
         for (final a in _apps.value)
@@ -35,7 +35,7 @@ class ExternalApplicationViewModel {
     await _save();
   }
 
-  Future<void> destroy(ExternalApplication application) async {
+  Future<void> destroy(ApplicationEntity application) async {
     _apps.value =
         _apps.value.where((a) => a.id != application.id).toList();
     await _save();

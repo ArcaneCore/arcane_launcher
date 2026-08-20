@@ -22,7 +22,7 @@ class MysqldViewModel {
     _info.value = info;
   }
 
-  void start(Server server) async {
+  void start(ServerEntity server) async {
     final info = _info.value;
     if (info.status != ServiceStatus.stopped) return;
     if (server.mysqldPath.isEmpty) return;
@@ -40,7 +40,7 @@ class MysqldViewModel {
     _info.value = ServiceInformation();
   }
 
-  void toggle(Server server) {
+  void toggle(ServerEntity server) {
     if (_info.value.status != ServiceStatus.stopped) {
       stop();
     } else {

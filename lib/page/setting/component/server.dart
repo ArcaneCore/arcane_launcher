@@ -52,7 +52,7 @@ class _CreateServerButton extends StatelessWidget {
   void _createServer(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => _ServerForm(server: Server()),
+      builder: (context) => _ServerForm(server: ServerEntity()),
     );
   }
 }
@@ -60,7 +60,7 @@ class _CreateServerButton extends StatelessWidget {
 class _ServerTile extends StatelessWidget {
   const _ServerTile({required this.server});
 
-  final Server server;
+  final ServerEntity server;
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +118,7 @@ class _ServerTile extends StatelessWidget {
 class _ServerForm extends StatefulWidget {
   const _ServerForm({required this.server});
 
-  final Server server;
+  final ServerEntity server;
 
   @override
   State<_ServerForm> createState() => _ServerFormState();
@@ -472,7 +472,7 @@ class _ServerFormState extends State<_ServerForm> {
 
   /// Applies discovery results to the form; only non-empty fields are
   /// overwritten, and the name is filled only when empty.
-  void applyDiscovery(Server discovered) {
+  void applyDiscovery(ServerEntity discovered) {
     if (nameCtrl.text.isEmpty && discovered.name.isNotEmpty) {
       nameCtrl.text = discovered.name;
     }
@@ -500,7 +500,7 @@ class _ServerFormState extends State<_ServerForm> {
   }
 
   void _store() async {
-    final server = Server();
+    final server = ServerEntity();
     server.id = widget.server.id;
     server.name = nameCtrl.text;
     server.description = descCtrl.text;

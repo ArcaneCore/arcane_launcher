@@ -214,7 +214,7 @@ class _ServerSelectState extends State<_ServerSelect> {
     );
   }
 
-  void selectServer(Server server) {
+  void selectServer(ServerEntity server) {
     getIt<ServerViewModel>().activate(server);
     controller.removeOverlayEntry();
   }

@@ -1,18 +1,18 @@
-class ExternalApplication {
+class ApplicationEntity {
   int? id;
   String name;
   String path;
   String description;
 
-  ExternalApplication({
+  ApplicationEntity({
     this.id,
     this.name = '',
     this.path = '',
     this.description = '',
   });
 
-  factory ExternalApplication.fromMap(Map<String, Object?> map) {
-    return ExternalApplication(
+  factory ApplicationEntity.fromMap(Map<String, Object?> map) {
+    return ApplicationEntity(
       id: map['id'] as int?,
       name: map['name'] as String? ?? '',
       path: map['path'] as String? ?? '',

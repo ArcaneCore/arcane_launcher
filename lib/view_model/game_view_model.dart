@@ -52,7 +52,7 @@ class GameViewModel {
     _startClient(GetIt.instance<ServerViewModel>().activeServer);
   }
 
-  void _startClient(Server server) {
+  void _startClient(ServerEntity server) {
     if (server.clientPath.isEmpty) return;
     final patterns = server.clientPath.split(r'\');
     final prefix = patterns.take(patterns.length - 1);
@@ -109,7 +109,7 @@ class GameViewModel {
     getIt<MysqldViewModel>().stop();
   }
 
-  List<String> _createTasks(Server server) {
+  List<String> _createTasks(ServerEntity server) {
     final getIt = GetIt.instance;
     final tasks = <String>[];
     if (server.mysqldPath.isEmpty) return tasks;
