@@ -115,105 +115,105 @@ class ServerDiscovery {
 
     return ServerDiscoveryResult(server: server, warnings: warnings);
   }
-}
 
-/// Common WoW client executables, ordered by priority.
-const _clientCandidates = [
-  'wow.exe',
-  'wow-64.exe',
-  'wowclassic.exe',
-  'wowclassic_retail.exe',
-  'wow_beta.exe',
-];
+  /// Common WoW client executables, ordered by priority.
+  static const _clientCandidates = [
+    'wow.exe',
+    'wow-64.exe',
+    'wowclassic.exe',
+    'wowclassic_retail.exe',
+    'wow_beta.exe',
+  ];
 
-/// Matches server executables / configs by lowercase file name, handling both
-/// `.exe` and extensionless Linux builds.
-void _matchServerFile(File file, Map<String, File> found) {
-  final name = _basename(file.path).toLowerCase();
-  if (name == 'mysqld.exe' || name == 'mysqld') {
-    found.putIfAbsent('mysqld', () => file);
-  } else if (name == 'worldserver.exe' || name == 'worldserver') {
-    found.putIfAbsent('worldserver', () => file);
-  } else if (name == 'authserver.exe' || name == 'authserver') {
-    found.putIfAbsent('authserver', () => file);
-  } else if (name == 'worldserver.conf' || name == 'worldserver.conf.dist') {
-    // Prefer the real conf over the .dist template.
-    final current = found['worldserver_conf'];
-    if (current == null || current.path.endsWith('.dist')) {
-      found['worldserver_conf'] = file;
-    }
-  } else if (name == 'authserver.conf' || name == 'authserver.conf.dist') {
-    final current = found['authserver_conf'];
-    if (current == null || current.path.endsWith('.dist')) {
-      found['authserver_conf'] = file;
-    }
-  }
-}
-
-/// Recursively scans a directory up to [maxDepth], skipping inaccessible
-/// entries.
-Future<void> _scan(
-  Directory dir,
-  int maxDepth,
-  void Function(File file) onFile,
-) async {
-  if (maxDepth <= 0) return;
-  try {
-    await for (final entity in dir.list(followLinks: false)) {
-      if (entity is Directory) {
-        await _scan(entity, maxDepth - 1, onFile);
-      } else if (entity is File) {
-        onFile(entity);
+  /// Matches server executables / configs by lowercase file name, handling both
+  /// `.exe` and extensionless Linux builds.
+  static void _matchServerFile(File file, Map<String, File> found) {
+    final name = _basename(file.path).toLowerCase();
+    if (name == 'mysqld.exe' || name == 'mysqld') {
+      found.putIfAbsent('mysqld', () => file);
+    } else if (name == 'worldserver.exe' || name == 'worldserver') {
+      found.putIfAbsent('worldserver', () => file);
+    } else if (name == 'authserver.exe' || name == 'authserver') {
+      found.putIfAbsent('authserver', () => file);
+    } else if (name == 'worldserver.conf' || name == 'worldserver.conf.dist') {
+      // Prefer the real conf over the .dist template.
+      final current = found['worldserver_conf'];
+      if (current == null || current.path.endsWith('.dist')) {
+        found['worldserver_conf'] = file;
+      }
+    } else if (name == 'authserver.conf' || name == 'authserver.conf.dist') {
+      final current = found['authserver_conf'];
+      if (current == null || current.path.endsWith('.dist')) {
+        found['authserver_conf'] = file;
       }
     }
-  } catch (_) {
-    // Ignore scan errors such as permission issues.
   }
-}
 
-/// Parses an emulator conf (`Key = "Value"` lines) into a key-value map.
-Map<String, String> _parseConf(File confFile) {
-  final result = <String, String>{};
-  String? content;
-  try {
-    content = confFile.readAsStringSync();
-  } catch (_) {
+  /// Recursively scans a directory up to [maxDepth], skipping inaccessible
+  /// entries.
+  static Future<void> _scan(
+    Directory dir,
+    int maxDepth,
+    void Function(File file) onFile,
+  ) async {
+    if (maxDepth <= 0) return;
+    try {
+      await for (final entity in dir.list(followLinks: false)) {
+        if (entity is Directory) {
+          await _scan(entity, maxDepth - 1, onFile);
+        } else if (entity is File) {
+          onFile(entity);
+        }
+      }
+    } catch (_) {
+      // Ignore scan errors such as permission issues.
+    }
+  }
+
+  /// Parses an emulator conf (`Key = "Value"` lines) into a key-value map.
+  static Map<String, String> _parseConf(File confFile) {
+    final result = <String, String>{};
+    String? content;
+    try {
+      content = confFile.readAsStringSync();
+    } catch (_) {
+      return result;
+    }
+    for (final rawLine in content.split('\n')) {
+      final line = rawLine.trim();
+      if (line.isEmpty || line.startsWith('#')) continue;
+      final eq = line.indexOf('=');
+      if (eq <= 0) continue;
+      final key = line.substring(0, eq).trim();
+      var value = line.substring(eq + 1).trim();
+      if (value.startsWith('"')) {
+        final close = value.indexOf('"', 1);
+        if (close > 0) value = value.substring(1, close);
+      }
+      result[key] = value;
+    }
     return result;
   }
-  for (final rawLine in content.split('\n')) {
-    final line = rawLine.trim();
-    if (line.isEmpty || line.startsWith('#')) continue;
-    final eq = line.indexOf('=');
-    if (eq <= 0) continue;
-    final key = line.substring(0, eq).trim();
-    var value = line.substring(eq + 1).trim();
-    if (value.startsWith('"')) {
-      final close = value.indexOf('"', 1);
-      if (close > 0) value = value.substring(1, close);
-    }
-    result[key] = value;
+
+  /// Derives the full log path from conf: conf dir + LogFileDir/LogsDir + LogFile.
+  static String _resolveLogPath(
+    File confFile,
+    Map<String, String> conf,
+    String defaultName,
+  ) {
+    final logDir = (conf['LogFileDir'] ?? conf['LogsDir'] ?? '').trim();
+    final logName = (conf['LogFile'] ?? '').trim();
+    if (logName.isEmpty) return '';
+    final sep = Platform.pathSeparator;
+    final base = confFile.parent.path;
+    if (logDir.isEmpty || logDir == '.') return '$base$sep$logName';
+    final dir = File(logDir).isAbsolute ? logDir : '$base$sep$logDir';
+    return '$dir$sep$logName';
   }
-  return result;
-}
 
-/// Derives the full log path from conf: conf dir + LogFileDir/LogsDir + LogFile.
-String _resolveLogPath(
-  File confFile,
-  Map<String, String> conf,
-  String defaultName,
-) {
-  final logDir = (conf['LogFileDir'] ?? conf['LogsDir'] ?? '').trim();
-  final logName = (conf['LogFile'] ?? '').trim();
-  if (logName.isEmpty) return '';
-  final sep = Platform.pathSeparator;
-  final base = confFile.parent.path;
-  if (logDir.isEmpty || logDir == '.') return '$base$sep$logName';
-  final dir = File(logDir).isAbsolute ? logDir : '$base$sep$logDir';
-  return '$dir$sep$logName';
-}
-
-/// Returns the last path segment, accepting both `\` and `/` separators.
-String _basename(String path) {
-  final parts = path.split(RegExp(r'[\\/]'));
-  return parts.where((p) => p.isNotEmpty).lastOrNull ?? '';
+  /// Returns the last path segment, accepting both `\` and `/` separators.
+  static String _basename(String path) {
+    final parts = path.split(RegExp(r'[\\/]'));
+    return parts.where((p) => p.isNotEmpty).lastOrNull ?? '';
+  }
 }
