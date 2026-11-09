@@ -1,6 +1,14 @@
+import 'dart:async';
 import 'dart:io';
 
 class ProcessUtil {
+  /// Processes started with [startHidden], kept referenced while they run.
+  ///
+  /// The launcher holds the write end of their stdin pipe, so the [Process]
+  /// must stay alive for as long as the server should keep running: the
+  /// worldserver shuts itself down when its stdin reaches EOF.
+  final _hiddenProcesses = <Process>{};
+
   /// Retrieves the process IDs of the processes with the specified [name].
   ///
   /// This function runs the 'tasklist' command to list all running processes, and
@@ -58,39 +66,46 @@ class ProcessUtil {
   /// The [arguments] parameter is an optional list of string arguments to pass to
   /// the process. If not provided, an empty list will be used.
   ///
-  /// The [detached] parameter determines whether to start the process as a detached
-  /// process. When true, the process runs independently and automatically includes
-  /// the /MIN parameter to start minimized. Defaults to false.
+  /// The child's stdout/stderr are piped to the returned [Process], so the
+  /// caller is responsible for consuming them, otherwise the child can block
+  /// once a pipe buffer fills up.
   ///
   /// Returns a [Future] that completes with a [Process] object representing the
   /// started process.
-  Future<Process> start(
-    String name, {
-    List<String>? arguments,
-    bool detached = false,
-  }) async {
-    var executable = name;
-    var formattedArguments = arguments ?? [];
-    var mode = ProcessStartMode.normal;
-    String? workingDirectory;
-    final patterns = name.split(r'\');
-    if (patterns.length > 1) {
-      executable = patterns.last;
-      workingDirectory = patterns.take(patterns.length - 1).join(r'\');
-    }
-    if (detached) {
-      // Use the Windows `start` command to launch minimized.
-      executable = 'start';
-      formattedArguments = ['/MIN', name, ...formattedArguments];
-      mode = ProcessStartMode.detached;
-    }
+  Future<Process> start(String name, {List<String>? arguments}) async {
+    final (executable, workingDirectory) = _split(name);
     return await Process.start(
       executable,
-      formattedArguments,
-      mode: mode,
+      arguments ?? [],
+      mode: ProcessStartMode.normal,
       runInShell: true,
       workingDirectory: workingDirectory,
     );
+  }
+
+  /// Starts a new process in the background without opening a console window.
+  ///
+  /// This uses [ProcessStartMode.normal], which starts the child with
+  /// `CREATE_NO_WINDOW` on Windows, so no window is shown (mysqld is started
+  /// the same way). The child's stdout/stderr are drained so a server that logs
+  /// heavily can never block on a full pipe, and the process is kept referenced
+  /// so its stdin pipe stays open: the worldserver treats stdin EOF as a
+  /// shutdown request.
+  Future<Process> startHidden(String name, {List<String>? arguments}) async {
+    final process = await start(name, arguments: arguments);
+    _hiddenProcesses.add(process);
+    unawaited(process.stdout.drain<void>().catchError((_) {}));
+    unawaited(process.stderr.drain<void>().catchError((_) {}));
+    unawaited(
+      process.exitCode.whenComplete(() => _hiddenProcesses.remove(process)),
+    );
+    return process;
+  }
+
+  (String, String?) _split(String name) {
+    final patterns = name.split(r'\');
+    if (patterns.length == 1) return (name, null);
+    return (patterns.last, patterns.take(patterns.length - 1).join(r'\'));
   }
 
   /// Stops a list of processes by their process IDs.

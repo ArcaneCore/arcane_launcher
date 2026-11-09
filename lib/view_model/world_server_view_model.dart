@@ -44,7 +44,7 @@ class WorldServerViewModel {
     final info = _info.value;
     if (info.status != ServiceStatus.stopped) return;
     if (server.worldServerPath.isEmpty) return;
-    await _process.start(server.worldServerPath, detached: true);
+    await _process.startHidden(server.worldServerPath);
     _info.value = info.copyWith(status: ServiceStatus.starting);
     _listenLogs(server);
   }

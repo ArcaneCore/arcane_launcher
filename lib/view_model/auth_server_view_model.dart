@@ -44,7 +44,7 @@ class AuthServerViewModel {
     final info = _info.value;
     if (info.status != ServiceStatus.stopped) return;
     if (server.authServerPath.isEmpty) return;
-    _process.start(server.authServerPath, detached: true);
+    await _process.startHidden(server.authServerPath);
     _info.value = info.copyWith(status: ServiceStatus.starting);
     _listenLogs(server);
   }
