@@ -30,11 +30,10 @@ void main() async {
   ]);
 
   final server = serverVM.activeServer;
+  // Config files are loaded lazily by the config page, not at startup.
   await Future.wait([
     GetIt.instance.get<AuthServerViewModel>().init(server),
-    GetIt.instance.get<AuthServerViewModel>().fetchConfig(server),
     GetIt.instance.get<WorldServerViewModel>().init(server),
-    GetIt.instance.get<WorldServerViewModel>().fetchConfig(server),
   ]);
 
   GetIt.instance.get<GameViewModel>().init();

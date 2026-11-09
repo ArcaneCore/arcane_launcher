@@ -1,20 +1,24 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:arcane_launcher/model/config_document.dart';
 import 'package:arcane_launcher/model/service_information.dart';
 import 'package:arcane_launcher/schema/server.dart';
 import 'package:arcane_launcher/util/process_util.dart';
+import 'package:arcane_launcher/view_model/config_view_model.dart';
 import 'package:get_it/get_it.dart';
 import 'package:signals/signals.dart';
 
-class WorldServerViewModel {
+class WorldServerViewModel implements ConfigViewModel {
   final _info = signal(ServiceInformation());
   final _process = GetIt.instance.get<ProcessUtil>();
-  final _config = signal('');
+  ConfigDocument? _config;
   Timer? _timer;
 
   ServiceInformation get info => _info.value;
-  String get config => _config.value;
+
+  @override
+  ConfigDocument? get document => _config;
 
   Future<void> init(ServerEntity server) async {
     final info = ServiceInformation();
@@ -27,17 +31,22 @@ class WorldServerViewModel {
     _info.value = info;
   }
 
+  @override
   Future<void> fetchConfig(ServerEntity server) async {
     if (server.worldServerConfig.isEmpty) {
-      _config.value = '';
+      _config = null;
       return;
     }
-    _config.value = await File(server.worldServerConfig).readAsString();
+    _config = ConfigDocument.parseBytes(
+      await File(server.worldServerConfig).readAsBytes(),
+    );
   }
 
-  Future<void> storeConfig(ServerEntity server, String config) async {
-    if (server.worldServerConfig.isEmpty) return;
-    await File(server.worldServerConfig).writeAsString(config);
+  @override
+  Future<void> storeConfig(ServerEntity server) async {
+    final document = _config;
+    if (document == null || server.worldServerConfig.isEmpty) return;
+    await File(server.worldServerConfig).writeAsString(document.source);
   }
 
   void start(ServerEntity server) async {

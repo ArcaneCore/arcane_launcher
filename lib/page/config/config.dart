@@ -54,10 +54,9 @@ class _SettingState extends State<ConfigPage> {
           physics: const NeverScrollableScrollPhysics(),
           itemBuilder:
               (context, index) => ArcaneCard(
-                child: switch (selectedIndex) {
+                child: switch (index) {
                   0 => const WorldServerConfigPage(),
-                  1 => const AuthServerConfigPage(),
-                  _ => const SizedBox(),
+                  _ => const AuthServerConfigPage(),
                 },
               ),
           itemCount: 2,
