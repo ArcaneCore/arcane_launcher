@@ -57,6 +57,11 @@ class ArcaneLauncher extends StatelessWidget {
             brightness: s.darkMode ? Brightness.dark : Brightness.light,
             colorSchemeSeed: Color(s.color),
             fontFamily: 'Microsoft YaHei UI',
+            // Flutter's desktop default for buttons is `SystemMouseCursors.basic`
+            // (arrow); match the click cursor used by the hand-built tiles.
+            elevatedButtonTheme: const ElevatedButtonThemeData(
+              style: ButtonStyle(mouseCursor: WidgetStateMouseCursor.clickable),
+            ),
           ),
         );
       },

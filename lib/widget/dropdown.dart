@@ -107,21 +107,25 @@ class _ArcaneDropdownOverlay extends StatelessWidget {
             targetAnchor: Alignment.topRight,
             link: link,
             offset: const Offset(0, -Arcane.space4),
-            child: Material(
-              color: surface,
-              borderRadius: BorderRadius.circular(Arcane.radiusCard),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(Arcane.radiusCard),
-                  boxShadow: Arcane.shadow(colorScheme),
-                  color: surface,
+            // Shadow lives outside the Material; the Material itself provides
+            // the background and hosts ink splashes from ListTile etc.
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(Arcane.radiusCard),
+                boxShadow: Arcane.shadow(colorScheme),
+              ),
+              child: Material(
+                color: surface,
+                borderRadius: BorderRadius.circular(Arcane.radiusCard),
+                clipBehavior: Clip.antiAlias,
+                child: Container(
+                  constraints: BoxConstraints(
+                    maxHeight: 200,
+                    maxWidth: width,
+                    minWidth: width,
+                  ),
+                  child: builder?.call(context),
                 ),
-                constraints: BoxConstraints(
-                  maxHeight: 200,
-                  maxWidth: width,
-                  minWidth: width,
-                ),
-                child: builder?.call(context),
               ),
             ),
           ),

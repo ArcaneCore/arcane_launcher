@@ -10,8 +10,8 @@ class ArcaneStartButton extends StatefulWidget {
     super.key,
     required this.onPlay,
     this.loading = false,
-    this.playLabel = 'Play',
-    this.loadingLabel = 'Starting...',
+    this.playLabel = 'PLAY',
+    this.loadingLabel = 'STARTING...',
     this.optionsBuilder,
   });
 
@@ -83,6 +83,7 @@ class _ArcaneStartButtonState extends State<ArcaneStartButton> {
               children: [if (options != null) options],
             );
           },
+          width: 200,
           child: ElevatedButton(
             style: ButtonStyle(
               backgroundColor: WidgetStatePropertyAll(cs.primary),
